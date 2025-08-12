@@ -26,6 +26,7 @@ import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 import javax.mail.search.FromTerm;
 import javax.mail.search.SubjectTerm;
+import com.sun.security.sasl.Provider;
 
 import jsystem.framework.system.SystemObjectImpl;
 
@@ -169,7 +170,7 @@ public class MailUtil extends SystemObjectImpl{
 			props.put("mail.smtp.socketFactory.fallback", "false");
 		}
 
-		Security.addProvider(new com.sun.net.ssl.internal.ssl.Provider());
+		Security.addProvider(new Provider());
 
 		props.put("mail.smtp.host", smtpHostName);
 
