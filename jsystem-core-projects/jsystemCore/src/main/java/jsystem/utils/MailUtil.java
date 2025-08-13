@@ -4,7 +4,7 @@
 package jsystem.utils;
 
 import java.io.File;
-import java.security.Security;
+
 import java.util.ArrayList;
 import java.util.Properties;
 
@@ -26,7 +26,6 @@ import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 import javax.mail.search.FromTerm;
 import javax.mail.search.SubjectTerm;
-import com.sun.security.sasl.Provider;
 
 import jsystem.framework.system.SystemObjectImpl;
 
@@ -169,8 +168,6 @@ public class MailUtil extends SystemObjectImpl{
 			props.put("mail.smtp.socketFactory.class", SSL_FACTORY);
 			props.put("mail.smtp.socketFactory.fallback", "false");
 		}
-
-		Security.addProvider(new Provider());
 
 		props.put("mail.smtp.host", smtpHostName);
 
