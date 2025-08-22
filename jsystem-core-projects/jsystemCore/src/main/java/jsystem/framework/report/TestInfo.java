@@ -26,6 +26,6 @@ public class TestInfo implements Serializable{
 	public String userDoc = null;
 	public boolean isHiddenInHTML;
 	public String toString(){
-		return "className" + className + "methodName "+methodName +" fullUuid" + fullUuid;
+		return "className " + className + " methodName " + methodName + " fullUuid " + fullUuid;
 	}
 }
