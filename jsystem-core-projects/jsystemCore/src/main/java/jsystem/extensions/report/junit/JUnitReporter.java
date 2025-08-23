@@ -2,7 +2,7 @@ package jsystem.extensions.report.junit;
 
 import java.io.File;
 import java.io.IOException;
-
+import java.io.StringWriter;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
@@ -11,12 +11,12 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.dataformat.xml.XmlMapper;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlText;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.Marshaller;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlValue;
 
 import jsystem.extensions.report.xml.XmlReporter;
 import jsystem.framework.FrameworkOptions;
@@ -140,11 +140,13 @@ public class JUnitReporter implements ExtendTestReporter, ExtendTestListener {
 	public void toXml() {
 		testSuite.setTime(getTimeDeltaInSec(testSuiteStart));
 		try {
-			XmlMapper xmlMapper = new XmlMapper();
-			String xmlString = xmlMapper.writeValueAsString(testSuite);
+			JAXBContext context = JAXBContext.newInstance(testSuite.getClass());
+			Marshaller marshaller = context.createMarshaller();
+			StringWriter sw = new StringWriter();
+			marshaller.marshal(testSuite, sw);
 			final String currentLogFolder = JSystemProperties.getInstance().getPreference(FrameworkOptions.LOG_FOLDER)
 					+ File.separator + "current";
-			FileUtils.write(currentLogFolder + File.separator + logFileName, xmlString);
+			FileUtils.write(currentLogFolder + File.separator + logFileName, sw.toString());
 		} catch (Exception e) {
 			log.log(Level.SEVERE, "Failed to export report to XML", e);
 		}
@@ -175,7 +177,7 @@ public class JUnitReporter implements ExtendTestReporter, ExtendTestListener {
 
 		private FailureOrError error;
 
-		@JacksonXmlProperty(isAttribute = true)
+		@XmlAttribute
 		public String getName() {
 			return name;
 		}
@@ -184,7 +186,7 @@ public class JUnitReporter implements ExtendTestReporter, ExtendTestListener {
 			this.name = name;
 		}
 
-		@JacksonXmlProperty(isAttribute = true, localName = "classname")
+		@XmlAttribute(name = "classname")
 		public String getClassName() {
 			return className;
 		}
@@ -193,7 +195,7 @@ public class JUnitReporter implements ExtendTestReporter, ExtendTestListener {
 			this.className = className;
 		}
 
-		@JacksonXmlProperty(isAttribute = true)
+		@XmlAttribute
 		public float getTime() {
 			return time;
 		}
@@ -202,7 +204,7 @@ public class JUnitReporter implements ExtendTestReporter, ExtendTestListener {
 			this.time = time;
 		}
 
-		@JsonProperty
+		@XmlElement
 		public FailureOrError getFailure() {
 			return failure;
 		}
@@ -211,7 +213,7 @@ public class JUnitReporter implements ExtendTestReporter, ExtendTestListener {
 			this.failure = failure;
 		}
 
-		@JsonProperty
+		@XmlElement
 		public FailureOrError getError() {
 			return error;
 		}
@@ -222,7 +224,7 @@ public class JUnitReporter implements ExtendTestReporter, ExtendTestListener {
 
 	}
 
-	@JacksonXmlRootElement(localName = "testsuite")
+	@XmlRootElement(name = "testsuite")
 	static class TestSuite {
 
 		private int errors;
@@ -237,8 +239,7 @@ public class JUnitReporter implements ExtendTestReporter, ExtendTestListener {
 
 		private String timeStamp;
 
-		@JacksonXmlElementWrapper(useWrapping = false)
-		@JsonProperty("testcase")
+		@XmlElement(name = "testcase")
 		protected List<TestCase> testCaseList = new ArrayList<TestCase>();
 
 		public TestCase getLastTestCase() {
@@ -258,7 +259,7 @@ public class JUnitReporter implements ExtendTestReporter, ExtendTestListener {
 			testCaseList.add(testCase);
 		}
 
-		@JacksonXmlProperty(isAttribute = true)
+		@XmlAttribute
 		public int getErrors() {
 			return errors;
 		}
@@ -267,7 +268,7 @@ public class JUnitReporter implements ExtendTestReporter, ExtendTestListener {
 			errors++;
 		}
 
-		@JacksonXmlProperty(isAttribute = true)
+		@XmlAttribute
 		public int getFailures() {
 			return failures;
 		}
@@ -276,7 +277,7 @@ public class JUnitReporter implements ExtendTestReporter, ExtendTestListener {
 			this.failures = failures;
 		}
 
-		@JacksonXmlProperty(isAttribute = true)
+		@XmlAttribute
 		public String getHostName() {
 			return hostName;
 		}
@@ -285,7 +286,7 @@ public class JUnitReporter implements ExtendTestReporter, ExtendTestListener {
 			this.hostName = hostName;
 		}
 
-		@JacksonXmlProperty(isAttribute = true)
+		@XmlAttribute
 		public String getName() {
 			return name;
 		}
@@ -294,12 +295,12 @@ public class JUnitReporter implements ExtendTestReporter, ExtendTestListener {
 			this.name = name;
 		}
 
-		@JacksonXmlProperty(isAttribute = true)
+		@XmlAttribute
 		public String getTimeStamp() {
 			return timeStamp;
 		}
 
-		@JacksonXmlProperty(isAttribute = true)
+		@XmlAttribute
 		public float getTime() {
 			return time;
 		}
@@ -312,7 +313,7 @@ public class JUnitReporter implements ExtendTestReporter, ExtendTestListener {
 			this.timeStamp = timeStamp;
 		}
 
-		@JacksonXmlProperty(isAttribute = true)
+		@XmlAttribute
 		public int getTests() {
 			return testCaseList.size();
 		}
@@ -324,7 +325,7 @@ public class JUnitReporter implements ExtendTestReporter, ExtendTestListener {
 		private String message;
 		private String type;
 
-		@JacksonXmlProperty(isAttribute = true)
+		@XmlAttribute
 		public String getMessage() {
 			return message;
 		}
@@ -333,7 +334,7 @@ public class JUnitReporter implements ExtendTestReporter, ExtendTestListener {
 			this.message = message;
 		}
 
-		@JacksonXmlProperty(isAttribute = true)
+		@XmlAttribute
 		public String getType() {
 			return type;
 		}
@@ -342,7 +343,7 @@ public class JUnitReporter implements ExtendTestReporter, ExtendTestListener {
 			this.type = type;
 		}
 
-		@JacksonXmlText
+		@XmlValue
 		public String getValue() {
 			return value;
 		}
