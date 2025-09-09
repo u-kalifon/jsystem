@@ -303,7 +303,7 @@ public class JSystemProperties {
 		if (loggerStatus == null) { // the logger was never init
 			setPreference("logger", "true");
 			setPreference("handlers", "java.util.logging.FileHandler java.util.logging.ConsoleHandler");
-			setPreference("jsystem.level", "FINER");
+			setPreference("jsystem.level", "INFO");
 			setPreference("java.util.logging.FileHandler.limit", "10000000");
 			setPreference("java.util.logging.FileHandler.count", "4");
 			setPreference("java.util.logging.FileHandler.append", "true");
@@ -322,7 +322,7 @@ public class JSystemProperties {
 				String remoteLogConf = "logger=true\n"
 						+ "handlers=java.util.logging.FileHandler java.util.logging.ConsoleHandler\n"
 						+ "java.util.logging.FileHandler.limit=10000000\n" + "java.util.logging.FileHandler.count=4\n"
-						+ "jsystem.level= FINER\n" + "java.util.logging.FileHandler.append=true\n"
+						+ "jsystem.level= INFO\n" + "java.util.logging.FileHandler.append=true\n"
 						+ "java.util.logging.FileHandler.formatter=java.util.logging.SimpleFormatter\n"
 						// +
 						// "java.util.logging.FileHandler.formatter=jsystem.utils.BasicFormatter\n"

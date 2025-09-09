@@ -19,7 +19,7 @@ public class LoggerHandler {
 					+ "java.util.logging.FileHandler.count=4\n" + "java.util.logging.FileHandler.append=true\n"
 					+ "java.util.logging.FileHandler.formatter=java.util.logging.SimpleFormatter\n"
 					+ "java.util.logging.FileHandler.pattern=JSystemUtilImpl%g.log\n"
-					+ "java.util.logging.FileHandler.level=ALL\n" + "java.util.logging.ConsoleHandler.level=ALL\n"
+					+ "java.util.logging.FileHandler.level=INFO\n" + "java.util.logging.ConsoleHandler.level=INFO\n"
 					+ "java.util.logging.ConsoleHandler.formatter=java.util.logging.SimpleFormatter\n";
 
 			try {

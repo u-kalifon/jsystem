@@ -69,7 +69,7 @@ public class Launcher2 {
 		try {
 			String mainClassName = System.getProperty(CommonResources.JSYSTEM_MAIN);
 			if (mainClassName == null || "".equals(mainClassName.trim())){
-				throw new Exception("jsystem main class is not defined");
+				throw new Exception("JSystem main class is not defined. It is typically passed as a system property on the command line: -Djsystem.main=jsystem.treeui.TestRunner");
 			}
 			Class<?> mainClass;
 			mainClass = loader.loadClass(mainClassName);

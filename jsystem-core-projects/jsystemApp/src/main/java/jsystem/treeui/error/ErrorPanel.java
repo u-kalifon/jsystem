@@ -117,7 +117,7 @@ public class ErrorPanel {
 	 */
 	public static void showErrorDialog(String title, String message, ErrorLevel errorLevel) {
 		WaitDialog.endWaitDialog();
-		Logger.getLogger(ErrorPanel.class.getName()).log(Level.FINEST, message);
+		Logger.getLogger(ErrorPanel.class.getName()).log(Level.INFO, message);
 		ERROR_DIALOG = new ErrorDialog(title, message, errorLevel, false);
 		ERROR_DIALOG.init();
 	}
@@ -130,7 +130,7 @@ public class ErrorPanel {
 	 */
 	public static boolean showErrorDialogOkCancel(String title, String message, ErrorLevel errorLevel) {
 		WaitDialog.endWaitDialog();
-		Logger.getLogger(ErrorPanel.class.getName()).log(Level.FINEST, message);
+		Logger.getLogger(ErrorPanel.class.getName()).log(Level.INFO, message);
 		ERROR_DIALOG = new ErrorDialog(title, message, errorLevel, true);
 		ERROR_DIALOG.init();
 		return ERROR_DIALOG.isCancel();
