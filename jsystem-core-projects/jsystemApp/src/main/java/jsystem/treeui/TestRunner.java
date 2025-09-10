@@ -40,8 +40,9 @@ import javax.swing.*;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * TestRunner This class implements the main entry This class holds the tree
@@ -66,7 +67,7 @@ public class TestRunner extends BaseTestRunner implements StartRunner {
 
 	public static final int CONTINUE_EVENT = 15;
 
-	private static Logger log = Logger.getLogger(TestRunner.class.getName());
+	private static Logger log = LoggerFactory.getLogger(TestRunner.class);
 
 	private static TestRunner runner;
 
@@ -79,12 +80,12 @@ public class TestRunner extends BaseTestRunner implements StartRunner {
 		JSystemProperties.getInstance();
 		processSplashScreen();
 
-		log.fine("Tree TestRunner is starting");
+		log.debug("Tree TestRunner is starting");
 
 		try {
 			UIManager.setLookAndFeel(new Plastic3DLookAndFeel());
 		} catch (Exception e) {
-			log.log(Level.SEVERE, "Error setting UI Look and Feel");
+			log.error("Error setting UI Look and Feel");
 		}
 
 		JSystemProperties.getInstance().setJsystemRunner(true);
@@ -108,7 +109,7 @@ public class TestRunner extends BaseTestRunner implements StartRunner {
 		try {
 			GuiResourcesManager.getInstance().init();
 		} catch (Throwable e1) {
-			log.log(Level.SEVERE, "Fail to init GUI resource file", e1);
+			log.error("Fail to init GUI resource file", e1);
 		}
 
 		UIManager.put("Button.background", new Color(0xf6, 0xf6, 0xf6));
@@ -130,13 +131,13 @@ public class TestRunner extends BaseTestRunner implements StartRunner {
 		try {
 			JSystemAgentClientsPool.initPoolFromRepositoryFile();
 		} catch (Throwable e) {
-			log.log(Level.SEVERE, "Fail to init agents pool", e);
+			log.error("Fail to init agents pool", e);
 		}
 
 		try {
 			UpgradeManager.upgrade(true);
 		} catch (Exception e) {
-			log.log(Level.WARNING, "Fail to upgrading old scenarios", e);
+			log.warn("Fail to upgrading old scenarios", e);
 		}
 
 		try {
@@ -148,7 +149,7 @@ public class TestRunner extends BaseTestRunner implements StartRunner {
 			TestRunnerFrame.guiMainFrame = treeView;
 			treeView.init();
 		} catch (Throwable e) {
-			log.log(Level.SEVERE, "Failed initiating main view", e);
+			log.error("Failed initiating main view", e);
 			System.exit(1);
 		} finally {
 			// turning on events
@@ -180,8 +181,8 @@ public class TestRunner extends BaseTestRunner implements StartRunner {
 		try {
 			AutoSaveThread.getInstance().startThread();
 		} catch (Exception e) {
-			log.log(Level.SEVERE, "ERROR getting instance of AutoSaveThread manager.");
-			log.log(Level.SEVERE, StringUtils.getStackTrace(e));
+			log.error("ERROR getting instance of AutoSaveThread manager.");
+			log.error(StringUtils.getStackTrace(e));
 		}
 
 		// Extract JSystem script file for "if" condition from the jsystemAnt
@@ -204,7 +205,7 @@ public class TestRunner extends BaseTestRunner implements StartRunner {
 			new File(destination).mkdirs();
 			FileUtils.extractOneZipFile("ifScriptCondition.js", new File(antJarFile), new File(destination));
 		} catch (IOException e) {
-			log.log(Level.WARNING, "Fail to locate script file for if execution: " + destination);
+			log.warn("Fail to locate script file for if execution: " + destination);
 		}
 	}
 
@@ -212,7 +213,7 @@ public class TestRunner extends BaseTestRunner implements StartRunner {
 		try {
 			RunnerEngineManager.getRunnerEngine().close();
 		} catch (Exception e) {
-			log.warning("Failed disconnecting on exit " + e.getMessage());
+			log.warn("Failed disconnecting on exit " + e.getMessage());
 		}
 		if (RunnerListenersManager.hadFailure) {
 			log.info("System exit 101");
@@ -294,7 +295,7 @@ public class TestRunner extends BaseTestRunner implements StartRunner {
 				try {
 					updateLock();
 				} catch (Exception e) {
-					log.warning("Failed updating file lock. " + e.getMessage());
+					log.warn("Failed updating file lock. " + e.getMessage());
 				}
 			}
 			break;
@@ -438,10 +439,10 @@ public class TestRunner extends BaseTestRunner implements StartRunner {
 							}
 						}
 					} catch (Exception e) {
-						log.log(Level.FINE, "Splash Screen Closed");
+						log.debug("Splash Screen Closed");
 					}
 				} else {
-					log.log(Level.WARNING, "Splash screen not found");
+					log.warn("Splash screen not found");
 
 				}
 

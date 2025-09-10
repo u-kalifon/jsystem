@@ -6,8 +6,9 @@ package jsystem.treeui.publisher;
 import java.io.File;
 import java.io.IOException;
 import java.util.Enumeration;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.event.TreeModelListener;
 import javax.swing.tree.TreeModel;
@@ -24,7 +25,7 @@ import org.w3c.dom.Element;
  * 
  */
 public class PublisherTreeModel implements TreeModel {
-	private static Logger log = Logger.getLogger(PublisherTreeModel.class.getName());
+	private static Logger log = LoggerFactory.getLogger(PublisherTreeModel.class);
 
 	public static final int VIEW_ALL = 0;
 
@@ -83,12 +84,12 @@ public class PublisherTreeModel implements TreeModel {
 			try {
 				FileUtils.getEmptyXmlFile(tmpXmlFile);
 			} catch (Exception e1) {
-				log.log(Level.WARNING, "exception while initializing xml file");
+				log.warn("exception while initializing xml file");
 			}
 		try {
 			FileUtils.copyFile(tmpXmlFile, xmlFile);
 		} catch (IOException e) {
-			log.log(Level.WARNING, "Fail to write to: " + xmlFile.getPath(), e);
+			log.warn("Fail to write to: " + xmlFile.getPath(), e);
 		}
 	}
 
@@ -97,7 +98,7 @@ public class PublisherTreeModel implements TreeModel {
 			// Prepare the DOM document for writing
 			FileUtils.saveDocumentToFile(doc, file);
 		} catch (Exception e) {
-			log.log(Level.WARNING, "Fail to write to: " + xmlFile.getPath(), e);
+			log.warn("Fail to write to: " + xmlFile.getPath(), e);
 		}
 	}
 

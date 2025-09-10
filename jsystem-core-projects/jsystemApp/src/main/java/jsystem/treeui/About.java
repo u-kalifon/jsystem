@@ -13,8 +13,9 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.net.URI;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The About Version Dialog, activated from the Help Menu
@@ -26,7 +27,7 @@ public class About extends JDialog {
 
 	private static final long serialVersionUID = 1L;
 	
-	private static Logger log = Logger.getLogger(About.class.getName());
+	private static Logger log = LoggerFactory.getLogger(About.class);
 	
 	private String version;
 
@@ -90,7 +91,7 @@ public class About extends JDialog {
 		try {
 			version = ClassSearchUtil.getPropertyFromClassPath("META-INF/maven/org.jsystemtest/jsystemApp/pom.properties","version");
 		} catch (Exception e) {
-			log.log(Level.WARNING, "Failed getting client version: " + e.getMessage());
+			log.warn("Failed getting client version: " + e.getMessage());
 		}
 		JLabel versionLabel = new JLabel("Version: " + version);
 		versionLabel.setOpaque(false);
@@ -119,7 +120,7 @@ public class About extends JDialog {
 					try {
 						desktop.browse(new URI("http://www.top-q.co.il"));
 					} catch (Exception e) {
-						log.log(Level.WARNING, "Failed opening browser to Top-Q website: " + e.getMessage());
+						log.warn("Failed opening browser to Top-Q website: " + e.getMessage());
 					}
 				}
 			}  
@@ -150,7 +151,7 @@ public class About extends JDialog {
 					try {
 						desktop.browse(new URI("https://github.com/Top-Q/jsystem/wiki/Release-Notes"));
 					} catch (Exception e) {
-						log.log(Level.WARNING, "Failed openning browser to JSystem wiki: " + e.getMessage());
+						log.warn("Failed openning browser to JSystem wiki: " + e.getMessage());
 					}
 				}
 			}  

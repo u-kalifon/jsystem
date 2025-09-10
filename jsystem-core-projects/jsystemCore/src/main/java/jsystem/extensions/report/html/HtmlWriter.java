@@ -14,8 +14,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Properties;
 import java.util.Stack;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import jsystem.extensions.report.html.summary.ContainerSummaryReport;
 import jsystem.framework.FrameworkOptions;
@@ -69,7 +70,7 @@ public class HtmlWriter implements Serializable{
 
 	private NameGenerator generator;
 	
-	private static Logger log = Logger.getLogger(HtmlWriter.class.getName());
+	private static Logger log = LoggerFactory.getLogger(HtmlWriter.class);
 
 	private int testCounter = 0;
 	
@@ -139,12 +140,11 @@ public class HtmlWriter implements Serializable{
 		try {
 			addResourceFiles();
 		} catch (Exception e) {
-			log.warning("Failed adding needed html files for sceario Hierarchy");
+			log.warn("Failed adding needed html files for sceario Hierarchy");
 		}
 		
 		rootScenario = new HashMap<String, Integer>();
 		containersStack = new Stack<HtmlTreeTestList>();
-
 
 		legacyPackageList();
 		//note method doesn't do anything if FrameworkOptions.HTML_PACKAGE_LIST is not set.
@@ -175,7 +175,7 @@ public class HtmlWriter implements Serializable{
 		try {
 			packagesList.doToFile(generator);
 		}catch (Exception e) {
-			log.fine("Failed updating package list file." + e.getMessage());
+			log.debug("Failed updating package list file." + e.getMessage());
 		}		
 	}
 	
@@ -202,7 +202,7 @@ public class HtmlWriter implements Serializable{
 			}
 			packagesList.toFile(generator);
 		}catch (Exception e1) {
-			log.fine("Failed updating package list file." + e1.getMessage());
+			log.debug("Failed updating package list file." + e1.getMessage());
 		}		
 		
 	}
@@ -232,12 +232,12 @@ public class HtmlWriter implements Serializable{
 		try {
 			FileUtils.saveInputStreamToFile(is,destination);
 		} catch (Exception e) {
-			log.warning("Failed copying File "+sourcePath+" needed to represent Html Hierarchy");
+			log.warn("Failed copying File "+sourcePath+" needed to represent Html Hierarchy");
 		}finally{
 			try {
 				is.close();
 			} catch (IOException e) {
-				log.warning("failed closing input stream");
+				log.warn("failed closing input stream");
 			}
 		}
 	}
@@ -336,7 +336,7 @@ public class HtmlWriter implements Serializable{
 			try {
 				FileUtils.addPropertyToFile(CommonResources.TEST_INNER_TEMP_FILENAME, CommonResources.TEST_DIR_KEY, directory);
 			}catch (Exception e) {
-				log.log(Level.WARNING,"Failed updating tmp properties",e);
+				log.warn("Failed updating tmp properties",e);
 			}
 		}
 	}

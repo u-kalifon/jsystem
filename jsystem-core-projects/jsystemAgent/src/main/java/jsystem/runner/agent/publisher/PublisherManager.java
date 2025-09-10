@@ -3,8 +3,8 @@
  */
 package jsystem.runner.agent.publisher;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import jsystem.framework.FrameworkOptions;
 import jsystem.framework.JSystemProperties;
@@ -19,7 +19,7 @@ import jsystem.utils.StringUtils;
  * 
  */
 public class PublisherManager {
-	private static Logger log = Logger.getLogger(PublisherManager.class.getName());
+	private static Logger log = LoggerFactory.getLogger(PublisherManager.class);
 
 	private static PublisherManager manager = null;
 
@@ -49,7 +49,7 @@ public class PublisherManager {
 				.getPreference(FrameworkOptions.REPORTS_PUBLISHER_CLASS);
 		if (StringUtils.isEmpty(publisherClassName)) {
 			publisher = null;
-			log.warning("No publiher was defined");
+			log.warn("No publiher was defined");
 			publisher = new EmptyPublisher();
 			return;
 		}
@@ -58,12 +58,12 @@ public class PublisherManager {
 			if (publisherClass != null) {
 				Object instance = publisherClass.newInstance();
 				if (instance instanceof Publisher) {
-					log.log(Level.INFO, "Reports publisher : " + publisherClassName + " Was loaded.");
+					log.info("Reports publisher : " + publisherClassName + " Was loaded.");
 					publisher = (Publisher) instance;
 				}
 			}
 		} catch (Exception e) {
-			log.log(Level.WARNING, "Fail to init publisher : " + publisherClassName, e);
+			log.warn("Fail to init publisher : " + publisherClassName, e);
 			publisher = new EmptyPublisher();
 		}
 

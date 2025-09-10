@@ -6,8 +6,9 @@ package jsystem.treeui.fixtureui;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.util.Vector;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -32,7 +33,7 @@ public class FixturePanel extends JPanel {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	private static Logger log = Logger.getLogger(FixturePanel.class.getName());
+	private static Logger log = LoggerFactory.getLogger(FixturePanel.class);
 
 	private JTree fTree;
 
@@ -94,7 +95,7 @@ public class FixturePanel extends JPanel {
 				try {
 					vpath = FixtureManager.getInstance().getFixturePath(fixture);
 				} catch (Exception e) {
-					log.log(Level.WARNING, "Fail to find fixture path", e);
+					log.warn("Fail to find fixture path", e);
 					return;
 				}
 				Object[] path = new Object[vpath.size()];

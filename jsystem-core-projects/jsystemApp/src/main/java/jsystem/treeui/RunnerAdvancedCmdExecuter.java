@@ -7,8 +7,9 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import jsystem.framework.FrameworkOptions;
 import jsystem.framework.JSystemProperties;
@@ -36,7 +37,7 @@ import org.w3c.dom.Element;
  */
 public class RunnerAdvancedCmdExecuter implements ExecutionListener {
 
-	private static Logger log = Logger.getLogger(RunnerAdvancedCmdExecuter.class.getName());
+	private static Logger log = LoggerFactory.getLogger(RunnerAdvancedCmdExecuter.class);
 	private final String COMMENT = "#";
 	
 	private File[] argsFile;
@@ -56,7 +57,7 @@ public class RunnerAdvancedCmdExecuter implements ExecutionListener {
 					}
 				}
 			} catch (IOException e) {
-				log.log(Level.SEVERE, "Fail reading scenarios list file", e);
+				log.error("Fail reading scenarios list file", e);
 			}			
 		} else {
 			argsFile = new File[args.length];
@@ -105,15 +106,15 @@ public class RunnerAdvancedCmdExecuter implements ExecutionListener {
 				
 				// Parse the input file
 				if (null == currentFile){
-					log.warning("File to parse is null. Skipping");
+					log.warn("File to parse is null. Skipping");
 					continue;
 				}
 				
 				if (!currentFile.exists()){
-					log.warning("File "+currentFile.getAbsolutePath()+" does not exist. Skipping");
+					log.warn("File "+currentFile.getAbsolutePath()+" does not exist. Skipping");
 					continue;
 				}
-				log.fine("About to open file "+currentFile.getAbsolutePath()+" for parsing");
+				log.debug("About to open file "+currentFile.getAbsolutePath()+" for parsing");
 				Document doc = XmlUtils.getDocumentBuilder().parse(
 						new ReaderInputStream(
 								new FileReader(currentFile)));

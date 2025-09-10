@@ -5,7 +5,8 @@
  */
 package jsystem.runner.agent.server;
 
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import jsystem.framework.RunnerStatePersistencyManager;
 import jsystem.framework.scenario.Scenario;
@@ -23,7 +24,7 @@ import junit.framework.TestListener;
 public class ActiveTestStateListener implements TestListener {
 	
 	@SuppressWarnings("unused")
-	private static Logger log = Logger.getLogger(ActiveTestStateListener.class.getName());
+	private static Logger log = LoggerFactory.getLogger(ActiveTestStateListener.class);
 	
 	public ActiveTestStateListener() {
 	}

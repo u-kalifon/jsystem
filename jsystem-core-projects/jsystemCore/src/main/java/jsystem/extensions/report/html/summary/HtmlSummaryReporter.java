@@ -12,8 +12,9 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import jsystem.framework.FrameworkOptions;
 import jsystem.framework.JSystemProperties;
@@ -33,7 +34,7 @@ public class HtmlSummaryReporter implements Serializable{
 	 */
 	private static final long serialVersionUID = -4606545218717848144L;
 
-	private static Logger log = Logger.getLogger(HtmlSummaryReporter.class.getName());
+	private static Logger log = LoggerFactory.getLogger(HtmlSummaryReporter.class);
 
 	private File summaryFile;
 
@@ -103,7 +104,7 @@ public class HtmlSummaryReporter implements Serializable{
 		try {
 			saveFile();
 		} catch (Exception e) {
-			log.log(Level.WARNING, "Fail to write file: " + summaryFile.getPath(), e);
+			log.warn("Fail to write file: " + summaryFile.getPath(), e);
 		}
 
 	}
@@ -155,7 +156,7 @@ public class HtmlSummaryReporter implements Serializable{
 			try {
 				saveFile();
 			} catch (Exception e) {
-				log.log(Level.WARNING, "fail to save summary file", e);
+				log.warn("fail to save summary file", e);
 			}
 		}
 

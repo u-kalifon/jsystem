@@ -13,8 +13,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -29,13 +30,12 @@ import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
-
 /**
  * XML related common functionality
  */
 public class XmlUtils {
 
-	private static Logger log = Logger.getLogger(XmlUtils.class.getName());
+	private static Logger log = LoggerFactory.getLogger(XmlUtils.class);
 	private static DocumentBuilder db; 
 	
 	/**
@@ -49,13 +49,13 @@ public class XmlUtils {
 			db = dbf.newDocumentBuilder();
 			db.setErrorHandler(new ErrorHandler(){
 				public void error(SAXParseException exception) throws SAXException {
-					log.log(Level.FINE, "Failed parsing xml file",exception);
+					log.debug("Failed parsing xml file",exception);
 				}
 				public void fatalError(SAXParseException exception) throws SAXException {
-					log.log(Level.FINE, "Failed parsing xml file",exception);
+					log.debug("Failed parsing xml file",exception);
 				}
 				public void warning(SAXParseException exception) throws SAXException {
-					log.log(Level.FINE, "Failed parsing xml file",exception);					
+					log.debug("Failed parsing xml file",exception);					
 				}
 			});
 		}
@@ -222,20 +222,20 @@ public class XmlUtils {
 		try {
 			docBuilder = docBuilderFactory.newDocumentBuilder();
 		} catch (ParserConfigurationException e) {
-			log.warning("Wrong parser configuration: " + e.getMessage());
+			log.warn("Wrong parser configuration: " + e.getMessage());
 			return null;
 		}
 		File sourceFile = new File(fileName);
 		try {
 			doc = docBuilder.parse(sourceFile);
 		} catch (SAXException e) {
-			log.warning("Wrong XML file structure: " + e.getMessage());
+			log.warn("Wrong XML file structure: " + e.getMessage());
 			return null;
 		} catch (IOException e) {
-			log.warning("Could not read source file: " + e.getMessage());
+			log.warn("Could not read source file: " + e.getMessage());
 			return null;
 		}
-		log.fine("XML file parsed");
+		log.debug("XML file parsed");
 		return doc;
 	}
 	

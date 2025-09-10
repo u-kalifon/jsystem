@@ -19,13 +19,14 @@ import java.io.StringReader;
 import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
 import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.util.List;
 
 public class ObjectArrayParameterProvider extends AbstractSerializingParameterProvider {
 
-	private static Logger log = Logger.getLogger(ObjectArrayParameterProvider.class.getName());
+	private static Logger log = LoggerFactory.getLogger(ObjectArrayParameterProvider.class);
 
 	private List<ParameterProviderListener> listenersList = new ArrayList<ParameterProviderListener>();
 
@@ -63,7 +64,7 @@ public class ObjectArrayParameterProvider extends AbstractSerializingParameterPr
 						properties.setProperty(i + "." + be.getName(), StringUtils.advancedToString(value));
 					}
 				} catch (Exception e) {
-					log.log(Level.WARNING, "Fail to invoke the getter: " + be.getName(), e);
+					log.warn("Fail to invoke the getter: " + be.getName(), e);
 				}
 			}
 		}
@@ -90,7 +91,7 @@ public class ObjectArrayParameterProvider extends AbstractSerializingParameterPr
 			propertiesString = multiplySingleBackslashes(propertiesString);
 			properties.load(new StringReader(propertiesString));
 		} catch (IOException e1) {
-			log.log(Level.WARNING, "Fail to load properties: " + propertiesString, e1);
+			log.warn("Fail to load properties: " + propertiesString, e1);
 			return null;
 		}
 		// create the class from the input string
@@ -98,7 +99,7 @@ public class ObjectArrayParameterProvider extends AbstractSerializingParameterPr
 		try {
 			c = LoadersManager.getInstance().getLoader().loadClass(className);
 		} catch (ClassNotFoundException e) {
-			log.log(Level.WARNING, "Fail to create class: " + className, e);
+			log.warn("Fail to create class: " + className, e);
 			return null;
 		}
 		// create the object and init it using the properties
@@ -254,8 +255,7 @@ public class ObjectArrayParameterProvider extends AbstractSerializingParameterPr
 				listener = (ParameterProviderListener) LoadersManager.getInstance().getLoader().loadClass(listenerStr)
 						.newInstance();
 			} catch (Exception e) {
-				log.log(Level.WARNING,
-						"Failed to create instance of type " + ParameterProviderListener.class.getName(), e);
+				log.warn("Failed to create instance of type " + ParameterProviderListener.class.getName(), e);
 				continue;
 			}
 			listenersList.add(listener);

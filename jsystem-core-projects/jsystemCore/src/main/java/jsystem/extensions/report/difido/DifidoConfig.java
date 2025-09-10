@@ -5,7 +5,8 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Properties;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Allows configuration of the Difido HTML report. This will affect the local
@@ -16,7 +17,7 @@ import java.util.logging.Logger;
  */
 class DifidoConfig {
 
-	private static final Logger log = Logger.getLogger(DifidoConfig.class.getName());
+	private static final Logger log = LoggerFactory.getLogger(DifidoConfig.class);
 
 	private static final String FILE_NAME = "difido.properties";
 
@@ -44,7 +45,7 @@ class DifidoConfig {
 		try (FileInputStream in = new FileInputStream(new File(System.getProperty("user.dir"), FILE_NAME))) {
 			properties.load(in);
 		} catch (IOException e) {
-			log.warning("Failed to read Difido configuration file");
+			log.warn("Failed to read Difido configuration file");
 		}
 	}
 
@@ -57,7 +58,7 @@ class DifidoConfig {
 			properties.store(out, "Difido report properties");
 
 		} catch (IOException e) {
-			log.warning("Failed to create default Difido properties file due to " + e.getMessage());
+			log.warn("Failed to create default Difido properties file due to " + e.getMessage());
 		}
 
 	}

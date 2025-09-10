@@ -10,8 +10,9 @@ import java.util.List;
 import java.util.Properties;
 import java.util.UUID;
 import java.util.Vector;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.mail.MethodNotSupportedException;
 
@@ -43,7 +44,7 @@ import org.w3c.dom.NodeList;
  * 
  */
 public abstract class JTestContainer implements JTest {
-	protected static Logger log = Logger.getLogger(JTestContainer.class.getName());
+	protected static Logger log = LoggerFactory.getLogger(JTestContainer.class);
 
 	private String name;
 	protected Vector<JTest> rootTests = new Vector<JTest>();
@@ -80,7 +81,7 @@ public abstract class JTestContainer implements JTest {
 	}
 
 	public JTestContainer(String name, JTestContainer parent, String id, String uuid) {
-		log.fine("JTest container : " + name);
+		log.debug("JTest container : " + name);
 		setParent(parent);
 		if (!(this instanceof Scenario)) {
 			setName(name);
@@ -388,20 +389,20 @@ public abstract class JTestContainer implements JTest {
 	 */
 	public void removeTest(JTest test) throws Exception {
 		if (test == null) {
-			log.log(Level.WARNING, "Test to remove is null, inside container: " + this.getName());
+			log.warn("Test to remove is null, inside container: " + this.getName());
 			return;
 		}
 
 		// several JTest types cannot be deleted directly, only their parent...
 		if ((test instanceof AntIfElse) || (test instanceof AntSwitchDefault)) {
 			// TODO: maybe add a pop-up message
-			log.log(Level.WARNING, "Test " + test.getTestName() + " cannot be removed directly");
+			log.warn("Test " + test.getTestName() + " cannot be removed directly");
 			return;
 		}
 
 		int index = getRootIndex(test);
 		if (index == -1) {
-			log.log(Level.WARNING, "Test " + test.getTestName() + " wasn't found in container " + this.getName());
+			log.warn("Test " + test.getTestName() + " wasn't found in container " + this.getName());
 			return;
 		}
 		rootTests.remove(index);
@@ -1093,7 +1094,7 @@ public abstract class JTestContainer implements JTest {
 			}
 		}
 		// This happens when we execute runScenario.bat on junit4 tests.
-		log.warning("Failed to find runner test for test " + test.getClass().getSimpleName() + " in jcontainter "
+		log.warn("Failed to find runner test for test " + test.getClass().getSimpleName() + " in jcontainter "
 				+ this.getClass().getSimpleName());
 		return null;
 	}

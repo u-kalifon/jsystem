@@ -15,8 +15,9 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A wrapper for the Ant ScriptCondition to allow passing of parameters and
@@ -27,7 +28,7 @@ import java.util.logging.Logger;
  */
 public class JSystemScriptCondition extends ScriptCondition {
 
-	Logger log = Logger.getLogger(JSystemScriptCondition.class.getName());
+	Logger log = LoggerFactory.getLogger(JSystemScriptCondition.class);
 
 	String params;
 	String uuid;
@@ -72,7 +73,7 @@ public class JSystemScriptCondition extends ScriptCondition {
 			final File destinationFolder = new File(System.getProperty("user.dir"), "scripts");
 			if (!destinationFolder.exists() || !destinationFolder.isDirectory()) {
 				if (!destinationFolder.mkdir()) {
-					log.warning("Failed to create scripts destination folder");
+					log.warn("Failed to create scripts destination folder");
 					return;
 				}
 			}
@@ -93,7 +94,7 @@ public class JSystemScriptCondition extends ScriptCondition {
 					newSrc = extractScriptFromJar(antJarFile, srcFile.getName(), destinationFolder);
 				}
 				if (null == newSrc) {
-					log.warning("Failed to find " + srcFile.getName() + " script file");
+					log.warn("Failed to find " + srcFile.getName() + " script file");
 				}
 			}
 
@@ -119,7 +120,7 @@ public class JSystemScriptCondition extends ScriptCondition {
 				log.info("Extract the script file from the jsystemAnt jar file to " + destination);
 				FileUtils.extractOneZipFile("ifScriptCondition.js", antJarFile, destination);
 			} catch (IOException e) {
-				log.log(Level.SEVERE, "Fail to locate script file for if execution: " + scriptName);
+				log.error("Fail to locate script file for if execution: " + scriptName);
 				throw new RuntimeException("Fail locating script file for if execution: " + scriptName);
 			}
 		}

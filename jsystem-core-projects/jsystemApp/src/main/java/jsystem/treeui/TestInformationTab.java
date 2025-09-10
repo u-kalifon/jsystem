@@ -16,8 +16,9 @@ import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.util.Arrays;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -106,7 +107,7 @@ public class TestInformationTab implements TreeSelectionListener, FocusListener,
 
 	private UserDocumentation ud;
 
-	private static Logger log = Logger.getLogger(TestInformationTab.class.getName());
+	private static Logger log = LoggerFactory.getLogger(TestInformationTab.class);
 
 	private String currentSectionName = "";
 
@@ -265,7 +266,7 @@ public class TestInformationTab implements TreeSelectionListener, FocusListener,
 			try {
 				doc = HtmlCodeWriter.getInstance().getMethodJavaDoc(className, methodName);
 			} catch (Exception e1) {
-				log.log(Level.WARNING, "Fail to read javadoc", e1);
+				log.warn("Fail to read javadoc", e1);
 			}
 			if (StringUtils.isEmpty(doc)) {
 				doc = test.getDocumentation();

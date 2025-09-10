@@ -5,8 +5,9 @@ package com.aqua.anttask.jsystem;
 
 import java.util.Enumeration;
 import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import jsystem.framework.common.CommonResources;
 import jsystem.framework.report.ListenerstManager;
@@ -33,7 +34,7 @@ import org.apache.tools.ant.ProjectComponent;
  */
 public class JSystemAntUtil {
 
-	static Logger log = Logger.getLogger(JSystemAntUtil.class.getName());
+	static Logger log = LoggerFactory.getLogger(JSystemAntUtil.class);
 	
 	/**
 	 * Get all properties relevant to given unique ID and scenario String
@@ -45,7 +46,7 @@ public class JSystemAntUtil {
 		try {
 			return ScenarioHelpers.getTestPropertiesFromScenarioProps(scenarioString, fullUuid);
 		} catch (Exception e1) {
-			log.log(Level.SEVERE, "Error trying to load test parameters from properties file",e1);
+			log.error("Error trying to load test parameters from properties file",e1);
 			return new Properties();
 		}
 	}
@@ -65,11 +66,11 @@ public class JSystemAntUtil {
 			try {
 				tmp = ParametersManager.replaceAllReferenceValues(tmp, ParameterType.STRING);
 			} catch (Exception e) {
-				log.log(Level.SEVERE, "Error trying to replace reference parameters for input: " + tmp,e);
+				log.error("Error trying to replace reference parameters for input: " + tmp,e);
 			}
 			toReturn = tmp;
 		}
-		log.log(Level.INFO,parameterName + " = " + toReturn);
+		log.info(parameterName + " = " + toReturn);
 		return toReturn;
 	}
 	

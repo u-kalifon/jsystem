@@ -5,8 +5,9 @@ package jsystem.utils;
 
 import java.io.File;
 import java.net.URL;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import jsystem.framework.FrameworkOptions;
 import jsystem.framework.JSystemProperties;
@@ -35,7 +36,7 @@ public class UploadRunner {
 
 	private PostMethod filePost;
 
-	private static Logger log = Logger.getLogger(UploadRunner.class.getName());
+	private static Logger log = LoggerFactory.getLogger(UploadRunner.class);
 
 	/**
 	 * 
@@ -107,7 +108,7 @@ public class UploadRunner {
 			_url.openConnection().connect();
 			return true;
 		} catch (Exception e) {
-			log.log(Level.FINE, "Failed validating url " + url, e);
+			log.debug("Failed validating url " + url, e);
 			return false;
 		}
 	}

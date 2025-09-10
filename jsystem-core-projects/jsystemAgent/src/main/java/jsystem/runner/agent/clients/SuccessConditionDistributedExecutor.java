@@ -8,8 +8,9 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import jsystem.framework.RunProperties;
 import jsystem.framework.report.ExecutionListener;
@@ -22,7 +23,6 @@ import jsystem.runner.ErrorLevel;
 import junit.framework.AssertionFailedError;
 import junit.framework.SystemTest;
 import junit.framework.Test;
-
 
 /**
  * Executor which implements the PassIfOnePass condition.
@@ -39,7 +39,7 @@ import junit.framework.Test;
  * @author goland
  */
 public class SuccessConditionDistributedExecutor extends DefaultDistributedExecutor{
-	private static Logger log = Logger.getLogger(SuccessConditionDistributedExecutor.class.getName());
+	private static Logger log = LoggerFactory.getLogger(SuccessConditionDistributedExecutor.class);
 	
 	protected ExecutionListener getDistributedExecutionListener() {
 		boolean passIfOnePass = false;
@@ -121,7 +121,7 @@ public class SuccessConditionDistributedExecutor extends DefaultDistributedExecu
 				try {
 					getAndMergeRunProperties();
 				}catch (Exception e) {
-					log.log(Level.WARNING, "Failed getting agent run properties",e );
+					log.warn("Failed getting agent run properties",e );
 				}
 			}			
 		}
@@ -238,20 +238,17 @@ public class SuccessConditionDistributedExecutor extends DefaultDistributedExecu
 			
 		}
 
-
 		@Override
 		public void endLoop(AntForLoop loop, int count) {
 			// TODO Auto-generated method stub
 			
 		}
 
-
 		@Override
 		public void startContainer(JTestContainer container) {
 			// TODO Auto-generated method stub
 			
 		}
-
 
 		@Override
 		public void startLoop(AntForLoop loop, int count) {

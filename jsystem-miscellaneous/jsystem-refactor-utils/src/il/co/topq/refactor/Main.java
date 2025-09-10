@@ -9,8 +9,9 @@ import il.co.topq.refactor.refactorUtil.JSystemUtilImpl;
 import il.co.topq.refactor.utils.StringUtils;
 
 import java.io.File;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
@@ -21,7 +22,7 @@ import org.apache.commons.cli.ParseException;
  */
 
 public class Main {
-	private static Logger log = Logger.getLogger("Main");
+	private static Logger log = LoggerFactory.getLogger("Main");
 
 	private static final String MODE_SCENARIO = "scenario";
 	private static final String MODE_TEST = "test";
@@ -36,7 +37,7 @@ public class Main {
 			commander = new Commander(args);
 
 		} catch (ParseException e) {
-			log.log(Level.SEVERE, "Failed to parse command line parameters. " + e.getMessage());
+			log.error("Failed to parse command line parameters. " + e.getMessage());
 			System.exit(1);
 		}
 
@@ -125,10 +126,10 @@ public class Main {
 						scenarioSourceNamePath, scenarioTargetNamePath);
 
 			} else {
-				log.warning("Unknown mode: " + mode);
+				log.warn("Unknown mode: " + mode);
 			}
 		} catch (Exception e) {
-			log.log(Level.SEVERE, "Exception was caught while refactoring", e);
+			log.error("Exception was caught while refactoring", e);
 			System.exit(1);
 		}
 		log.info("Finished refactoring in " + (System.currentTimeMillis() - startTime) / 1000 + " seconds");
@@ -144,7 +145,7 @@ public class Main {
 		if (null != optionValue) {
 			return;
 		}
-		log.severe("Missing parameter: " + option.getLongOpt() + " (" + option.getDescription() + ")");
+		log.error("Missing parameter: " + option.getLongOpt() + " (" + option.getDescription() + ")");
 		System.exit(1);
 	}
 

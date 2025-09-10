@@ -14,8 +14,9 @@ import java.io.File;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import jsystem.extensions.sourcecontrol.SourceControlI;
 
@@ -34,7 +35,7 @@ public class JSystemUtilImpl implements JSystemUtilI {
 
 	final File configFile = new File("JSystemUtilImpl.properties");
 
-	private Logger log = Logger.getLogger(this.getClass().getSimpleName());
+	private Logger log = LoggerFactory.getLogger(this.getClass().getSimpleName());
 
 	public JSystemUtilImpl(File projectDir) {
 		jsystemProject = new JSystemProject(projectDir);
@@ -67,7 +68,7 @@ public class JSystemUtilImpl implements JSystemUtilI {
 			c = (Class<SourceControlI>) l.loadClass(className);
 			sourceControHandler = c.newInstance();
 		} catch (Exception e) {
-			log.log(Level.WARNING, "Failed to create instance of source control plugin", e);
+			log.warn("Failed to create instance of source control plugin", e);
 		}
 	}
 
@@ -174,13 +175,13 @@ public class JSystemUtilImpl implements JSystemUtilI {
 
 		for (ScenarioPairFiles pairFile : pairFilesList) {
 			boolean fileChange = false;
-			log.finer("In file " + pairFile.getPropertiesFile());
+			log.debug("In file " + pairFile.getPropertiesFile());
 			long start = System.currentTimeMillis();
 			for (UUID uuid : allUUIDs) {
                 boolean changedNow = pairFile.getPropertiesFile().replacePropertyName(uuid, oldParameterName, newParameterName);
 				fileChange = fileChange || changedNow;
 			}
-			log.finer("Finished finding all uuid's in " + (System.currentTimeMillis() - start) / 1000 + " seconds");
+			log.debug("Finished finding all uuid's in " + (System.currentTimeMillis() - start) / 1000 + " seconds");
 			start = System.currentTimeMillis();
 			if (fileChange) {
 				// We know that the test exists in the file and has the
@@ -192,7 +193,7 @@ public class JSystemUtilImpl implements JSystemUtilI {
 				numberOfFilesAffected++;
 			}
 			pairFile.getPropertiesFile().close();
-			log.finer("Finished writing properties to file " + (System.currentTimeMillis() - start) / 1000 + " seconds");
+			log.debug("Finished writing properties to file " + (System.currentTimeMillis() - start) / 1000 + " seconds");
 		}
 		return changed;
 	}
@@ -219,7 +220,7 @@ public class JSystemUtilImpl implements JSystemUtilI {
 
 		List<ScenarioPropertiesFile> propertiesFilesList = jsystemProject.getScenariosPropertiesFiles();
 		for (ScenarioPropertiesFile propertiesFile : propertiesFilesList) {
-			log.fine("In file " + propertiesFile);
+			log.debug("In file " + propertiesFile);
 			boolean backedUp = false;
 			Map<String, String> content = propertiesFile.getContent();
 			for (String prop : content.keySet()) {
@@ -228,11 +229,11 @@ public class JSystemUtilImpl implements JSystemUtilI {
 					String newBean = SerializedBeanUtils.renameBeanParameter(content.get(prop), currentParameterName,
 							newParameterName);
 					if (newBean.equals(content.get(prop))) {
-						log.fine("Bean exists but no change was done");
+						log.debug("Bean exists but no change was done");
 						continue;
 					}
 					if (!backedUp) {
-						log.fine("Creating backup of " + propertiesFile);
+						log.debug("Creating backup of " + propertiesFile);
 						numberOfFilesAffected++;
 						propertiesFile.backup();
 						backedUp = true;
@@ -267,14 +268,14 @@ public class JSystemUtilImpl implements JSystemUtilI {
 		log.info("About to rename scenario " + scenarioSourceNamePath + " to " + scenarioTargetNamePath + " in "
 				+ multipleSuiteAbsolutePathFileName);
 		if (!(new File(multipleSuiteAbsolutePathFileName).exists())) {
-			log.severe("File " + multipleSuiteAbsolutePathFileName + " is not exist");
+			log.error("File " + multipleSuiteAbsolutePathFileName + " is not exist");
 			return false;
 		}
 		scenarioSourceNamePath = StringUtils.frontSlashToBackSlash(scenarioSourceNamePath);
 		scenarioTargetNamePath = StringUtils.frontSlashToBackSlash(scenarioTargetNamePath);
 		MultipleScenarioSuiteFile suiteFile = new MultipleScenarioSuiteFile(multipleSuiteAbsolutePathFileName);
 		if (!suiteFile.isScenarioExists(scenarioSourceNamePath)) {
-			log.warning("Scenario " + scenarioSourceNamePath + " not exist in " + multipleSuiteAbsolutePathFileName);
+			log.warn("Scenario " + scenarioSourceNamePath + " not exist in " + multipleSuiteAbsolutePathFileName);
 			return false;
 		}
 		suiteFile.backup();

@@ -1,45 +1,20 @@
 package il.co.topq.refactor.infra;
 
-import java.io.ByteArrayInputStream;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.util.logging.LogManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.bridge.SLF4JBridgeHandler;
 
 public class LoggerHandler {
-	private static final String LOG_CONFIG_NAME = "log.config";
+	private static final Logger logger = LoggerFactory.getLogger(LoggerHandler.class);
 
 	public static void initLogger() {
-		FileInputStream fis = null;
-		try {
-			fis = new FileInputStream(LOG_CONFIG_NAME);
-			LogManager.getLogManager().readConfiguration(fis);
-		} catch (Exception e) {
-			String config = "handlers=java.util.logging.FileHandler java.util.logging.ConsoleHandler\n"
-					+ ".level=INFO\n" + "java.util.logging.FileHandler.limit=10000000\n"
-					+ "java.util.logging.FileHandler.count=4\n" + "java.util.logging.FileHandler.append=true\n"
-					+ "java.util.logging.FileHandler.formatter=java.util.logging.SimpleFormatter\n"
-					+ "java.util.logging.FileHandler.pattern=JSystemUtilImpl%g.log\n"
-					+ "java.util.logging.FileHandler.level=INFO\n" + "java.util.logging.ConsoleHandler.level=INFO\n"
-					+ "java.util.logging.ConsoleHandler.formatter=java.util.logging.SimpleFormatter\n";
-
-			try {
-				LogManager.getLogManager().readConfiguration(new ByteArrayInputStream(config.getBytes()));
-			} catch (IOException e1) {
-				e1.printStackTrace();
-				return;
-			}
-
-		} finally {
-			if (null != fis) {
-				try {
-					fis.close();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
+		// Install SLF4J bridge to capture JUL logs from third-party libraries
+		if (!SLF4JBridgeHandler.isInstalled()) {
+			SLF4JBridgeHandler.removeHandlersForRootLogger();
+			SLF4JBridgeHandler.install();
 		}
-
+		logger.info("SLF4J logging bridge initialized for refactor utils");
+		// Logback configuration is handled by logback.xml in resources
 	}
 
 }

@@ -6,8 +6,9 @@ package jsystem.treeui.actionItems;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.Action;
 
@@ -21,7 +22,7 @@ import jsystem.treeui.multiscenario.MultiScenarioDialog;
 @SuppressWarnings("serial")
 public class ShowMultipleScenarioAction extends IgnisAction {
 
-	private static Logger log = Logger.getLogger(ShowMultipleScenarioAction.class.getName());
+	private static Logger log = LoggerFactory.getLogger(ShowMultipleScenarioAction.class);
 	
 	private static ShowMultipleScenarioAction showMultipleScenarioAction = null;
 	
@@ -48,7 +49,7 @@ public class ShowMultipleScenarioAction extends IgnisAction {
 			try {
 				commandsFile.createNewFile();
 			} catch (IOException e) {
-				log.log(Level.SEVERE, "Fail to create run XML file", e);
+				log.error("Fail to create run XML file", e);
 			}
 		}		
 		

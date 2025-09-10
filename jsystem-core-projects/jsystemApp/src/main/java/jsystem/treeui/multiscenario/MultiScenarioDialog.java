@@ -14,8 +14,9 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
@@ -55,7 +56,7 @@ import org.w3c.dom.Element;
 @SuppressWarnings("serial")
 public class MultiScenarioDialog extends javax.swing.JDialog {
 	
-	private static Logger log = Logger.getLogger(MultiScenarioDialog.class.getName());
+	private static Logger log = LoggerFactory.getLogger(MultiScenarioDialog.class);
 	
 	protected RunnerCmd currentCmd = null;
 	protected ArrayList<RunnerCmd> commands;
@@ -471,7 +472,6 @@ public class MultiScenarioDialog extends javax.swing.JDialog {
         jPanel2Layout.linkSize(SwingConstants.VERTICAL, new Component[] {addButton, removeButton});
         jPanel3.setBorder(BorderFactory.createTitledBorder("Execution"));
 
-
         loadButton.setText("Load");
         loadButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
@@ -733,7 +733,6 @@ public class MultiScenarioDialog extends javax.swing.JDialog {
 		t.start();    	
     }//GEN-LAST:event_runButtonActionPerformed
 
-
     private void loadButtonActionPerformed(ActionEvent evt) {//GEN-FIRST:event_saveButtonActionPerformed
     	JFileChooser fc = new JFileChooser(configFile);
     	int returnVal = fc.showOpenDialog(this);
@@ -757,7 +756,7 @@ public class MultiScenarioDialog extends javax.swing.JDialog {
 					configFile = file;
 					saveButtonActionPerformed(evt);
 				} catch (IOException e) {
-					log.log(Level.SEVERE, "Fail to craete a new configuration file", e);
+					log.error("Fail to craete a new configuration file", e);
 				}
             }
         }
@@ -778,7 +777,7 @@ public class MultiScenarioDialog extends javax.swing.JDialog {
 			}
 			FileUtils.saveDocumentToFile(doc, configFile);
 		} catch (Exception e) {
-			log.log(Level.SEVERE, "Fail to write to run XML file", e);
+			log.error("Fail to write to run XML file", e);
 		}
 		// Indicate to the user that the save was done
 		saveButton.setEnabled(false);

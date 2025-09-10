@@ -9,8 +9,9 @@ package jsystem.runner.remote;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.JOptionPane;
 
@@ -80,7 +81,7 @@ public class ScenarioExecutor implements ExecutionListener {
 	volatile private boolean testStarted;
 	
 
-	private static Logger log = Logger.getLogger(ScenarioExecutor.class.getName());
+	private static Logger log = LoggerFactory.getLogger(ScenarioExecutor.class);
 
 	public ScenarioExecutor() {
 	}
@@ -142,7 +143,7 @@ public class ScenarioExecutor implements ExecutionListener {
 
 		scenarioFile = ScenariosManager.getInstance().getCurrentScenario().getScenarioFile().getAbsolutePath();
 
-		log.log(Level.INFO, "Execute count: " + ScenariosManager.getInstance().getCurrentScenario().countTestCases());
+		log.info("Execute count: " + ScenariosManager.getInstance().getCurrentScenario().countTestCases());
 
 		setRepeatLeftNumber(getRepeatNumber());
 		
@@ -469,7 +470,7 @@ public class ScenarioExecutor implements ExecutionListener {
 		try {
 			f.createNewFile();
 		} catch (Exception e) {
-			log.warning("Failed creating empty properties file for tests parameters" + e.getMessage());
+			log.warn("Failed creating empty properties file for tests parameters" + e.getMessage());
 		}
 	}
 
@@ -487,7 +488,7 @@ public class ScenarioExecutor implements ExecutionListener {
 					executeMode = RunMode.enumFromNum(runModeAsNumber);
 				}catch (NumberFormatException e) {
 					JSystemProperties.getInstance().setPreference(FrameworkOptions.RUN_MODE,RunMode.DROP_EVERY_RUN.toString());
-					log.warning("Found incompetible value in Run Mode, replaced to "+RunMode.DROP_EVERY_RUN);
+					log.warn("Found incompetible value in Run Mode, replaced to "+RunMode.DROP_EVERY_RUN);
 				}
 			}
 
@@ -496,8 +497,8 @@ public class ScenarioExecutor implements ExecutionListener {
 			}
 		}
 
-		log.log(Level.INFO, "Execute mode: ");
-		log.log(Level.INFO, executeMode.toString());
+		log.info("Execute mode: ");
+		log.info(executeMode.toString());
 	}
 
 	public void startTest(Test test) {

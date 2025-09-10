@@ -4,7 +4,6 @@
 package jsystem.treeui.tree;
 
 import java.util.ArrayList;
-import java.util.logging.Level;
 
 import jsystem.framework.scenario.RunnerSOTest;
 import jsystem.framework.scenario.RunnerTest;
@@ -26,7 +25,7 @@ public class SystemObjectMethod extends TestNode {
 				}
 			}
 		} catch (Exception e) {
-			log.log(Level.WARNING,"Failed to init test", e);
+			log.warn("Failed to init test", e);
 		}
 	}
 	public String getXpath(){

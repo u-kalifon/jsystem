@@ -9,8 +9,9 @@ import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -67,7 +68,7 @@ public class UpgradeAndBackwardCompatibility {
 	}
 	public static final String SCENARIO_VERSION_PROPERTY_NAME = "scenario.version";
 	
-	private static Logger log = Logger.getLogger(UpgradeAndBackwardCompatibility.class.getName());
+	private static Logger log = LoggerFactory.getLogger(UpgradeAndBackwardCompatibility.class);
 	private static Map<Version,Map<AntElement,String>> map;
 	
 	static {
@@ -91,7 +92,7 @@ public class UpgradeAndBackwardCompatibility {
 			String entity = elements.get(element);
 			return entity;
 		}
-		log.warning("Problem checking entity \""+element+"\" for version "+version);
+		log.warn("Problem checking entity \""+element+"\" for version "+version);
 		return null;
 	}
 	
@@ -148,7 +149,6 @@ public class UpgradeAndBackwardCompatibility {
 				".xml", backupFile.getAbsolutePath());
 		return backupFile;
 	}
-
 
 	/**
 	 */
@@ -210,7 +210,7 @@ public class UpgradeAndBackwardCompatibility {
 			String version = m.group(1);
 			return version.equals(v.toString());
 		}catch (Exception e) {
-			log.log(Level.WARNING,"Failed getting " + scenario + " version. "+e.getMessage());
+			log.warn("Failed getting " + scenario + " version. "+e.getMessage());
 			return false;
 		}
 	}

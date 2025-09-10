@@ -14,8 +14,9 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -71,7 +72,7 @@ import org.w3c.dom.traversal.NodeIterator;
  */
 public class TabbedSutXmlEditor extends JDialog implements ActionListener, SutEditor {
 	private static final long serialVersionUID = 3242874217688222418L;
-	private static Logger log = Logger.getLogger(TabbedSutXmlEditor.class.getName());
+	private static Logger log = LoggerFactory.getLogger(TabbedSutXmlEditor.class);
 	boolean save = false;
 
 	public TabbedSutXmlEditor() {
@@ -92,8 +93,8 @@ public class TabbedSutXmlEditor extends JDialog implements ActionListener, SutEd
 		try {
 			return XPathAPI.selectNodeList(doc, "//*[@edit='enable']").getLength() > 0;
 		}catch (Exception e){
-			log.log(Level.WARNING,"Failed in sut validation. Please reduce log level to fine to see full error stack");
-			log.log(Level.FINE,"Failed in sut validation.",e);
+			log.warn("Failed in sut validation. Please reduce log level to fine to see full error stack");
+			log.debug("Failed in sut validation.",e);
 			return false; 
 		}
 	}

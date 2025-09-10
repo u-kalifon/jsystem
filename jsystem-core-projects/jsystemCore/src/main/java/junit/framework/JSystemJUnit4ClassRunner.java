@@ -6,7 +6,8 @@ package junit.framework;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.Arrays;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import jsystem.framework.report.ListenerstManager;
 import jsystem.framework.scenario.RunningProperties;
@@ -30,7 +31,7 @@ import org.junit.runner.notification.RunNotifier;
  */
 public class JSystemJUnit4ClassRunner extends JUnit4ClassRunner {
 	
-	private Logger log = Logger.getLogger(JSystemJUnit4ClassRunner.class.getName());
+	private Logger log = LoggerFactory.getLogger(JSystemJUnit4ClassRunner.class);
 	
 	/**
 	 * 

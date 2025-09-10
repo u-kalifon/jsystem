@@ -4,7 +4,7 @@
 package jsystem.framework.scenario.flow_control;
 
 import java.util.Properties;
-import java.util.logging.Level;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -342,7 +342,7 @@ public class AntForLoop extends AntFlowControl {
 			String val = (String) props.get(param.getValue());
 			return StringUtils.isEmpty(val) ? "DYNAMIC VALUE" : val;
 		} catch (Exception e) {
-			log.log(Level.FINE, "Failed loading dynamic ant values");
+			log.debug("Failed loading dynamic ant values");
 			return "DYNAMIC VALUE";
 		}
 	}

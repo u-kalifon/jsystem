@@ -9,13 +9,14 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import jsystem.extensions.report.difido.RemoteDifidoProperties.RemoteDifidoOptions;
 
 public class RemoteHtmlReporter extends AbstractHtmlReporter {
 
-	private static final Logger log = Logger.getLogger(RemoteHtmlReporter.class.getName());
+	private static final Logger log = LoggerFactory.getLogger(RemoteHtmlReporter.class);
 
 	private static final int MAX_NUM_OF_ALLOWED_FAILURES = 10;
 
@@ -65,7 +66,7 @@ public class RemoteHtmlReporter extends AbstractHtmlReporter {
 			try {
 				client.endExecution(executionId);
 			} catch (Exception e) {
-				log.warning("Failed to close execution with id " + executionId);
+				log.warn("Failed to close execution with id " + executionId);
 			}
 			executionId = -1;
 		}
@@ -90,10 +91,10 @@ public class RemoteHtmlReporter extends AbstractHtmlReporter {
 			executionId = prepareExecution();
 			machineId = client.addMachine(executionId, getExecution().getLastMachine());
 			enabled = true;
-			log.fine(RemoteHtmlReporter.class.getName() + " was initialized successfully");
+			log.debug(RemoteHtmlReporter.class.getName() + " was initialized successfully");
 		} catch (Throwable t) {
 			enabled = false;
-			log.warning("Failed to init " + RemoteHtmlReporter.class.getName() + "connection with host '" + host + ":"
+			log.warn("Failed to init " + RemoteHtmlReporter.class.getName() + "connection with host '" + host + ":"
 					+ port + "' due to " + t.getMessage());
 		}
 
@@ -149,7 +150,7 @@ public class RemoteHtmlReporter extends AbstractHtmlReporter {
 		try {
 			client.addTestDetails(executionId, testDetails);
 		} catch (Exception e) {
-			log.warning("Failed updating test details to remote server due to " + e.getMessage());
+			log.warn("Failed updating test details to remote server due to " + e.getMessage());
 			checkIfNeedsToDisable();
 		}
 
@@ -164,7 +165,7 @@ public class RemoteHtmlReporter extends AbstractHtmlReporter {
 		try {
 			client.updateMachine(executionId, machineId, execution.getLastMachine());
 		} catch (Exception e) {
-			log.warning("Failed updating test details to remote server due to " + e.getMessage());
+			log.warn("Failed updating test details to remote server due to " + e.getMessage());
 			checkIfNeedsToDisable();
 		}
 	}
@@ -172,7 +173,7 @@ public class RemoteHtmlReporter extends AbstractHtmlReporter {
 	private void checkIfNeedsToDisable() {
 		numOfFailures++;
 		if (numOfFailures > MAX_NUM_OF_ALLOWED_FAILURES) {
-			log.warning("Communication to server has failed more then " + MAX_NUM_OF_ALLOWED_FAILURES
+			log.warn("Communication to server has failed more then " + MAX_NUM_OF_ALLOWED_FAILURES
 					+ ". Disabling report reporter");
 			enabled = false;
 		}
@@ -195,7 +196,7 @@ public class RemoteHtmlReporter extends AbstractHtmlReporter {
 			try {
 				client.addFile(executionId, getTestDetails().getUid(), file);
 			} catch (Exception e) {
-				log.warning("Failed uploading file " + file.getName() + " to remote server due to " + e.getMessage());
+				log.warn("Failed uploading file " + file.getName() + " to remote server due to " + e.getMessage());
 			}
 		}
 

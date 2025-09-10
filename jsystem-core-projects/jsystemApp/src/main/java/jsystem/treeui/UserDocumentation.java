@@ -8,8 +8,9 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.JButton;
 import javax.swing.JPanel;
@@ -36,7 +37,7 @@ public class UserDocumentation extends JPanel implements MouseListener {
 
 	private String doc;
 
-	private static Logger log = Logger.getLogger(UserDocumentation.class.getName());
+	private static Logger log = LoggerFactory.getLogger(UserDocumentation.class);
 
 	private JTextArea testUserDocumentation;
 
@@ -110,7 +111,7 @@ public class UserDocumentation extends JPanel implements MouseListener {
 				MultipleScenarioOps.updateDocumentation(test, doc);
 				testTableController.refreshTree();
 			} catch (Exception e1) {
-				log.log(Level.WARNING, "Fail to update scenario after userDoc Apply", e1);
+				log.warn("Fail to update scenario after userDoc Apply", e1);
 			}
 		} else if (source.equals(clearButton)) {
 			test.setDocumentation("");

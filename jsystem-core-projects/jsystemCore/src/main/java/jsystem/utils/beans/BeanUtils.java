@@ -11,8 +11,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import jsystem.framework.IgnoreMethod;
 import jsystem.framework.TestBeanClass;
@@ -33,7 +34,7 @@ import jsystem.utils.StringUtils;
  * @author guy.arieli
  */
 public class BeanUtils {
-	private static Logger log = Logger.getLogger(BeanUtils.class.getName());
+	private static Logger log = LoggerFactory.getLogger(BeanUtils.class);
 
 	/**
 	 * Get all the bean elements of a class
@@ -128,7 +129,7 @@ public class BeanUtils {
 								provider.setProviderConfig(args);
 								beanElement.setParameterProvider(provider);
 							} catch (Exception e) {
-								log.log(Level.WARNING, "Fail to create new instance of provider", e);
+								log.warn("Fail to create new instance of provider", e);
 								continue;
 							}
 						}
@@ -338,7 +339,7 @@ public class BeanUtils {
 		try {
 			method.invoke(object, getObjects(type, value));
 		} catch (Throwable t) {
-			log.warning("Unknown type: " + type.getName());
+			log.warn("Unknown type: " + type.getName());
 		}
 	}
 

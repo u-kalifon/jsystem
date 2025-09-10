@@ -3,7 +3,8 @@
  */
 package jsystem.runner.agent.mediators;
 
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import jsystem.framework.fixture.Fixture;
 import jsystem.framework.fixture.FixtureListener;
@@ -19,7 +20,7 @@ import jsystem.runner.agent.server.RunnerAgent;
  * @author goland
  */
 public class FixtureListenerMediator extends BaseMediator implements FixtureListener {
-	private static Logger log = Logger.getLogger(FixtureListenerMediator.class.getName());
+	private static Logger log = LoggerFactory.getLogger(FixtureListenerMediator.class);
 
 	public FixtureListenerMediator(RunnerAgent agent){
 		super(agent);
@@ -29,7 +30,7 @@ public class FixtureListenerMediator extends BaseMediator implements FixtureList
 		if (NotificationLevel.getCurrentNotificationLevel().equals(NotificationLevel.NO_TEST_INDICATION)){
 			return;
 		}				
-		log.finest("aboutToChangeTo(Fixture fixture)");
+		log.trace("aboutToChangeTo(Fixture fixture)");
 		sendNotification(new AboutToChangeToFixtureNotification(runnerAgent().getClass().getName(),fixture.getClass().getName()));
 	}
 
@@ -37,7 +38,7 @@ public class FixtureListenerMediator extends BaseMediator implements FixtureList
 		if (NotificationLevel.getCurrentNotificationLevel().equals(NotificationLevel.NO_TEST_INDICATION)){
 			return;
 		}				
-		log.finest("endFixturring()");
+		log.trace("endFixturring()");
 		sendNotification(new EndFixturingNotification(runnerAgent().getClass().getName()));
 	}
 
@@ -45,7 +46,7 @@ public class FixtureListenerMediator extends BaseMediator implements FixtureList
 		if (NotificationLevel.getCurrentNotificationLevel().equals(NotificationLevel.NO_TEST_INDICATION)){
 			return;
 		}				
-		log.finest("fixtureChanged(Fixture fixture)");
+		log.trace("fixtureChanged(Fixture fixture)");
 		sendNotification(new FixtureChangedNotification(runnerAgent().getClass().getName(),fixture.getClass().getName()));
 
 	}
@@ -54,7 +55,7 @@ public class FixtureListenerMediator extends BaseMediator implements FixtureList
 		if (NotificationLevel.getCurrentNotificationLevel().equals(NotificationLevel.NO_TEST_INDICATION)){
 			return;
 		}				
-		log.finest("startFixturring()");
+		log.trace("startFixturring()");
 		sendNotification(new StartFixturingNotification(runnerAgent().getClass().getName()));
 	}
 }

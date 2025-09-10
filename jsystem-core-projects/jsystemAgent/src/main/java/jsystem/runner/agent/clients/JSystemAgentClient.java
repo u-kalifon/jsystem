@@ -8,8 +8,9 @@ import java.net.InetAddress;
 import java.net.URL;
 import java.text.MessageFormat;
 import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -41,7 +42,7 @@ import com.aqua.filetransfer.ftp.FTPClient;
  * @author goland
  */
 public class JSystemAgentClient extends SystemObjectImpl implements RunnerEngine {
-	private static Logger log = Logger.getLogger(JSystemAgentClient.class.getName());
+	private static Logger log = LoggerFactory.getLogger(JSystemAgentClient.class);
 	private final static Pattern URL_PATTERN = Pattern.compile(".*\\:\\d{1,4}\\z");
 	private ConnectionState connectionState = ConnectionState.na;
 	private String agentHost;
@@ -111,7 +112,7 @@ public class JSystemAgentClient extends SystemObjectImpl implements RunnerEngine
 		try {
 			connector.close();
 		} catch (Exception e) {
-			log.log(Level.FINE, "Failed closing connection to agent", e);
+			log.debug("Failed closing connection to agent", e);
 		}
 		super.close();
 	}
@@ -172,7 +173,7 @@ public class JSystemAgentClient extends SystemObjectImpl implements RunnerEngine
 				init();
 				return true;
 			} catch (Throwable t) {
-				log.fine("Attempt to connect agent failed");
+				log.debug("Attempt to connect agent failed");
 			}
 			Thread.sleep(500);
 		}

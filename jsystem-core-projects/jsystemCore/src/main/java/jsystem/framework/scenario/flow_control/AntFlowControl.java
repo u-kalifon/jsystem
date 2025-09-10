@@ -6,7 +6,7 @@ package jsystem.framework.scenario.flow_control;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Properties;
-import java.util.logging.Level;
+
 import java.util.regex.Matcher;
 
 import jsystem.framework.common.CommonResources;
@@ -314,7 +314,7 @@ public abstract class AntFlowControl extends JTestContainer {
 				}			
 			}
 		}catch (Exception e){
-			log.log(Level.FINE,"Failed loading ant properties file.",e);
+			log.debug("Failed loading ant properties file.",e);
 		}
 		
 		return name;
@@ -334,7 +334,7 @@ public abstract class AntFlowControl extends JTestContainer {
 			String toReturn = uuid.substring(uuid.lastIndexOf(".") + 1); 
 			return toReturn;
 		}
-		log.fine("Flow element did not have a UUID, Generating a new one");
+		log.debug("Flow element did not have a UUID, Generating a new one");
 		return getRandomUUID();
 	}
 	

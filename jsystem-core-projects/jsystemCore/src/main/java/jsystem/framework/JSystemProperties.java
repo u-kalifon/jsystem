@@ -3,15 +3,13 @@
  */
 package jsystem.framework;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Properties;
 import java.util.StringTokenizer;
-import java.util.logging.Level;
-import java.util.logging.LogManager;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.bridge.SLF4JBridgeHandler;
 
 import jsystem.framework.common.CommonResources;
 import jsystem.framework.scenario.RunningProperties;
@@ -25,7 +23,7 @@ import jsystem.utils.StringUtils;
  */
 public class JSystemProperties {
 
-	private static Logger log = Logger.getLogger(JSystemProperties.class.getName());
+	private static Logger log = LoggerFactory.getLogger(JSystemProperties.class);
 
 	private static JSystemProperties jSystemProperties = null;
 
@@ -51,7 +49,7 @@ public class JSystemProperties {
 	public static JSystemProperties getInstance(boolean isReportVm) {
 		if (jSystemProperties == null) {
 			jSystemProperties = new JSystemProperties(isReportVm);
-			log.fine("JSystem instance init");
+			log.debug("JSystem instance init");
 		}
 		return jSystemProperties;
 	}
@@ -67,7 +65,7 @@ public class JSystemProperties {
 		getPreferencesFile();
 		loadPropertiesToCache();
 		setIsReporterVm(isReportVm);
-		initLogger();
+		initSLF4JBridge();
 		readPreferences();
 	}
 
@@ -84,7 +82,7 @@ public class JSystemProperties {
 		if (settingFile == null) {
 			String home = System.getProperty("user.dir");
 			settingFile = new File(home, CommonResources.JSYSTEM_PROPERTIES_FILE_NAME);
-			log.fine("Created new JSystem properties file.");
+			log.debug("Created new JSystem properties file.");
 			if (!settingFile.exists()) {
 				if (!restoreFromBackup()) {
 					createJsystemPropertiesFile();
@@ -104,7 +102,7 @@ public class JSystemProperties {
 		while (settingFile.exists() && retry < 6) {
 			System.gc(); // releasing all input\output stream to that file
 			FileUtils.deleteFile(settingFile.getName());
-			log.fine("deleted jsystem properties file.");
+			log.debug("deleted jsystem properties file.");
 			System.out.println("retry " + retry);
 			retry++;
 		}
@@ -124,14 +122,14 @@ public class JSystemProperties {
 		try {
 			settingFile.createNewFile();
 		} catch (IOException e1) {
-			log.severe("Problem creating new properties file!");
+			log.error("Problem creating new properties file!");
 		}
 		if (baseFile.exists()) {
 			try {
 				FileUtils.copyFile(baseFile, settingFile);
-				log.fine("Base file copied to jsystem properties file.");
+				log.debug("Base file copied to jsystem properties file.");
 			} catch (IOException e) {
-				log.warning("Couldn't copy base file!");
+				log.warn("Couldn't copy base file!");
 			}
 		}
 	}
@@ -262,7 +260,7 @@ public class JSystemProperties {
 				backupProperties();
 			}
 		} catch (IOException e) {
-			log.log(Level.WARNING, "Unable to save to properties file (could be write protected)");
+			log.warn("Unable to save to properties file (could be write protected)");
 		}
 	}
 
@@ -298,55 +296,23 @@ public class JSystemProperties {
 		savePreferences(preferences);
 	}
 
-	private void initLogger() {
+	private void initSLF4JBridge() {
 		String loggerStatus = getPreference(FrameworkOptions.LOGGER_STATUS);
 		if (loggerStatus == null) { // the logger was never init
 			setPreference("logger", "true");
-			setPreference("handlers", "java.util.logging.FileHandler java.util.logging.ConsoleHandler");
-			setPreference("jsystem.level", "INFO");
-			setPreference("java.util.logging.FileHandler.limit", "10000000");
-			setPreference("java.util.logging.FileHandler.count", "4");
-			setPreference("java.util.logging.FileHandler.append", "true");
-			// We were suppose to use the BasicFormatter implemented by Guy, but
-			// for some reason the logger can't find the formatter and rolls
-			// back to XmlFormatter.
-			setPreference("java.util.logging.FileHandler.formatter", "java.util.logging.SimpleFormatter");
-			setPreference("java.util.logging.FileHandler.pattern", "jsystem%g.log");
-			setPreference("java.util.logging.ConsoleHandler.level", "INFO");
-			setPreference("java.util.logging.ConsoleHandler.formatter", "java.util.logging.SimpleFormatter");
-
-			initLogger();
-
-		} else if (loggerStatus.equals("true") || loggerStatus.equals("enable")) {
-			if (!isReporterVm()) {
-				String remoteLogConf = "logger=true\n"
-						+ "handlers=java.util.logging.FileHandler java.util.logging.ConsoleHandler\n"
-						+ "java.util.logging.FileHandler.limit=10000000\n" + "java.util.logging.FileHandler.count=4\n"
-						+ "jsystem.level= INFO\n" + "java.util.logging.FileHandler.append=true\n"
-						+ "java.util.logging.FileHandler.formatter=java.util.logging.SimpleFormatter\n"
-						// +
-						// "java.util.logging.FileHandler.formatter=jsystem.utils.BasicFormatter\n"
-						+ "java.util.logging.FileHandler.pattern=remote%g.log\n"
-						+ "java.util.logging.ConsoleHandler.level=INFO\n"
-						+ "java.util.logging.ConsoleHandler.formatter=java.util.logging.SimpleFormatter\n";
-				try {
-					LogManager.getLogManager().readConfiguration(new ByteArrayInputStream(remoteLogConf.getBytes()));
-				} catch (IOException e) {
-					e.printStackTrace();
-					return;
-				}
-			} else {
-				try {
-					log.info("Logger was init");
-					LogManager.getLogManager().readConfiguration(new FileInputStream(getPreferencesFile()));
-				} catch (IOException e) {
-					e.printStackTrace();
-					return;
-				}
+			// SLF4J configuration is now handled by logback.xml
+		}
+		
+		if (loggerStatus == null || loggerStatus.equals("true") || loggerStatus.equals("enable")) {
+			// Install SLF4J bridge to capture JUL logs from third-party libraries
+			if (!SLF4JBridgeHandler.isInstalled()) {
+				SLF4JBridgeHandler.removeHandlersForRootLogger();
+				SLF4JBridgeHandler.install();
 			}
+			log.info("SLF4J logging bridge initialized");
 		} else {
 			log.info("Logger was set to off");
-			Logger.getLogger("").setLevel(Level.OFF);
+			// Note: With SLF4J/Logback, logging levels are controlled via logback.xml
 		}
 	}
 
@@ -440,7 +406,7 @@ public class JSystemProperties {
 		try {
 			FileUtils.copyFile(getPreferencesFile(), getBackupFile());
 		} catch (IOException e) {
-			log.log(Level.SEVERE, "Problem backing up JSystem properties file");
+			log.error("Problem backing up JSystem properties file");
 		}
 	}
 
@@ -453,13 +419,13 @@ public class JSystemProperties {
 		if (!isBackupValid()) {
 			return false;
 		}
-		log.log(Level.SEVERE, "JSystem properties file was empty, restoring from backup.");
+		log.error("JSystem properties file was empty, restoring from backup.");
 		File bu = getBackupFile();
 		try {
 			FileUtils.copyFile(bu, getPreferencesFile());
 			return true;
 		} catch (IOException e) {
-			log.log(Level.SEVERE, "Problem restoring JSystem properties from backup");
+			log.error("Problem restoring JSystem properties from backup");
 			return false;
 		}
 	}

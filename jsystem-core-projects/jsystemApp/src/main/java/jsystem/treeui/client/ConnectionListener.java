@@ -3,7 +3,8 @@
  */
 package jsystem.treeui.client;
 
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.management.Notification;
 import javax.management.NotificationListener;
@@ -23,7 +24,7 @@ import jsystem.treeui.error.ErrorPanel;
  */
 public class ConnectionListener implements NotificationListener {
 	
-	private static Logger log = Logger.getLogger(ConnectionListener.class.getName());
+	private static Logger log = LoggerFactory.getLogger(ConnectionListener.class);
 	private ConnectionMonitor monitor;
 	private RunnerEngine engine;
 	private Thread thread;
@@ -89,7 +90,7 @@ public class ConnectionListener implements NotificationListener {
 						connect();
 					}
 				}catch (Exception e){
-					log.fine("Failed opening connection to agent " + e.getMessage());
+					log.debug("Failed opening connection to agent " + e.getMessage());
 				}
 				try {
 					Thread.sleep(5000);

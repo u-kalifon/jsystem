@@ -4,8 +4,9 @@ import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import jsystem.extensions.report.xml.ReportInformation;
 import jsystem.extensions.report.xml.XmlReportHandler;
@@ -27,7 +28,7 @@ import jsystem.utils.StringUtils;
 public class MailSender {
 
 	private Reporter report = ListenerstManager.getInstance();
-	private Logger log = Logger.getLogger(MailSender.class.getName());
+	private Logger log = LoggerFactory.getLogger(MailSender.class);
 
 	/**
 	 * the separator for the files
@@ -89,7 +90,7 @@ public class MailSender {
 			mail.sendMail(mailSubject, messageHeader + "\n\n" + emailMessage);
 		} catch (Exception exception) {
 			String stackTraceAsString = StringUtils.getStackTrace(exception);
-			log.log(Level.SEVERE, "Problem sending mail!\n\n" + stackTraceAsString);
+			log.error("Problem sending mail!\n\n" + stackTraceAsString);
 			report.report("Problem sending mail! \n" + exception.getMessage(), stackTraceAsString, false);
 			throw exception;
 		}

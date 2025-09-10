@@ -11,7 +11,8 @@ import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.concurrent.Executors;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -37,7 +38,7 @@ import jsystem.framework.TestRunnerFrame;
 public class WaitDialog extends JDialog {
 	private static final long serialVersionUID = -2017901707408101146L;
 
-	private static Logger log = Logger.getLogger(WaitDialog.class.getName());
+	private static Logger log = LoggerFactory.getLogger(WaitDialog.class);
 
 	private Container parent;
 
@@ -168,7 +169,7 @@ public class WaitDialog extends JDialog {
 	 *            the listener handling the cancel button press
 	 */
 	public synchronized static void launchWaitDialog(final String title, final WaitDialogListener listener) {
-		log.fine("WaitDialog - launching waitDialog with title " + title);
+		log.debug("WaitDialog - launching waitDialog with title " + title);
 		if (dialog != null) { // probably some kind of error
 			return;
 		}
@@ -205,7 +206,7 @@ public class WaitDialog extends JDialog {
 	 */
 	public synchronized static void launchWaitDialog(final String title, final WaitDialogListener listener, final String progressMessage,
 			boolean cancelButton) {
-		log.fine("WaitDialog - launching waitDialog with title " + title);
+		log.debug("WaitDialog - launching waitDialog with title " + title);
 		if (dialog != null) { // probably some kind of error
 			return;
 		}

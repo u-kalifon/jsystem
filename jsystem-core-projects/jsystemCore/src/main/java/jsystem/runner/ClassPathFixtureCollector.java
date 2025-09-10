@@ -9,8 +9,9 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.StringTokenizer;
 import java.util.Vector;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -19,7 +20,7 @@ import jsystem.framework.fixture.Fixture;
 import jsystem.runner.loader.LoadersManager;
 
 public class ClassPathFixtureCollector extends ClassPathTestCollector {
-	private static Logger log = Logger.getLogger(ClassPathFixtureCollector.class.getName());
+	private static Logger log = LoggerFactory.getLogger(ClassPathFixtureCollector.class);
 
 	static final int SUFFIX_LENGTH = ".class".length();
 
@@ -97,7 +98,7 @@ public class ClassPathFixtureCollector extends ClassPathTestCollector {
 						}
 					}
 				} catch (IOException e) {
-					log.log(Level.WARNING, "fail to open zip file " + thisRoot.getPath(), e);
+					log.warn("fail to open zip file " + thisRoot.getPath(), e);
 				}
 
 			}

@@ -6,8 +6,9 @@ package jsystem.framework;
 import java.io.File;
 import java.io.IOException;
 import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import jsystem.framework.common.CommonResources;
 import jsystem.framework.report.Summary;
@@ -22,7 +23,7 @@ import jsystem.utils.FileUtils;
  * @author guy.arieli
  */
 public class RunProperties {
-	private static Logger log = Logger.getLogger(RunProperties.class.getName());
+	private static Logger log = LoggerFactory.getLogger(RunProperties.class);
 	private static RunProperties rp = null;
 
 	private RunProperties() {
@@ -49,7 +50,7 @@ public class RunProperties {
 	public void resetRunProperties() {
 		log.info("Reset the Run properties file");
 		if (!runPropertiesFile.delete() && runPropertiesFile.exists()){
-			log.warning("Failed deleting .run.properties file");
+			log.warn("Failed deleting .run.properties file");
 		}
 		Summary.getInstance().initPublishValues();
 	}
@@ -112,9 +113,9 @@ public class RunProperties {
 		Properties p = new Properties();
 		if (runPropertiesFile.getAbsoluteFile().exists()) {
 			p = FileUtils.loadPropertiesFromFile(runPropertiesFile.getAbsolutePath());
-			log.log(Level.CONFIG,"load run properties at :"+runPropertiesFile.getAbsolutePath());
+			log.info("load run properties at: " + runPropertiesFile.getAbsolutePath());
 		}else{
-			log.log(Level.CONFIG,"the run properties doesn't exist,return new Properties object");
+			log.info("the run properties doesn't exist, return new Properties object");
 		}
 		return p;
 	}

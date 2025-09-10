@@ -11,8 +11,9 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Enumeration;
 import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import jsystem.framework.RunProperties;
 import jsystem.framework.scenario.ScenarioHelpers;
@@ -35,7 +36,7 @@ public class Summary {
 //	Thread safe singleton instance
 	private static final Summary summary_Instance = new Summary();
 	
-	private static Logger log = Logger.getLogger(Summary.class.getName());
+	private static Logger log = LoggerFactory.getLogger(Summary.class);
 	
 	private static String SUMMARY_FILE_NAME = "summary.properties";
 	
@@ -92,8 +93,7 @@ public class Summary {
 		try {
 			RunProperties.getInstance().setRunProperty("summary." + key, value);
 		} catch (Exception exception) {
-			log.log(Level.WARNING, 
-					"Fail to save property key: " + key + ", value: " + value, 
+			log.warn("Fail to save property key: " + key + ", value: " + value, 
 					exception);
 		}
 	}
@@ -109,7 +109,7 @@ public class Summary {
 			try {
 				properties = FileUtils.loadPropertiesFromFile(SUMMARY_FILE_NAME);
 			} catch (Exception exception) {
-				log.log(Level.WARNING, "Fail to load summary properties", exception);
+				log.warn("Fail to load summary properties", exception);
 			}
 		}
 		try {
@@ -122,7 +122,7 @@ public class Summary {
 				}
 			}
 		} catch (Exception exception) {
-			log.log(Level.WARNING, "Fail to load run properties", exception);
+			log.warn("Fail to load run properties", exception);
 		}
 		return properties;
 	}
@@ -154,7 +154,7 @@ public class Summary {
 		try {
 			FileUtils.savePropertiesToFile(new Properties(), SUMMARY_FILE_NAME);
 		} catch (IOException ioException) {
-			log.log(Level.WARNING, "Fail to reset Summary properties", ioException);
+			log.warn("Fail to reset Summary properties", ioException);
 		}
 		initPublishValues();
 	}

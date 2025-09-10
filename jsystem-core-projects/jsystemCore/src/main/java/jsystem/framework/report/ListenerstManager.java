@@ -8,8 +8,8 @@ import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import jsystem.framework.JSystemProperties;
 import jsystem.framework.fixture.Fixture;
@@ -42,8 +42,7 @@ import junit.framework.TestListener;
 public class ListenerstManager extends DefaultReporterImpl implements
 		JSystemListeners {
 
-	private static Logger log = Logger.getLogger(ListenerstManager.class
-			.getName());
+	private static Logger log = LoggerFactory.getLogger(ListenerstManager.class);
 
 	private static JSystemListeners manager = null;
 
@@ -125,7 +124,7 @@ public class ListenerstManager extends DefaultReporterImpl implements
 				try {
 					tl.addError(test, t);
 				} catch (Throwable ex) {
-					log.log(Level.SEVERE, "Fail to add error to testlistener",
+					log.error("Fail to add error to testlistener",
 							ex);
 				}
 			}
@@ -156,8 +155,7 @@ public class ListenerstManager extends DefaultReporterImpl implements
 				try {
 					tl.addFailure(test, t);
 				} catch (Throwable ex) {
-					log.log(Level.SEVERE,
-							"Fail to add failure to testlistener", ex);
+					log.error("Fail to add failure to testlistener", ex);
 				}
 
 			}
@@ -189,8 +187,7 @@ public class ListenerstManager extends DefaultReporterImpl implements
 				try {
 					tl.addWarning(test);
 				} catch (Throwable ex) {
-					log.log(Level.SEVERE,
-							"Fail to add warning to testlistener", ex);
+					log.error("Fail to add warning to testlistener", ex);
 				}
 			}
 		}
@@ -204,7 +201,7 @@ public class ListenerstManager extends DefaultReporterImpl implements
 			try {
 				tl.endTest(test);
 			} catch (Throwable ex) {
-				log.log(Level.SEVERE, "Fail to add endTest", ex);
+				log.error("Fail to add endTest", ex);
 			}
 		}
 		remoteRunner.endTest(test);
@@ -245,7 +242,7 @@ public class ListenerstManager extends DefaultReporterImpl implements
 				try {
 					tl.startTest(test);
 				} catch (Throwable ex) {
-					log.log(Level.SEVERE, "Fail to startTest", ex);
+					log.error("Fail to startTest", ex);
 				}
 			}
 		}
@@ -297,7 +294,7 @@ public class ListenerstManager extends DefaultReporterImpl implements
 			out.write(content);
 			out.close();
 		} catch (IOException e) {
-			log.log(Level.WARNING, "Fail to save file", e);
+			log.warn("Fail to save file", e);
 		}
 		checkExecutionStatus();
 		;
@@ -572,7 +569,7 @@ public class ListenerstManager extends DefaultReporterImpl implements
 			fw.flush();
 			fw.close();
 		} catch (IOException e) {
-			log.log(Level.SEVERE, "couldn't close fileWriter");
+			log.error("couldn't close fileWriter");
 		}
 	}
 

@@ -9,8 +9,9 @@ import java.lang.reflect.Method;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.management.Notification;
 import javax.management.NotificationListener;
@@ -37,7 +38,7 @@ import junit.framework.Test;
  * @author goland
  */
 public class AgentClientListenersManager implements JSystemListeners,NotificationListener  {
-	private static Logger log = Logger.getLogger(AgentClientListenersManager.class.getName());
+	private static Logger log = LoggerFactory.getLogger(AgentClientListenersManager.class);
 	private Set<Object> listeners;
 	
 	public AgentClientListenersManager(){
@@ -64,7 +65,6 @@ public class AgentClientListenersManager implements JSystemListeners,Notificatio
 
 	}
 
-
 	public void blockReporters(boolean block) {
 		invokeMethod("blockReporters",new Object[]{block},new Class[]{boolean.class});
 	}
@@ -76,7 +76,6 @@ public class AgentClientListenersManager implements JSystemListeners,Notificatio
 	public boolean isPause() {
 		return false;
 	}
-
 
 	public void setDate(String date) {
 		invokeMethod("setDate",new Object[]{date},new Class[]{String.class});
@@ -359,7 +358,7 @@ public class AgentClientListenersManager implements JSystemListeners,Notificatio
 	}
 	
 	public void handleNotification(Notification notification, Object handback) {
-		log.fine("Got event: " + notification.getType() + " " + notification.getSource());
+		log.debug("Got event: " + notification.getType() + " " + notification.getSource());
 		if ((notification instanceof RunnerNotification)){
 			((RunnerNotification)notification).invokeDispatcher(this);
 		}
@@ -375,13 +374,13 @@ public class AgentClientListenersManager implements JSystemListeners,Notificatio
 				method = 
 					o.getClass().getMethod(methodName,classes);
 			}catch (Exception e) {
-				log.fine( methodName + " was not found in " + o.getClass().getName());
+				log.debug( methodName + " was not found in " + o.getClass().getName());
 				continue;
 			}		
 			try {
 				retVal = method.invoke(o,objects);
 			}catch (Throwable t){
-				log.log(Level.WARNING,"Failed executing method" + methodName,t);
+				log.warn("Failed executing method" + methodName,t);
 			}
 		}
 		return retVal;

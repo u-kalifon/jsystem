@@ -8,8 +8,9 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.lang.reflect.Field;
 import java.net.Socket;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import jsystem.framework.FrameworkOptions;
 import jsystem.framework.JSystemProperties;
@@ -46,7 +47,14 @@ import org.apache.tools.ant.BuildListener;
  */
 public class RemoteTestRunner extends DefaultReporterImpl implements ExtendTestListener, FixtureListener, SutListener, BuildListener {
 	
-	static Logger log = Logger.getLogger(RemoteTestRunner.class.getName());
+	private static Logger log;
+	
+	public static Logger getLog() {
+		if (log == null) {
+			log = LoggerFactory.getLogger(RemoteTestRunner.class);
+		}
+		return log;
+	}
 	
 	boolean silent = false;
 	
@@ -445,41 +453,41 @@ public class RemoteTestRunner extends DefaultReporterImpl implements ExtendTestL
 					}
 					switch (m.getType()) {
 					case M_EXIT:
-						log.fine("got exit message.");
+						getLog().debug("got exit message.");
 						processExit();
-						log.fine("exit process ended.");
+						getLog().debug("exit process ended.");
 						break;
 					case M_INTERRUPT:
-						log.fine("got interrupt message.");
+						getLog().debug("got interrupt message.");
 						interrupted = true;
 						processExit();
-						log.fine("exit process after interrupt ended.");
+						getLog().debug("exit process after interrupt ended.");
 						break;
 					case M_PAUSE:
-						log.fine("got pause message.");
+						getLog().debug("got pause message.");
 						((ListenerstManager) ListenerstManager.getInstance()).pause();
 						break;
 					case M_GRACEFUL_STOP:
-						log.fine("got graceful stop message.");
+						getLog().debug("got graceful stop message.");
 						((ListenerstManager) ListenerstManager.getInstance()).gracefulStop();
 						break;
 					case M_RESUME:
-						log.fine("got resume message.");
+						getLog().debug("got resume message.");
 						((ListenerstManager) ListenerstManager.getInstance()).resume();
 						break;
 					case M_SYNCHED:
 						synchronize = true;
-						log.fine("Got M_SYNCHED message");
+						getLog().debug("Got M_SYNCHED message");
 						synchronized (fWriter) {
 							fWriter.notifyAll();
 						}
-						log.fine("M_SYNCHED message after notify all");
+						getLog().debug("M_SYNCHED message after notify all");
 						break;
 					case M_SYNCH:
 						Message mm = new Message();
 						mm.setType(RemoteMessage.M_SYNCHED);
 						sendMessage(mm);
-						log.fine("Send M_SYNCHED message");
+						getLog().debug("Send M_SYNCHED message");
 						break;
 						
 					case M_SHOW_CONFIRM_DIALOG:
@@ -688,7 +696,7 @@ public class RemoteTestRunner extends DefaultReporterImpl implements ExtendTestL
 			Message m = new Message();
 			m.setType(RemoteMessage.M_SYNCH);
 			sendMessage(m);
-			log.fine("Sent M_SYNCH message");
+			getLog().debug("Sent M_SYNCH message");
 			try {
 				while (!synchronize) {
 					try {
@@ -907,7 +915,7 @@ public class RemoteTestRunner extends DefaultReporterImpl implements ExtendTestL
 		Message m3 = new Message();
 		m3.setType(RemoteMessage.M_PAUSED);
 		sendMessage(m3);
-		log.fine("Paused event send");
+		getLog().debug("Paused event send");
 	}
 
 	/**
@@ -936,7 +944,7 @@ public class RemoteTestRunner extends DefaultReporterImpl implements ExtendTestL
 				 */
 				fWriter.reset();
 			} catch (IOException e) {
-				Logger.getLogger(this.getClass().getName()).log(Level.WARNING, "Fail to send message", e);
+				getLog().warn("Fail to send message", e);
 			}
 		}
 	}
@@ -963,25 +971,25 @@ public class RemoteTestRunner extends DefaultReporterImpl implements ExtendTestL
 		Message m = new Message();
 		m.setType(RemoteMessage.M_BUILD_FINISH);
 		sendMessage(m);
-		log.fine("sent buildFinished message.");
+		getLog().debug("sent buildFinished message.");
 		new ExitWatcher().start();
 		if (interrupted) {
 			blockAllMessages = true;
 		} else {
-			log.fine("started wait for exit.");
+			getLog().debug("started wait for exit.");
 			waitForExit();
-			log.fine("ended wait for exit.");
+			getLog().debug("ended wait for exit.");
 		}
 	}
 
 	public void buildStarted(BuildEvent event) {
 		String currentFixture = System.getProperty(RunningProperties.CURRENT_FIXTURE_BASE);
-		log.info("Current fixture: " + currentFixture);
+		getLog().info("Current fixture: " + currentFixture);
 		if (currentFixture != null) {
 			try {
 				FixtureManager.getInstance().setCurrentFixture(currentFixture);
 			} catch (Exception e) {
-				log.log(Level.WARNING, "Fail to set current fixture", e);
+				getLog().warn("Fail to set current fixture", e);
 			}
 		}
 		FixtureManager.getInstance().addListener(ListenerstManager.getInstance());
@@ -1188,7 +1196,7 @@ class ShutdownThread extends Thread {
 				m.setType(RemoteTestRunner.RemoteMessage.M_EXIT);
 				out.writeObject(m);
 				out.flush();
-				RemoteTestRunner.log.fine("Shutdown thread - sent exit.");
+				RemoteTestRunner.getLog().debug("Shutdown thread - sent exit.");
 				try {
 					Thread.sleep(10000);
 				} catch (InterruptedException e1) {
@@ -1210,16 +1218,16 @@ class ShutdownThread extends Thread {
  */
 class ExitWatcher extends Thread {
 	public void run() {
-		RemoteTestRunner.log.fine("Exit watcher started");
+		RemoteTestRunner.getLog().debug("Exit watcher started");
 		long exitTimeout = JSystemProperties.getInstance().getLongPreference(FrameworkOptions.EXIT_TIMEOUT, 15000);
 
 		if (exitTimeout == 0) {
-			RemoteTestRunner.log.fine("Exit watcher exittimeout=0 before system.exit");
+			RemoteTestRunner.getLog().debug("Exit watcher exittimeout=0 before system.exit");
 			System.exit(0);
 		}
 
 		if (exitTimeout < 0) {
-			RemoteTestRunner.log.fine("Exit watcher exittimeout<0 before return");
+			RemoteTestRunner.getLog().debug("Exit watcher exittimeout<0 before return");
 			return;
 		}
 
@@ -1228,7 +1236,7 @@ class ExitWatcher extends Thread {
 		} catch (InterruptedException e) {
 			return;
 		}
-		RemoteTestRunner.log.fine("Exit watcher exittimeout>0 after sleep before system.exit");
+		RemoteTestRunner.getLog().debug("Exit watcher exittimeout>0 after sleep before system.exit");
 		System.exit(0);
 	}
 }

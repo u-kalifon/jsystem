@@ -39,8 +39,9 @@ import java.util.Properties;
 import java.util.StringTokenizer;
 import java.util.TreeMap;
 import java.util.Vector;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -172,7 +173,7 @@ import junit.framework.Test;
 public class TestsTableController extends Observable implements TestStatusListener, ActionListener, ExtendTestListener,
 		TreeSelectionListener, MouseListener, TreeExpansionListener, ScenarioListener {
 
-	private static Logger log = Logger.getLogger(TestsTableController.class.getName());
+	private static Logger log = LoggerFactory.getLogger(TestsTableController.class);
 
 	OurTree tree;
 
@@ -799,7 +800,7 @@ public class TestsTableController extends Observable implements TestStatusListen
 				ListenerstManager.getInstance().addListener(plugin);
 				contextMenuPlugins.add(plugin);
 			} catch (Exception e) {
-				log.log(Level.WARNING, "Failed to init context menu plugin " + pluginName +" due to " + e.getMessage());
+				log.warn("Failed to init context menu plugin " + pluginName +" due to " + e.getMessage());
 			}
 
 		}
@@ -1192,35 +1193,35 @@ public class TestsTableController extends Observable implements TestStatusListen
 				clearExpandSelected(false, true);
 
 			} catch (Exception ex) {
-				log.log(Level.SEVERE, "Fail to remove test", ex);
+				log.error("Fail to remove test", ex);
 			}
 			break;
 		case DOWN:
 			try {
 				moveDown();
 			} catch (Exception e1) {
-				log.log(Level.WARNING, "Fail to move down test", e1);
+				log.warn("Fail to move down test", e1);
 			}
 			break;
 		case UP:
 			try {
 				moveUp();
 			} catch (Exception e1) {
-				log.log(Level.WARNING, "Fail to move up test", e1);
+				log.warn("Fail to move up test", e1);
 			}
 			break;
 		case TO_BOTTOM:
 			try {
 				moveToBottom();
 			} catch (Exception e1) {
-				log.log(Level.WARNING, "Fail to move test to bottom", e1);
+				log.warn("Fail to move test to bottom", e1);
 			}
 			break;
 		case TO_TOP:
 			try {
 				moveToTop();
 			} catch (Exception e1) {
-				log.log(Level.WARNING, "Fail to move test to top", e1);
+				log.warn("Fail to move test to top", e1);
 			}
 		}
 
@@ -1241,7 +1242,7 @@ public class TestsTableController extends Observable implements TestStatusListen
 			// loadScenario(scenarioName, false);
 		} catch (Exception e) {
 			ErrorPanel.showErrorDialog("Fail to redo scenario edit", e.getMessage(), ErrorLevel.Warning);
-			log.log(Level.WARNING, "Fail to redo scenario edit", e);
+			log.warn("Fail to redo scenario edit", e);
 		}
 	}
 
@@ -1252,7 +1253,7 @@ public class TestsTableController extends Observable implements TestStatusListen
 			// loadScenario(scenarioName, false);
 		} catch (Exception e) {
 			ErrorPanel.showErrorDialog("Fail to undo scenario edit", e.getMessage(), ErrorLevel.Warning);
-			log.log(Level.WARNING, "Fail to undo scenario edit", e);
+			log.warn("Fail to undo scenario edit", e);
 		}
 	}
 
@@ -1295,16 +1296,16 @@ public class TestsTableController extends Observable implements TestStatusListen
 			code = codeWriter.getCode(rt.getClassName());
 			code = code.replaceAll(rt.getMethodName(), "<b>" + rt.getMethodName() + "</b>");
 		} catch (FileNotFoundException e) {
-			log.log(Level.WARNING, "Fail to load test code because sorce file is missing. " + e.getMessage());
+			log.warn("Fail to load test code because sorce file is missing. " + e.getMessage());
 		} catch (ClassNotFoundException e) {
 			JOptionPane
 					.showMessageDialog(
 							null,
 							"Can't display test code because java2html.jar is missing.\nIf you wish to view code, please install java2html.jar. For instructions go to http://trac.jsystemtest.org/wiki/DetailedOSProjectsList",
 							"View Test Code warning", JOptionPane.INFORMATION_MESSAGE);
-			log.log(Level.WARNING, "Fail to load test code because java2html jar is missing. " + e.getMessage());
+			log.warn("Fail to load test code because java2html jar is missing. " + e.getMessage());
 		} catch (Exception e) {
-			log.log(Level.WARNING, "Fail to load test code. " + e.getMessage());
+			log.warn("Fail to load test code. " + e.getMessage());
 		}
 		if (code == null) {
 			return;
@@ -1319,7 +1320,7 @@ public class TestsTableController extends Observable implements TestStatusListen
 			BrowserLauncher.openURL(f.getPath());
 		} catch (IOException e2) {
 			ErrorPanel.showErrorDialog("Fail to load test code", e2.getMessage(), ErrorLevel.Warning);
-			log.log(Level.INFO, "Fail to load test code", e2);
+			log.info("Fail to load test code", e2);
 		}
 	}
 
@@ -1640,7 +1641,7 @@ public class TestsTableController extends Observable implements TestStatusListen
 						expandAll();
 						updateEnabledAndDisabledActions(null);
 					} catch (Exception e1) {
-						log.log(Level.SEVERE, "Fail to load scenario: " + updatedScenarioName, e1);
+						log.error("Fail to load scenario: " + updatedScenarioName, e1);
 						ErrorPanel.showErrorDialog(
 								"Problem loading Scenario \""
 										+ ScenarioHelpers.removeScenarioHeader(updatedScenarioName) + "\"",
@@ -1699,7 +1700,7 @@ public class TestsTableController extends Observable implements TestStatusListen
 			try {
 				MultipleScenarioOps.editComment(currentNode.getTest(), comment);
 			} catch (Exception e1) {
-				log.log(Level.WARNING, "Fail to update Scenario after Renaming", e1);
+				log.warn("Fail to update Scenario after Renaming", e1);
 			}
 			refreshTree();
 			tree.getSelectionModel().setSelectionPath(lastClickedPath);
@@ -2528,14 +2529,14 @@ public class TestsTableController extends Observable implements TestStatusListen
 			tree.getSelectionModel().clearSelection();
 			refreshTree();
 		} catch (Exception ex) {
-			log.log(Level.WARNING, "Fail to filter success", ex);
+			log.warn("Fail to filter success", ex);
 		}
 		testsTreeControler.refreshView();
 		testsTreeControler.expandTree();
 	}
 
 	public void selectScenario(String scenarioName) throws Exception {
-		log.fine("Starting to load scenario - " + scenarioName);
+		log.debug("Starting to load scenario - " + scenarioName);
 		ScenariosManager.setDirtyStateEventsSilent(true);
 		ScenarioHelpers.resetCache();
 		Scenario s = ScenariosManager.getInstance().getScenario(scenarioName);
@@ -2546,7 +2547,7 @@ public class TestsTableController extends Observable implements TestStatusListen
 		refreshTree();
 		ScenariosManager.setDirtyStateEventsSilent(false);
 
-		log.fine("Ended to load scenario - " + scenarioName);
+		log.debug("Ended to load scenario - " + scenarioName);
 	}
 
 	public void clearScenario(boolean ask) {
@@ -2591,7 +2592,7 @@ public class TestsTableController extends Observable implements TestStatusListen
 					}
 				}
 			} catch (Exception e1) {
-				log.log(Level.SEVERE, "Fail to clear scenario", e1);
+				log.error("Fail to clear scenario", e1);
 			}
 
 			for (TreePath path : paths) {
@@ -3134,7 +3135,7 @@ public class TestsTableController extends Observable implements TestStatusListen
 					updateEnabledAndDisabledActions(null);
 					refreshTree();
 				} catch (Exception e) {
-					log.log(Level.WARNING, "New scenario creation failed", e);
+					log.warn("New scenario creation failed", e);
 				}
 			} else {
 				try {
@@ -3186,7 +3187,7 @@ public class TestsTableController extends Observable implements TestStatusListen
 					refreshTree();
 
 				} catch (Exception e1) {
-					log.log(Level.WARNING, "List save failed", e1);
+					log.warn("List save failed", e1);
 				}
 			}
 		} finally {
@@ -3246,7 +3247,7 @@ public class TestsTableController extends Observable implements TestStatusListen
 			ScenariosManager.getInstance().setCurrentScenario(scenario);
 			// ScenarioUIUtils.showScenarioErrorDialog(scenario);
 		} catch (Exception e) {
-			log.log(Level.SEVERE, "Fail to reload scenario", e);
+			log.error("Fail to reload scenario", e);
 			ErrorPanel.showErrorDialog("Problem reloading current Scenario ",
 					StringUtils.getStackTrace(ScenariosManager.getInstance().getLastException()), ErrorLevel.Error);
 			return;
@@ -3594,7 +3595,7 @@ public class TestsTableController extends Observable implements TestStatusListen
 					handleNodeMap();
 
 				} catch (Exception e1) {
-					log.log(Level.WARNING, "Fail to update Scenario after check/uncheck test", e1);
+					log.warn("Fail to update Scenario after check/uncheck test", e1);
 				}
 			} else { // regular selection was made
 
@@ -4012,7 +4013,6 @@ class StatusBar extends JToolBar {
 	
 	
 	
-
 
 
 }

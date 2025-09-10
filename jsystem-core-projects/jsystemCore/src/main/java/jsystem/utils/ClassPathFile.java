@@ -15,8 +15,9 @@ import java.util.Properties;
 import java.util.StringTokenizer;
 import java.util.Vector;
 import java.util.jar.JarFile;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -24,7 +25,7 @@ import java.util.zip.ZipFile;
  * ClassPathFile work with file's class paths.
  */
 public class ClassPathFile {
-	private static Logger log = Logger.getLogger(ClassPathFile.class.getName());
+	private static Logger log = LoggerFactory.getLogger(ClassPathFile.class);
 
 	private Vector<String> fPathItems;
 
@@ -91,7 +92,7 @@ public class ClassPathFile {
 		try {
 			zipFile = new ZipFile(archive);
 		} catch (IOException io) {
-			log.log(Level.WARNING, "Fail to load file: " + archive.getPath(), io);
+			log.warn("Fail to load file: " + archive.getPath(), io);
 			return null;
 		}
 		ZipEntry entry = zipFile.getEntry(fileName);
@@ -109,7 +110,7 @@ public class ClassPathFile {
 			zipFile.close();
 			return data;
 		} catch (IOException e) {
-			log.log(Level.WARNING, "Fail to load data from jar: " + archive.getPath(), e);
+			log.warn("Fail to load data from jar: " + archive.getPath(), e);
 		} finally {
 			try {
 				if (stream != null)
@@ -141,7 +142,7 @@ public class ClassPathFile {
 			return out.toByteArray();
 
 		} catch (IOException e) {
-			log.log(Level.WARNING, "Fail to load file: " + f.getPath(), e);
+			log.warn("Fail to load file: " + f.getPath(), e);
 		}
 		return null;
 	}

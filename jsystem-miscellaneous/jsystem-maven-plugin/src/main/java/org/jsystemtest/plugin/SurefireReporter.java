@@ -8,8 +8,9 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
@@ -38,7 +39,7 @@ import junit.framework.Test;
  * 
  */
 public class SurefireReporter implements ExtendTestReporter, ExtendTestListener {
-	static Logger log = Logger.getLogger(XmlReporter.class.getName());
+	static Logger log = LoggerFactory.getLogger(XmlReporter.class);
 
 	private static final double MILL_TO_SEC = 1000;
 	private final String logFileName = "TEST-JSystem_maven_plugin_report.xml";
@@ -63,14 +64,14 @@ public class SurefireReporter implements ExtendTestReporter, ExtendTestListener 
 		try {
 			hostName = InetAddress.getLocalHost().getHostName();
 		} catch (UnknownHostException e) {
-			log.warning("Failed to get local host name");
+			log.warn("Failed to get local host name");
 		}
 		testSuite.setHostName(hostName);
 		testSuiteStart = System.currentTimeMillis();
 		try {
 			createFolder();
 		} catch (IOException e) {
-			log.warning("Failed in createing folder");
+			log.warn("Failed in createing folder");
 			e.printStackTrace();
 		}
 
@@ -151,7 +152,7 @@ public class SurefireReporter implements ExtendTestReporter, ExtendTestListener 
 			FileUtils.write(logFolderName + File.separator + logFileName, xmlString);
 			FileUtils.write(logFileName, xmlString);
 		} catch (Exception e) {
-			log.log(Level.SEVERE, "Failed to export report to XML", e);
+			log.error("Failed to export report to XML", e);
 		}
 	}
 

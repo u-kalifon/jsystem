@@ -6,8 +6,9 @@ package jsystem.extensions.report.xml;
 import java.io.File;
 import java.util.Enumeration;
 import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import jsystem.framework.FrameworkOptions;
 import jsystem.framework.JSystemProperties;
@@ -33,7 +34,7 @@ import org.w3c.dom.Element;
  * 
  */
 public class Reader {
-	private static Logger log = Logger.getLogger(Reader.class.getName());
+	private static Logger log = LoggerFactory.getLogger(Reader.class);
 
 	File reportFile;
 
@@ -68,7 +69,7 @@ public class Reader {
 		try {
 			FileUtils.saveDocumentToFile(doc, reportFile);
 		} catch (Exception e) {
-			log.log(Level.WARNING, "Fail to write to XML file", e);
+			log.warn("Fail to write to XML file", e);
 			return;
 		}
 		properties = new Properties();
@@ -123,8 +124,7 @@ public class Reader {
 
 		if (currentTest == null) {
 			if (!isInnerTest) {
-				log.log(Level.WARNING,
-						"Unable To Perform 'endTest' :current test ==null");
+				log.warn("Unable To Perform 'endTest' :current test ==null");
 			}
 			return;
 		}
@@ -176,7 +176,7 @@ public class Reader {
 		try {
 			FileUtils.saveDocumentToFile(doc, reportFile);
 		} catch (Exception e) {
-			log.log(Level.WARNING, "Fail to write to XML file", e);
+			log.warn("Fail to write to XML file", e);
 			return;
 		}
 		lastUpdatedTime = System.currentTimeMillis();
@@ -196,7 +196,7 @@ public class Reader {
 			try {
 				main.setAttribute(key, p.getProperty(key));
 			} catch (Throwable t) {
-				log.log(Level.WARNING, "*******   Fail to set attribute: + "
+				log.warn("*******   Fail to set attribute: + "
 						+ key + "   **********");
 			}
 		}

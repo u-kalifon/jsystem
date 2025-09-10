@@ -4,8 +4,9 @@
 package com.aqua.anttask.jsystem;
 
 import java.util.Vector;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.taskdefs.Sequential;
@@ -27,8 +28,7 @@ public class JSystemSwitch {
 	String uuid;
 	String scenarioString;
 
-	static Logger log = Logger.getLogger(JSystemSwitch.class.getName());
-
+	static Logger log = LoggerFactory.getLogger(JSystemSwitch.class);
 
 	public void setFullUuid(String uuid){
 		this.uuid = uuid;
@@ -66,7 +66,7 @@ public class JSystemSwitch {
 		}
 		
 		loadParameters();
-		log.log(Level.INFO,"Switch on \"" + value + "\"");
+		log.info("Switch on \"" + value + "\"");
 
 		if (value == null)
 			throw new BuildException("Value is missing");
@@ -144,7 +144,6 @@ public class JSystemSwitch {
 		{
 			this.value = value;
 		}
-
 
 		public void execute()
 		throws BuildException

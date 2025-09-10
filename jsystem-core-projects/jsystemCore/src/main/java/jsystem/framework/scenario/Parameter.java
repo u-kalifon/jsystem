@@ -8,8 +8,9 @@ package jsystem.framework.scenario;
 import java.lang.reflect.Method;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import jsystem.extensions.report.html.HtmlCodeWriter;
 import jsystem.framework.FrameworkOptions;
@@ -33,7 +34,7 @@ import jsystem.utils.beans.BeanUtils;
  * @author guy.arieli, golan.derazon
  */
 public class Parameter {
-	private static Logger log = Logger.getLogger(Parameter.class.getName());
+	private static Logger log = LoggerFactory.getLogger(Parameter.class);
 
 	public enum ParameterType {
 		STRING, INT, LONG, BOOLEAN, FLOAT, DOUBLE, SHORT, ENUM, FILE, DATE(
@@ -153,7 +154,7 @@ public class Parameter {
 				try {
 					return provider.getFromString((String) value);
 				} catch (Exception e) {
-					log.log(Level.WARNING, "Fail to convert to object: " + value, e);
+					log.warn("Fail to convert to object: " + value, e);
 				}
 			}
 		}
@@ -212,7 +213,7 @@ public class Parameter {
 	 */
 	private boolean isUserDefinedEquals(final Object inValue) {
 		if (!type.equals(ParameterType.USER_DEFINED)) {
-			log.warning("Parameter is not from type user defined");
+			log.warn("Parameter is not from type user defined");
 			return false;
 		}
 		if (value == null && inValue == null) {

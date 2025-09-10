@@ -1,7 +1,8 @@
 package il.co.topq.refactor.utils;
 
 import java.io.IOException;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -17,7 +18,7 @@ public class SerializedBeanUtils {
 	 * 0.paramName=Value<br>
 	 */
 	private static final String REGEX_PATTERN = "(\\n\\d?\\.?)%s(=.*\\s?\\n)";
-	private static Logger log = Logger.getLogger("SerializedBeanUtils");
+	private static Logger log = LoggerFactory.getLogger("SerializedBeanUtils");
 
 	private SerializedBeanUtils() {
 		// Utils class
@@ -58,7 +59,7 @@ public class SerializedBeanUtils {
 	 */
 	public static String renameBeanParameter(final String currentBean, final String currentParameterName,
 			final String newParameterName) {
-		log.fine("Replacing parameter " + currentParameterName + " with " + newParameterName);
+		log.debug("Replacing parameter " + currentParameterName + " with " + newParameterName);
 
 		String regex = String.format(REGEX_PATTERN, StringUtils.firstCharToUpper(currentParameterName.trim()));
 		String replaceStr = String.format("$1%s$2", StringUtils.firstCharToUpper(newParameterName.trim()));

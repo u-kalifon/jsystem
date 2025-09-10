@@ -145,7 +145,7 @@ public class RunnerSOTest extends RunnerTest {
 	protected void loadParameters() {
 		parameters = new HashMap<String, Parameter>();
 		if (test == null) {
-			log.warning("test class could not be loaded. class="
+			log.warn("test class could not be loaded. class="
 					+ getClassName() + " method=" + getMethodName());
 			return;
 		}
@@ -215,7 +215,7 @@ public class RunnerSOTest extends RunnerTest {
 				currentParameter.setEnumStringsAndNames(enumStringsAndNames);
 			} else {
 				// TODO throw exception
-				log.fine("Unknown parameter type: " + type.getName() + " for: "
+				log.debug("Unknown parameter type: " + type.getName() + " for: "
 						+ paramName);
 				continue;
 			}

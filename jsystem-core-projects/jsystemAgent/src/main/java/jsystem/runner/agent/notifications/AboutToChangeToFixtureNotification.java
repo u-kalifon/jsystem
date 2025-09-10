@@ -3,7 +3,8 @@
  */
 package jsystem.runner.agent.notifications;
 
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import jsystem.framework.fixture.Fixture;
 import jsystem.framework.report.JSystemListeners;
@@ -16,7 +17,7 @@ import jsystem.runner.loader.LoadersManager;
 public class AboutToChangeToFixtureNotification extends RunnerNotification {
 	private static final long serialVersionUID = 468127957018314228L;
 	
-	private static Logger log = Logger.getLogger(AboutToChangeToFixtureNotification.class.getName());
+	private static Logger log = LoggerFactory.getLogger(AboutToChangeToFixtureNotification.class);
 	
 	private String fixtureClassName;
 	
@@ -32,7 +33,7 @@ public class AboutToChangeToFixtureNotification extends RunnerNotification {
 			Fixture fixtureInstance = (Fixture)fixtureClass.newInstance();
 			mediator.aboutToChangeTo(fixtureInstance);			
 		} catch (Exception e){
-			log.warning("Failed creating instance of fixture " + getFixtureClassName() + " " + e.getMessage());
+			log.warn("Failed creating instance of fixture " + getFixtureClassName() + " " + e.getMessage());
 		}
 	}
 	

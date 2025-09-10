@@ -19,8 +19,9 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.UUID;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -112,7 +113,7 @@ import org.w3c.dom.NodeList;
  */
 public class RunnerTest implements JTest, UIHandler {
 
-	protected static Logger log = Logger.getLogger(RunnerTest.class.getName());
+	protected static Logger log = LoggerFactory.getLogger(RunnerTest.class);
 
 	public static final int STAT_NOT_RUN = 0;
 
@@ -443,7 +444,7 @@ public class RunnerTest implements JTest, UIHandler {
 		if (uuidProp != null) {
 			return uuidProp.getAttribute("value");
 		}
-		log.fine("RunnerTest did not have a UUID, Generating a new one");
+		log.debug("RunnerTest did not have a UUID, Generating a new one");
 		return getRandomUUID();
 	}
 
@@ -622,7 +623,7 @@ public class RunnerTest implements JTest, UIHandler {
 		try {
 			return ParameterUtils.propertiesToString(clone);
 		} catch (Exception e) {
-			log.warning("Failed converting test parameters to string " + e.getMessage());
+			log.warn("Failed converting test parameters to string " + e.getMessage());
 			return "";
 		}
 	}
@@ -710,7 +711,7 @@ public class RunnerTest implements JTest, UIHandler {
 				return true;
 			}
 		} catch (Exception e) {
-			log.log(Level.WARNING, "Failed executing handle ui event on class: " + getTest().getClass(), e);
+			log.warn("Failed executing handle ui event on class: " + getTest().getClass(), e);
 		}
 		return false;
 	}
@@ -724,10 +725,10 @@ public class RunnerTest implements JTest, UIHandler {
 			if (getTest() instanceof ValidationHandler) {
 				return ((ValidationHandler) getTest()).validate(map, getMethodName());
 			} else {
-				log.fine("validate was not found");
+				log.debug("validate was not found");
 			}
 		} catch (Exception e) {
-			log.log(Level.WARNING, "Failed executing validate method", e);
+			log.warn("Failed executing validate method", e);
 		}
 		return null;
 	}
@@ -961,7 +962,7 @@ public class RunnerTest implements JTest, UIHandler {
 		try {
 			initTestProperties(true);
 		} catch (Throwable e) {
-			log.fine("Problem initiating TestProperties annotation for test " + getMethodName());
+			log.debug("Problem initiating TestProperties annotation for test " + getMethodName());
 		}
 	}
 
@@ -1014,7 +1015,7 @@ public class RunnerTest implements JTest, UIHandler {
 	protected void loadParameters() {
 		parameters = new HashMap<String, Parameter>();
 		if (test == null) {
-			log.warning("test class could not be loaded. class=" + getClassName() + " method=" + getMethodName());
+			log.warn("test class could not be loaded. class=" + getClassName() + " method=" + getMethodName());
 			return;
 		}
 		String include = includeParamsStringAnnotation;
@@ -1052,7 +1053,7 @@ public class RunnerTest implements JTest, UIHandler {
 				 * work only with single parameter setter
 				 */
 				if (parametersType.length != 1) {
-					log.log(Level.FINE, "Number of setter parameter is not 1 for: " + methodName);
+					log.debug("Number of setter parameter is not 1 for: " + methodName);
 					continue;
 				}
 				Class<?> type = parametersType[0];
@@ -1085,17 +1086,17 @@ public class RunnerTest implements JTest, UIHandler {
 					if (getter != null) {
 						if (!getter.getReturnType().equals(type)) {
 							getter = null;
-							log.warning("Getter return type not match for: " + methodName);
+							log.warn("Getter return type not match for: " + methodName);
 						} else {
 							currentParameter.setGetMethod(getter);
 							try {
 								defaultValue = getter.invoke(test, new Object[0]);
 							} catch (Exception e) {
-								log.warning("Fail to invoke method: " + methodName);
+								log.warn("Fail to invoke method: " + methodName);
 							}
 						}
 					} else {
-						log.warning("Parameter " + paramName + " doesn't have a getter");
+						log.warn("Parameter " + paramName + " doesn't have a getter");
 					}
 				} catch (Throwable throwable) {
 					// ignored
@@ -1115,7 +1116,7 @@ public class RunnerTest implements JTest, UIHandler {
 								.loadClass(useProvider.provider().getName()).newInstance();
 						provider.setProviderConfig(args);
 					} catch (Exception e) {
-						log.log(Level.WARNING, "Fail to create new instance of provider", e);
+						log.warn("Fail to create new instance of provider", e);
 						continue;
 					}
 					currentParameter.setType(ParameterType.USER_DEFINED);
@@ -1178,7 +1179,7 @@ public class RunnerTest implements JTest, UIHandler {
 						currentParameter.setOptions(enumStrings);
 						currentParameter.setEnumStringsAndNames(enumStringsAndNames);
 					} else {
-						log.fine("Unknown parameter type: " + type.getName() + " for: " + paramName);
+						log.debug("Unknown parameter type: " + type.getName() + " for: " + paramName);
 						continue;
 					}
 				}
@@ -1214,7 +1215,7 @@ public class RunnerTest implements JTest, UIHandler {
 						}
 					}
 				} catch (Exception e) {
-					log.log(Level.WARNING, "Fail to get Doc of Param " + currentParameter.getName());
+					log.warn("Fail to get Doc of Param " + currentParameter.getName());
 				}
 
 				String name = lowerFirstLetter(currentParameter.getName());
@@ -1240,7 +1241,7 @@ public class RunnerTest implements JTest, UIHandler {
 						}
 					}
 				} catch (Exception e) {
-					log.log(Level.WARNING, "Fail to get method sectionOrder() from class " + className);
+					log.warn("Fail to get method sectionOrder() from class " + className);
 				}
 			}
 		}
@@ -1373,7 +1374,7 @@ public class RunnerTest implements JTest, UIHandler {
 				// without proper message
 				ListenerstManager.getInstance().report(
 						"Failed to set value to parameter with name '" + currentParameter.getName() + "'", 2);
-				log.log(Level.WARNING, "Failed to set value to parameter with name '" + currentParameter.getName()
+				log.warn("Failed to set value to parameter with name '" + currentParameter.getName()
 						+ "'", e);
 
 			}
@@ -1426,7 +1427,7 @@ public class RunnerTest implements JTest, UIHandler {
 					ScenarioHelpers.removePropertiesFromScenarioProps(getRoot().getName(), getFullUUID() + "."
 							+ givenParameter.getName(), true);
 				} catch (Exception e) {
-					log.severe("Problem removing a null parameter from Scenario properties file");
+					log.error("Problem removing a null parameter from Scenario properties file");
 				}
 			} else {
 				properties.put(originalParameter.getName(), stringValue);
@@ -1453,7 +1454,7 @@ public class RunnerTest implements JTest, UIHandler {
 	 */
 	private void setParameters() {
 		if (parameters == null) {
-			log.warning("Try to load properties when the parameters are not init");
+			log.warn("Try to load properties when the parameters are not init");
 			return;
 		}
 		Enumeration<Object> enum1 = properties.keys();

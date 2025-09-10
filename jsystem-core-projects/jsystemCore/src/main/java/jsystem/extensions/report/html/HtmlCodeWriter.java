@@ -11,8 +11,9 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.lang.reflect.Method;
 import java.util.HashMap;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import jsystem.framework.FrameworkOptions;
 import jsystem.framework.JSystemProperties;
@@ -39,7 +40,7 @@ import com.thoughtworks.qdox.model.JavaMethod;
  * 
  */
 public class HtmlCodeWriter {
-	private static Logger log = Logger.getLogger(HtmlCodeWriter.class.getName());
+	private static Logger log = LoggerFactory.getLogger(HtmlCodeWriter.class);
 
 	private static HtmlCodeWriter writer;
 
@@ -80,7 +81,7 @@ public class HtmlCodeWriter {
 				testsClassFolderName = JSystemProperties.getCurrentTestsPath();
 			} catch (Exception e1) {
 				// can't find the current test pass
-				log.log(Level.WARNING,"Failed to get current tests path");
+				log.warn("Failed to get current tests path");
 			}
 			if (testsClassFolderName != null) {
 				File testsClassFolder = new File(testsClassFolderName);
@@ -255,7 +256,7 @@ public class HtmlCodeWriter {
 				docBuilder.addSource(preProcessCode(FileUtils.read(testSrc)));
 			} catch (Throwable e) {
 				// ignore process fail
-				log.log(Level.FINE, "Fail to process file: " + testSrc.getAbsolutePath(), e);
+				log.debug("Fail to process file: " + testSrc.getAbsolutePath(), e);
 			}
 			filesTime.put(testSrc, testSrc.lastModified());
 		}

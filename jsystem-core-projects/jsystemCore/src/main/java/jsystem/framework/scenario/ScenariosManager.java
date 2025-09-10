@@ -6,8 +6,9 @@ package jsystem.framework.scenario;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Vector;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import jsystem.framework.FrameworkOptions;
 import jsystem.framework.JSystemProperties;
@@ -34,7 +35,7 @@ public class ScenariosManager {
 
 	public static final int RUN_MODE_STOP = 2;
 
-	private static Logger log = Logger.getLogger(ScenariosManager.class.getName());
+	private static Logger log = LoggerFactory.getLogger(ScenariosManager.class);
 
 	private static ScenariosManager manager = null;
 	
@@ -173,7 +174,7 @@ public class ScenariosManager {
 			try {
 				currentScenario = getScenario(null);
 			} catch (Exception e) {
-				log.log(Level.SEVERE, "Unable to init scenario", e);
+				log.error("Unable to init scenario", e);
 				lastException = e;
 			}
 		}
@@ -193,7 +194,7 @@ public class ScenariosManager {
 				currentScenario = getScenario(null);
 				return null;
 			} catch (Exception e) { // current scenario file is damaged
-				log.log(Level.SEVERE, "Unable to init scenario", e);
+				log.error("Unable to init scenario", e);
 				lastException = e;
 				// remove current Scenario entry from jsystem properties file
 				JSystemProperties.getInstance().removePreference(FrameworkOptions.CURRENT_SCENARIO);
@@ -213,7 +214,7 @@ public class ScenariosManager {
 						      +"new Default scenario was loaded\n\n"
 						      +StringUtils.getStackTrace(lastException);
 					} catch (Exception e2) {
-						log.log(Level.SEVERE, "Unable to init scenario", e2);
+						log.error("Unable to init scenario", e2);
 						lastException = e2;
 					}
 				}

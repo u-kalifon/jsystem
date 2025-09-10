@@ -9,8 +9,9 @@ import java.io.FilenameFilter;
 import java.text.SimpleDateFormat;
 import java.util.Properties;
 import java.util.Vector;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.JOptionPane;
 import javax.xml.parsers.DocumentBuilder;
@@ -47,7 +48,7 @@ import org.w3c.dom.Text;
  */
 public class ScenarioConversion {
 	
-	private static Logger log = Logger.getLogger(ScenarioConversion.class.getName());
+	private static Logger log = LoggerFactory.getLogger(ScenarioConversion.class);
 
 	private static ScenarioConversion sc = null;
 
@@ -67,7 +68,7 @@ public class ScenarioConversion {
 		try {
 			db = XmlUtils.getDocumentBuilder();
 		} catch (ParserConfigurationException e) {
-			log.log(Level.WARNING, "Fail to init the document builder", e);
+			log.warn("Fail to init the document builder", e);
 		}
 	}
 
@@ -149,7 +150,7 @@ public class ScenarioConversion {
 					 * If the scenario doesn't exit will continue
 					 */
 					if(!scenarioToConvertFile.exists()){ 
-						log.log(Level.WARNING,"Scenario file: " + sName + " couldn't be found and will be ignored");
+						log.warn("Scenario file: " + sName + " couldn't be found and will be ignored");
 						continue;
 					}
 					Scenario s = convertScenario(scenarioToConvertFile);
@@ -275,7 +276,7 @@ public class ScenarioConversion {
 			}
 			WaitDialog.endWaitDialog();
 		} catch (Exception e) {
-			log.log(Level.WARNING, "Old scenario convertion fail", e);
+			log.warn("Old scenario convertion fail", e);
 			return;
 		}
 		ScenariosManager.init();

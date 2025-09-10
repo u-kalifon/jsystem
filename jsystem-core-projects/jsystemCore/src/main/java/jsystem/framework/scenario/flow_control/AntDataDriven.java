@@ -2,7 +2,6 @@ package jsystem.framework.scenario.flow_control;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
 
 import jsystem.framework.FrameworkOptions;
 import jsystem.framework.JSystemProperties;
@@ -128,13 +127,13 @@ public class AntDataDriven extends AntFlowControl {
 			final DataProvider provider = BeanUtils.createInstanceFromClassName(providersClassName[i],
 					DataProvider.class);
 			if (null == provider) {
-				log.log(Level.WARNING, "Fail to init provider: " + providersClassName[i]);
+				log.warn("Fail to init provider: " + providersClassName[i]);
 				continue;
 			}
 			options.add(((DataProvider) provider).getName());
 		}
 		if (options.size() == 0) {
-			log.log(Level.WARNING, "No data providers specified - Using only the default CSV provider");
+			log.warn("No data providers specified - Using only the default CSV provider");
 			options.add(new CsvDataProvider().getName());
 		}
 		return options;

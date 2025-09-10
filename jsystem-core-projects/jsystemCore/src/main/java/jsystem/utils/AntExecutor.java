@@ -12,14 +12,15 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Properties;
 import java.util.Vector;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import jsystem.utils.build.BuildException;
 import jsystem.utils.exec.Command;
 import jsystem.utils.exec.Execute;
 
 public class AntExecutor {
-	private static Logger log = Logger.getLogger(AntExecutor.class.getName());
+	private static Logger log = LoggerFactory.getLogger(AntExecutor.class);
 	
 	public static Command executeAnt(File antHome, File buildFile) throws Exception {
 		return executeAnt(antHome, buildFile, null, null);

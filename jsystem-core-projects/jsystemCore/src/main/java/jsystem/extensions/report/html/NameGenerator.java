@@ -4,8 +4,9 @@
 package jsystem.extensions.report.html;
 
 import java.io.Serializable;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import jsystem.framework.common.CommonResources;
 import jsystem.utils.FileUtils;
@@ -17,7 +18,7 @@ public class NameGenerator implements Serializable {
 	 */
 	private static final long serialVersionUID = 4918047399994880310L;
 	
-	private static Logger log = Logger.getLogger(NameGenerator.class.getName());
+	private static Logger log = LoggerFactory.getLogger(NameGenerator.class);
 	
 	int i = 1;
 
@@ -51,7 +52,7 @@ public class NameGenerator implements Serializable {
 			try {
 				FileUtils.addPropertyToFile(CommonResources.TEST_INNER_TEMP_FILENAME, CommonResources.LAST_REPORT_NAME, lastReportName);
 			}catch (Exception e) {
-				log.log(Level.WARNING,"Failed updating last report",e);
+				log.warn("Failed updating last report",e);
 			}
 		}		
 	}
@@ -63,7 +64,6 @@ public class NameGenerator implements Serializable {
 	public int getIndex() {
 		return i;
 	}
-
 
 
 	public String getLastName() {

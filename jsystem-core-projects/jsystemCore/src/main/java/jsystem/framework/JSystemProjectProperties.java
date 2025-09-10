@@ -8,13 +8,14 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Properties;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Handles jsystem project properties.
  */
 public class JSystemProjectProperties {
-	private static Logger log = Logger.getLogger(JSystemProjectProperties.class.getName());
+	private static Logger log = LoggerFactory.getLogger(JSystemProjectProperties.class);
 	/**
 	 * JSystem project properties file name
 	 */
@@ -80,7 +81,7 @@ public class JSystemProjectProperties {
 				try{out.close();}catch(Exception e){};
 			};
 		}else {
-			log.warning(FrameworkOptions.TESTS_SOURCE_FOLDER.getString() + " points to a none existing folder.");
+			log.warn(FrameworkOptions.TESTS_SOURCE_FOLDER.getString() + " points to a none existing folder.");
 		}
 		//save to classes
 		String testsClassesFolderName = JSystemProperties.getInstance().getPreference(

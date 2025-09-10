@@ -3,14 +3,14 @@
  */
 package jsystem.treeui;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import jsystem.runner.agent.server.RunnerEngine;
 
 public class GracefulStopListener implements WaitDialogListener {
 	RunnerEngine agent;
-	private static Logger log = Logger.getLogger(GracefulStopListener.class.getName());
+	private static Logger log = LoggerFactory.getLogger(GracefulStopListener.class);
 	
 	public GracefulStopListener(RunnerEngine agent){
 		this.agent = agent;
@@ -20,7 +20,7 @@ public class GracefulStopListener implements WaitDialogListener {
 		try {
 			agent.stop();
 		} catch (Exception e) {
-			log.log(Level.SEVERE,"Failed stopping execution. " + e.getMessage());
+			log.error("Failed stopping execution. " + e.getMessage());
 
 		}
 	}

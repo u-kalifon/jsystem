@@ -4,7 +4,8 @@
 package jsystem.treeui.client;
 
 import java.lang.reflect.Method;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import jsystem.runner.agent.server.RunnerEngine;
 import jsystem.runner.agent.server.RunnerEngineImpl;
@@ -16,7 +17,7 @@ import jsystem.runner.agent.server.RunnerEngineImpl;
  * @author goland
  */
 public class ApplicationRunnerEngineImpl extends RunnerEngineImpl {
-	private static Logger log = Logger.getLogger(ApplicationRunnerEngineImpl.class.getName());
+	private static Logger log = LoggerFactory.getLogger(ApplicationRunnerEngineImpl.class);
 
 	public ApplicationRunnerEngineImpl() throws Exception {
 		super();
@@ -67,10 +68,10 @@ public class ApplicationRunnerEngineImpl extends RunnerEngineImpl {
 				try {
 					m.invoke(engine, (Object[]) null);
 				} catch (Exception e) {
-					log.warning("Failed performing " + operation +" on " + engine.getId() + " " + e.getMessage());
+					log.warn("Failed performing " + operation +" on " + engine.getId() + " " + e.getMessage());
 				}
 			} else {
-				log.fine(engine.getId() + " is disconnected. skipping activation");
+				log.debug(engine.getId() + " is disconnected. skipping activation");
 			}
 		}
 

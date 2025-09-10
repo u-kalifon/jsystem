@@ -11,7 +11,8 @@ import java.util.HashMap;
 import java.util.Properties;
 import java.util.Random;
 import java.util.Scanner;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -51,7 +52,7 @@ import junit.framework.Test;
  */
 public abstract class AbstractHtmlReporter implements ExtendLevelTestReporter, ExtendTestListener {
 
-	private static final Logger log = Logger.getLogger(AbstractHtmlReporter.class.getName());
+	private static final Logger log = LoggerFactory.getLogger(AbstractHtmlReporter.class);
 
 	protected static final SimpleDateFormat TIME_FORMAT = new SimpleDateFormat("HH:mm:ss");
 
@@ -127,7 +128,7 @@ public abstract class AbstractHtmlReporter implements ExtendLevelTestReporter, E
 
 	@Override
 	public void report(String title, final String message, int status, boolean bold, boolean html, boolean link) {
-		log.fine("Recieved report request with title '" + title + "'");
+		log.debug("Recieved report request with title '" + title + "'");
 		if (null == specialReportsElementsHandler) {
 			// This never suppose to happen, since it was initialized in the
 			// start test event.
@@ -309,7 +310,7 @@ public abstract class AbstractHtmlReporter implements ExtendLevelTestReporter, E
 
 	@Override
 	public void addError(Test arg0, Throwable arg1) {
-		log.fine("Received error event");
+		log.debug("Received error event");
 		if (DifidoConfig.getInstance().getBoolean(DifidoProperty.ERRORS_TO_FAILURES)) {
 			// We don't want errors in the report, so we will change each error
 			// to failure.
@@ -322,7 +323,7 @@ public abstract class AbstractHtmlReporter implements ExtendLevelTestReporter, E
 
 	@Override
 	public void addFailure(Test arg0, AssertionFailedError arg1) {
-		log.fine("Received failure event");
+		log.debug("Received failure event");
 		currentTest.setStatus(Status.failure);
 		updateCalculatedNumberOfTestsDueToFailure();
 	}
@@ -340,7 +341,7 @@ public abstract class AbstractHtmlReporter implements ExtendLevelTestReporter, E
 
 	@Override
 	public void endTest(Test arg0) {
-		log.fine("Received end test");
+		log.debug("Received end test");
 		currentTest.setDuration(System.currentTimeMillis() - testStartTime);
 		// In case scenario properties were added during the test run, we want
 		// also to add them to the scenario model
@@ -355,7 +356,7 @@ public abstract class AbstractHtmlReporter implements ExtendLevelTestReporter, E
 
 	@Override
 	public void addWarning(Test test) {
-		log.fine("Received warning event");
+		log.debug("Received warning event");
 		currentTest.setStatus(Status.warning);
 	}
 
@@ -373,7 +374,7 @@ public abstract class AbstractHtmlReporter implements ExtendLevelTestReporter, E
 			firstTest = false;
 			startRun();
 		}
-		log.fine("Recieved start test event");
+		log.debug("Recieved start test event");
 		specialReportsElementsHandler = new SpecialReportElementsHandler();
 		String testName = testInfo.meaningfulName;
 		if (null == testName || "null".equals(testName)) {
@@ -385,7 +386,7 @@ public abstract class AbstractHtmlReporter implements ExtendLevelTestReporter, E
 		if (null == testName || "null".equals(testName)) {
 			testName = testInfo.className;
 		}
-		log.fine("Test name is " + testName);
+		log.debug("Test name is " + testName);
 		currentTest = new TestNode(index++, testName, executionUid + "-" + index);
 		currentTest.setClassName(testInfo.className);
 		testStartTime = System.currentTimeMillis();
@@ -413,7 +414,7 @@ public abstract class AbstractHtmlReporter implements ExtendLevelTestReporter, E
 				while (scanner.hasNextLine()) {
 					final String parameter = scanner.nextLine();
 					if (!parameter.contains("=")) {
-						log.warning("There is an illegal parameter '" + parameter + "' in test " + testName);
+						log.warn("There is an illegal parameter '" + parameter + "' in test " + testName);
 						continue;
 					}
 					// We are searching only for the first '"' since that in
@@ -435,17 +436,17 @@ public abstract class AbstractHtmlReporter implements ExtendLevelTestReporter, E
 		try {
 			updateTestDirectory();
 		} catch (Throwable t) {
-			log.severe("Failed updating test directory due to " + t.getMessage());
+			log.error("Failed updating test directory due to " + t.getMessage());
 		}
 		try {
 			writeExecution(execution);
 		} catch (Throwable t) {
-			log.severe("Failed writing execution due to " + t.getMessage());
+			log.error("Failed writing execution due to " + t.getMessage());
 		}
 		try {
 			writeTestDetails(testDetails);
 		} catch (Throwable t) {
-			log.severe("Failed writing test details due to " + t.getMessage());
+			log.error("Failed writing test details due to " + t.getMessage());
 		}
 	}
 
@@ -513,13 +514,13 @@ public abstract class AbstractHtmlReporter implements ExtendLevelTestReporter, E
 
 	@Override
 	public void endLoop(AntForLoop loop, int count) {
-		log.fine("Recieved end loop event");
+		log.debug("Recieved end loop event");
 		currentScenario = (ScenarioNode) currentScenario.getParent();
 	}
 
 	@Override
 	public void startContainer(JTestContainer container) {
-		log.fine("Recieved start containter event");
+		log.debug("Recieved start containter event");
 		if (firstTest) {
 			firstTest = false;
 			startRun();
@@ -578,7 +579,7 @@ public abstract class AbstractHtmlReporter implements ExtendLevelTestReporter, E
 
 	@Override
 	public void endContainer(JTestContainer container) {
-		log.fine("Recieved end container event");
+		log.debug("Recieved end container event");
 		if (currentScenario.getParent() instanceof ScenarioNode) {
 			currentScenario = (ScenarioNode) currentScenario.getParent();
 
@@ -629,7 +630,7 @@ public abstract class AbstractHtmlReporter implements ExtendLevelTestReporter, E
 
 	@Override
 	public void startLevel(String level, EnumReportLevel place) throws IOException {
-		log.fine("Recieved start level event");
+		log.debug("Recieved start level event");
 		ReportElement element = new ReportElement();
 		element.setTime(TIME_FORMAT.format(new Date()));
 		element.setTitle(level);
@@ -644,7 +645,7 @@ public abstract class AbstractHtmlReporter implements ExtendLevelTestReporter, E
 
 	@Override
 	public void stopLevel() {
-		log.fine("Recieved stop level event");
+		log.debug("Recieved stop level event");
 		ReportElement element = new ReportElement();
 		element.setTime(TIME_FORMAT.format(new Date()));
 		element.setType(ElementType.stopLevel);

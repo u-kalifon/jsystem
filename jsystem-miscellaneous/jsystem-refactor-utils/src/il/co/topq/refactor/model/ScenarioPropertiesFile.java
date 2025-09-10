@@ -14,7 +14,7 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.UUID;
-import java.util.logging.Level;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -71,7 +71,7 @@ public class ScenarioPropertiesFile extends JSystemFile {
 
             //We ask here if the property line ends with the parameter name so we wont accept a subset of this parameter name
 			if (((String) entry.getKey()).endsWith(testUUID + "." + oldName)) {
-				log.fine("Found property " + ((String) entry.getKey()) + " in file " + file.getName());
+				log.debug("Found property " + ((String) entry.getKey()) + " in file " + file.getName());
 				it.remove();
 				newProperties.put(((String) entry.getKey()).replace(oldName, newName), entry.getValue());
 				// if (!oldName.equals("timeoutInSec")) {
@@ -122,7 +122,7 @@ public class ScenarioPropertiesFile extends JSystemFile {
 		close();
 		File newPropFile = new File(scenariosFolder + newName + ".properties");
 		if (newPropFile.exists()) {
-			log.severe("Scenario properites file with the same name is already exists: " + newPropFile.getAbsolutePath());
+			log.error("Scenario properites file with the same name is already exists: " + newPropFile.getAbsolutePath());
 			throw new IOException("Scenario properties file with the same name is already exists: "
 					+ newPropFile.getAbsolutePath());
 		}
@@ -143,7 +143,7 @@ public class ScenarioPropertiesFile extends JSystemFile {
 			close();
 			File newPropertiesFile = new File(scenariosFolder + newName + ".properties");
 			if (newPropertiesFile.exists()) {
-				log.severe("Scenario properties file with the same name is already exists: "
+				log.error("Scenario properties file with the same name is already exists: "
 						+ newPropertiesFile.getAbsolutePath());
 				throw new IOException("Scenario XML file with the same name is already exists: "
 						+ newPropertiesFile.getAbsolutePath());
@@ -152,14 +152,14 @@ public class ScenarioPropertiesFile extends JSystemFile {
 			sourceControlHandler.moveFile(file, newPropertiesFile);
 			file = newPropertiesFile;
 		} catch (Exception e) {
-			log.log(Level.SEVERE, "Excpetion was caught during renaming of file", e);
+			log.error("Excpetion was caught during renaming of file", e);
 			throw new ScenarioXmlParseException();
 		}
 
 	}
 
 	public void save() throws IOException {
-		log.finer("Saving file " + this);
+		log.debug("Saving file " + this);
 		init();
 		FileOutputStream fos = null;
 		try {
@@ -170,7 +170,7 @@ public class ScenarioPropertiesFile extends JSystemFile {
 			properties.store(fos, "");
 
 		} catch (Exception e) {
-			log.log(Level.WARNING, "Failed to save properties file " + file.getAbsolutePath(), e);
+			log.warn("Failed to save properties file " + file.getAbsolutePath(), e);
 			throw new IOException("Failed to save properties file " + file.getAbsolutePath());
 		} finally {
 			if (fos != null) {
@@ -201,7 +201,7 @@ public class ScenarioPropertiesFile extends JSystemFile {
 
 	public void put(String prop, String newBean) throws IOException {
 		init();
-		log.fine("Putting in file key:" + prop + " with value: " + newBean);
+		log.debug("Putting in file key:" + prop + " with value: " + newBean);
 		properties.put(prop, newBean);
 
 	}

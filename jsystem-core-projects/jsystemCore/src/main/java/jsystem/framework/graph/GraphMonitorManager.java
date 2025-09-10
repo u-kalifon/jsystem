@@ -9,8 +9,9 @@ import java.awt.Insets;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Vector;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
@@ -39,7 +40,7 @@ public class GraphMonitorManager implements TestListener {
 
 	private ViewUpdater updater; // updater that runs the extra thread
 
-	private static Logger log = Logger.getLogger(GraphMonitorManager.class.getName());
+	private static Logger log = LoggerFactory.getLogger(GraphMonitorManager.class);
 
 	private GraphMonitorManager() {
 		mtf = new MainTabbedForm();
@@ -122,7 +123,7 @@ public class GraphMonitorManager implements TestListener {
 				mtf.updateActiveTab();
 			}
 		} catch (Exception e) {
-			log.log(Level.FINE, "Fail while updating graph monitor", e);
+			log.debug("Fail while updating graph monitor", e);
 		}
 	}
 
@@ -166,7 +167,7 @@ public class GraphMonitorManager implements TestListener {
 			// xmlPerTest = toXmlString();
 			// ListenerstManager.getInstance().setData(xmlPerTest);
 		} catch (Exception e) {
-			log.log(Level.WARNING, "Fail writing graphs to report", e);
+			log.warn("Fail writing graphs to report", e);
 		}
 	}
 
@@ -178,7 +179,7 @@ public class GraphMonitorManager implements TestListener {
 		// doc =
 		// DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
 		// } catch (ParserConfigurationException e) {
-		// log.log(Level.WARNING, "Fail getting Document", e);
+		// log.warn("Fail getting Document", e);
 		// }
 		//
 		// Element root = doc.createElement("testGraphs");
@@ -205,7 +206,7 @@ public class GraphMonitorManager implements TestListener {
 	// xformer.transform(source, strResult);
 	// return writer.toString();
 	// } catch (Exception e) {
-	// log.log(Level.WARNING, "Fail while generating data to xml String", e);
+	// log.warn("Fail while generating data to xml String", e);
 	// return null;
 	// }
 	// }
@@ -228,7 +229,7 @@ public class GraphMonitorManager implements TestListener {
 		// }
 		// }
 		// } catch (Exception e) {
-		// log.log(Level.WARNING, "Fail to find root Element", e);
+		// log.warn("Fail to find root Element", e);
 		// }
 		return graphResults;
 	}

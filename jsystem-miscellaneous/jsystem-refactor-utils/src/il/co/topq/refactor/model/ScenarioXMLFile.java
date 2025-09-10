@@ -13,7 +13,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
-import java.util.logging.Level;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
@@ -106,7 +105,7 @@ public class ScenarioXMLFile extends JSystemFile {
 			file = newXmlFile;
 			XmlUtils.getElement(doc, XPATH_GET_SCENARIO_ROOT_ELEMENT).setAttribute("name", newScenarioName);
 		} catch (Exception e) {
-			log.log(Level.SEVERE, "Excpetion was caught during renaming of file", e);
+			log.error("Excpetion was caught during renaming of file", e);
 			throw new ScenarioXmlParseException();
 		}
 
@@ -149,7 +148,7 @@ public class ScenarioXMLFile extends JSystemFile {
 		} catch (IOException e) {
 			throw e;
 		} catch (Exception e) {
-			log.log(Level.SEVERE, "Excpetion was caught during renaming of file", e);
+			log.error("Excpetion was caught during renaming of file", e);
 			throw new ScenarioXmlParseException();
 		}
 

@@ -18,8 +18,9 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Vector;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -70,7 +71,7 @@ import junit.framework.SystemTest;
  */
 public class TestsTreeController implements TreeSelectionListener, MouseListener, ActionListener, KeyListener {
 
-	private static Logger log = Logger.getLogger(TestsTreeController.class.getName());
+	private static Logger log = LoggerFactory.getLogger(TestsTreeController.class);
 
 	private TestTreePanel testBrowser;
 
@@ -301,7 +302,7 @@ public class TestsTreeController implements TreeSelectionListener, MouseListener
 					info.append("<b>Documentation:</b><br>").append(doc.replaceAll("\n", "<br>"));
 				}
 			} catch (Exception e) {
-				log.log(Level.WARNING, "Failed to get test documentation", e);
+				log.warn("Failed to get test documentation", e);
 			}
 		} else if (currentNode instanceof ScenarioNode) {
 			String doc = ScenarioHelpers.getTestProperty(null, ((ScenarioNode) currentNode).getScenarioName(),

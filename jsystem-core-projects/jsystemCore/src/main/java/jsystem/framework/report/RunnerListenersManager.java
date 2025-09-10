@@ -18,8 +18,9 @@ import java.util.ArrayList;
 import java.util.Properties;
 import java.util.StringTokenizer;
 import java.util.Vector;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import jsystem.extensions.report.difido.HtmlReporter;
 import jsystem.extensions.report.html.CssUtils.CssType;
@@ -83,7 +84,7 @@ public class RunnerListenersManager extends DefaultReporterImpl implements JSyst
 
 	private static final String RUNNER_REPORTERS_STATE_BIN = "runnerReportersState.bin";
 
-	private static Logger log = Logger.getLogger(RunnerListenersManager.class.getName());
+	private static Logger log = LoggerFactory.getLogger(RunnerListenersManager.class);
 
 	private static RunnerListenersManager manager = null;
 
@@ -213,7 +214,7 @@ public class RunnerListenersManager extends DefaultReporterImpl implements JSyst
 			try {
 				loadReporter(reporterClassName);
 			} catch (Exception e) {
-				log.log(Level.WARNING, "fail to load reporter: " + reporterClassName, e);
+				log.warn("fail to load reporter: " + reporterClassName, e);
 				report("load reporter exception", StringUtils.getStackTrace(e), true);
 			}
 		}
@@ -237,7 +238,7 @@ public class RunnerListenersManager extends DefaultReporterImpl implements JSyst
 			RunnerStatePersistencyManager.getInstance().setLoadReporters(true);
 			step("Agent is about to restart");
 		} catch (Exception e) {
-			log.warning("Failed saving reporters state" + e.getMessage());
+			log.warn("Failed saving reporters state" + e.getMessage());
 		} finally {
 			try {
 				fos.close();
@@ -325,7 +326,7 @@ public class RunnerListenersManager extends DefaultReporterImpl implements JSyst
 						try {
 							tl.addError(test, t);
 						} catch (Throwable ex) {
-							log.log(Level.SEVERE, "Fail to add error to testlistener", ex);
+							log.error("Fail to add error to testlistener", ex);
 						}
 					}
 				}
@@ -353,7 +354,7 @@ public class RunnerListenersManager extends DefaultReporterImpl implements JSyst
 						try {
 							tl.addError(test, new Exception(message));
 						} catch (Throwable ex) {
-							log.log(Level.SEVERE, "Fail to add error to testlistener", ex);
+							log.error("Fail to add error to testlistener", ex);
 						}
 					}
 				}
@@ -421,7 +422,7 @@ public class RunnerListenersManager extends DefaultReporterImpl implements JSyst
 					try {
 						tl.addFailure(test, t);
 					} catch (Throwable ex) {
-						log.log(Level.SEVERE, "Fail to add failure to testlistener", ex);
+						log.error("Fail to add failure to testlistener", ex);
 					}
 
 				}
@@ -464,7 +465,7 @@ public class RunnerListenersManager extends DefaultReporterImpl implements JSyst
 					try {
 						tl.addFailure(test, new AssertionFailedError(message));
 					} catch (Throwable ex) {
-						log.log(Level.SEVERE, "Fail to add failure to testlistener", ex);
+						log.error("Fail to add failure to testlistener", ex);
 					}
 
 				}
@@ -492,7 +493,7 @@ public class RunnerListenersManager extends DefaultReporterImpl implements JSyst
 				try {
 					tl.addWarning(test);
 				} catch (Throwable ex) {
-					log.log(Level.SEVERE, "Fail to add warning to testlistener", ex);
+					log.error("Fail to add warning to testlistener", ex);
 				}
 			}
 		}
@@ -550,7 +551,7 @@ public class RunnerListenersManager extends DefaultReporterImpl implements JSyst
 				updateNegativeTest(test);
 				fireStatusManager(null, currentTest, false);
 			} catch (IOException e) {
-				log.log(Level.SEVERE, "Fail to stopLevel", e);
+				log.error("Fail to stopLevel", e);
 			}
 		} else {
 			fireEndTest(test, blockReporters);
@@ -592,7 +593,7 @@ public class RunnerListenersManager extends DefaultReporterImpl implements JSyst
 						((TestListener) currentObject).endTest(test);
 					}
 				} catch (Throwable ex) {
-					log.log(Level.SEVERE, "Fail to signal status manager", ex);
+					log.error("Fail to signal status manager", ex);
 				}
 			}
 		}
@@ -639,7 +640,7 @@ public class RunnerListenersManager extends DefaultReporterImpl implements JSyst
 					if (test == null) {
 						continue;
 					}
-					log.log(Level.SEVERE, "Fail to add endTest", ex);
+					log.error("Fail to add endTest", ex);
 				}
 			}
 		}
@@ -652,7 +653,7 @@ public class RunnerListenersManager extends DefaultReporterImpl implements JSyst
 					try {
 						tl.endTest(test);
 					} catch (Throwable ex) {
-						log.log(Level.SEVERE, "Fail to add endTest", ex);
+						log.error("Fail to add endTest", ex);
 					}
 				}
 			}
@@ -736,7 +737,7 @@ public class RunnerListenersManager extends DefaultReporterImpl implements JSyst
 						meaningfulName = rt.getMeaningfulName();
 					}
 				} catch (Exception e) {
-					log.log(Level.FINE, "Failed getting RunnerTest", e);
+					log.debug("Failed getting RunnerTest", e);
 				}
 			}
 		}
@@ -764,7 +765,7 @@ public class RunnerListenersManager extends DefaultReporterImpl implements JSyst
 				((ScenarioAsTest) currentTest).setCurrentRunnerTest(test);
 				fireStatusManager(ti, currentTest, true);
 			} catch (IOException e) {
-				log.log(Level.SEVERE, "Fail to startLevel", e);
+				log.error("Fail to startLevel", e);
 			}
 		} else {
 			fireTestStart(ti, test, false);
@@ -790,7 +791,7 @@ public class RunnerListenersManager extends DefaultReporterImpl implements JSyst
 					try {
 						tl.startTest(testInfo);
 					} catch (Throwable ex) {
-						log.log(Level.SEVERE, "Fail to startTest", ex);
+						log.error("Fail to startTest", ex);
 					}
 				}
 			} else {
@@ -804,7 +805,7 @@ public class RunnerListenersManager extends DefaultReporterImpl implements JSyst
 							tl.startTest(test);
 						}
 					} catch (Throwable ex) {
-						log.log(Level.SEVERE, "Fail to startTest", ex);
+						log.error("Fail to startTest", ex);
 					}
 				}
 			}
@@ -882,15 +883,15 @@ public class RunnerListenersManager extends DefaultReporterImpl implements JSyst
 				code = code.replaceAll(tname.getMethodName(), "<b>" + tname.getMethodName() + "</b>");
 				reportHtml("test code", code, true);
 			} catch (FileNotFoundException e) {
-				log.log(Level.WARNING, "Fail to load test code because source file is missing. " + e.getMessage());
+				log.warn("Fail to load test code because source file is missing. " + e.getMessage());
 			} catch (ClassNotFoundException e) {
 				reportHtml(
 						"Can't display test code because java2html.jar is missing.",
 						"If you wish to view code, please install java2html.jar. For instructions go to <a href=\"http://trac.jsystemtest.org/wiki/DetailedOSProjectsList\">JSystem Trac</a>",
 						true);
-				log.log(Level.WARNING, "Fail to load test code because java2html jar is missing. " + e.getMessage());
+				log.warn("Fail to load test code because java2html jar is missing. " + e.getMessage());
 			} catch (Exception e) {
-				log.log(Level.WARNING, "Fail to load test code. " + e.getMessage());
+				log.warn("Fail to load test code. " + e.getMessage());
 			}
 		}
 
@@ -910,7 +911,7 @@ public class RunnerListenersManager extends DefaultReporterImpl implements JSyst
 			try {
 				classDoc = HtmlCodeWriter.getInstance().getClassJavaDoc(tname.getClassName());
 			} catch (Exception e) {
-				log.log(Level.WARNING, "Fail to process document", e);
+				log.warn("Fail to process document", e);
 			}
 		}
 		if (tDoc != null) {
@@ -919,7 +920,7 @@ public class RunnerListenersManager extends DefaultReporterImpl implements JSyst
 			try {
 				testDoc = HtmlCodeWriter.getInstance().getMethodJavaDoc(tname.getClassName(), tname.getMethodName());
 			} catch (Exception e) {
-				log.log(Level.WARNING, "Fail to process document", e);
+				log.warn("Fail to process document", e);
 			}
 		}
 		if (classDoc != null && (!classDoc.equals(""))) {
@@ -978,7 +979,7 @@ public class RunnerListenersManager extends DefaultReporterImpl implements JSyst
 				try {
 					fl.aboutToChangeTo(fixture);
 				} catch (Throwable ex) {
-					log.log(Level.SEVERE, "Fail to file aboutToChangeTo", ex);
+					log.error("Fail to file aboutToChangeTo", ex);
 				}
 			}
 		}
@@ -992,7 +993,7 @@ public class RunnerListenersManager extends DefaultReporterImpl implements JSyst
 				try {
 					fl.fixtureChanged(fixture);
 				} catch (Throwable ex) {
-					log.log(Level.SEVERE, "Fail to file fixtureChanged", ex);
+					log.error("Fail to file fixtureChanged", ex);
 				}
 			}
 		}
@@ -1006,7 +1007,7 @@ public class RunnerListenersManager extends DefaultReporterImpl implements JSyst
 				try {
 					fl.startFixturring();
 				} catch (Throwable ex) {
-					log.log(Level.SEVERE, "Fail to file startFixturring", ex);
+					log.error("Fail to file startFixturring", ex);
 				}
 			}
 		}
@@ -1020,7 +1021,7 @@ public class RunnerListenersManager extends DefaultReporterImpl implements JSyst
 				try {
 					fl.endFixturring();
 				} catch (Throwable ex) {
-					log.log(Level.SEVERE, "Fail to file endFixturring", ex);
+					log.error("Fail to file endFixturring", ex);
 				}
 			}
 		}
@@ -1039,12 +1040,12 @@ public class RunnerListenersManager extends DefaultReporterImpl implements JSyst
 
 	@Override
 	public void initReporters() {
-		log.fine("RunnerListenersManager - initReporters ");
+		log.debug("RunnerListenersManager - initReporters ");
 		parser.init();
 		testIndex = new RepeatTestIndex();
 		ArrayList<TestReporter> array = getAllReporters();
 		for (int i = 0; i < array.size(); i++) {
-			log.fine("RunnerListenersManager - initiating " + array.get(i));
+			log.debug("RunnerListenersManager - initiating " + array.get(i));
 			array.get(i).init();
 		}
 		testsCount = 0;
@@ -1079,7 +1080,7 @@ public class RunnerListenersManager extends DefaultReporterImpl implements JSyst
 				try {
 					((ExtendTestReporter) currentObject).startSection();
 				} catch (Throwable ex) {
-					log.log(Level.SEVERE, "Fail to startSection", ex);
+					log.error("Fail to startSection", ex);
 				}
 			}
 		}
@@ -1101,7 +1102,7 @@ public class RunnerListenersManager extends DefaultReporterImpl implements JSyst
 				try {
 					((ExtendTestReporter) currentObject).endSection();
 				} catch (Throwable ex) {
-					log.log(Level.SEVERE, "Fail to endSection", ex);
+					log.error("Fail to endSection", ex);
 				}
 			}
 		}
@@ -1125,7 +1126,7 @@ public class RunnerListenersManager extends DefaultReporterImpl implements JSyst
 			out.write(content);
 			out.close();
 		} catch (IOException e) {
-			log.log(Level.WARNING, "Fail to save file", e);
+			log.warn("Fail to save file", e);
 		}
 	}
 
@@ -1145,7 +1146,7 @@ public class RunnerListenersManager extends DefaultReporterImpl implements JSyst
 				try {
 					((ExtendTestReporter) currentObject).setData(data);
 				} catch (Throwable ex) {
-					log.log(Level.SEVERE, "Fail to setData", ex);
+					log.error("Fail to setData", ex);
 				}
 			}
 		}
@@ -1158,7 +1159,7 @@ public class RunnerListenersManager extends DefaultReporterImpl implements JSyst
 				try {
 					((SutListener) currentObject).sutChanged(sutName);
 				} catch (Throwable ex) {
-					log.log(Level.SEVERE, "Fail to sutChange", ex);
+					log.error("Fail to sutChange", ex);
 				}
 			}
 		}
@@ -1171,7 +1172,7 @@ public class RunnerListenersManager extends DefaultReporterImpl implements JSyst
 				try {
 					((ScenarioListener) currentObject).scenarioChanged(current, changeType);
 				} catch (Throwable ex) {
-					log.log(Level.SEVERE, "Fail to scenarioChanged", ex);
+					log.error("Fail to scenarioChanged", ex);
 				}
 			}
 		}
@@ -1184,7 +1185,7 @@ public class RunnerListenersManager extends DefaultReporterImpl implements JSyst
 				try {
 					((ScenarioListener) currentObject).scenarioDirectoryChanged(directory);
 				} catch (Throwable ex) {
-					log.log(Level.SEVERE, "Fail to scenarioDirectoryChanged", ex);
+					log.error("Fail to scenarioDirectoryChanged", ex);
 				}
 			}
 		}
@@ -1252,7 +1253,7 @@ public class RunnerListenersManager extends DefaultReporterImpl implements JSyst
 					try {
 						((ExtendTestListener) currentObject).endTest(currentTest);
 					} catch (Throwable ex) {
-						log.log(Level.SEVERE, "Fail to endReport", ex);
+						log.error("Fail to endReport", ex);
 					}
 				}
 			}
@@ -1270,7 +1271,7 @@ public class RunnerListenersManager extends DefaultReporterImpl implements JSyst
 				try {
 					((ExtendTestListener) currentObject).endRun();
 				} catch (Throwable ex) {
-					log.log(Level.SEVERE, "Fail to endRun", ex);
+					log.error("Fail to endRun", ex);
 				}
 			}
 		}
@@ -1307,7 +1308,7 @@ public class RunnerListenersManager extends DefaultReporterImpl implements JSyst
 						}
 						((ExtendLevelTestReporter) currentObject).startLevel(level, Reporter.CurrentPlace);
 					} catch (Throwable ex) {
-						log.log(Level.SEVERE, "Fail to report", ex);
+						log.error("Fail to report", ex);
 					}
 				}
 			}
@@ -1318,7 +1319,7 @@ public class RunnerListenersManager extends DefaultReporterImpl implements JSyst
 					try {
 						((ExtendLevelTestReporter) currentObject).startLevel(level, place);
 					} catch (Throwable ex) {
-						log.log(Level.SEVERE, "Fail to report", ex);
+						log.error("Fail to report", ex);
 					}
 				}
 			}
@@ -1347,7 +1348,7 @@ public class RunnerListenersManager extends DefaultReporterImpl implements JSyst
 				try {
 					((ExtendLevelTestReporter) currentObject).stopLevel();
 				} catch (Throwable ex) {
-					log.log(Level.SEVERE, "Fail to report", ex);
+					log.error("Fail to report", ex);
 				}
 			}
 		}
@@ -1436,7 +1437,7 @@ public class RunnerListenersManager extends DefaultReporterImpl implements JSyst
 					try {
 						((ExtendTestReporter) currentObject).report(title, message, status, false, false, true);
 					} catch (Throwable ex) {
-						log.log(Level.SEVERE, "Fail to addLink", ex);
+						log.error("Fail to addLink", ex);
 					}
 				}
 			}
@@ -1447,7 +1448,7 @@ public class RunnerListenersManager extends DefaultReporterImpl implements JSyst
 					try {
 						((ExtendTestReporter) currentObject).report(title, message, status, false, true, false);
 					} catch (Throwable ex) {
-						log.log(Level.SEVERE, "Fail to reportHtml", ex);
+						log.error("Fail to reportHtml", ex);
 					}
 				}
 			}
@@ -1482,13 +1483,13 @@ public class RunnerListenersManager extends DefaultReporterImpl implements JSyst
 					try {
 						((ExtendTestReporter) currentObject).report(title, message, status, bold, false, false);
 					} catch (Throwable ex) {
-						log.log(Level.SEVERE, "Fail to report", ex);
+						log.error("Fail to report", ex);
 					}
 				} else if (currentObject instanceof TestReporter) {
 					try {
 						((TestReporter) currentObject).report(title, message, status, bold);
 					} catch (Throwable ex) {
-						log.log(Level.SEVERE, "Fail to report", ex);
+						log.error("Fail to report", ex);
 					}
 				}
 			}
@@ -1523,13 +1524,13 @@ public class RunnerListenersManager extends DefaultReporterImpl implements JSyst
 				try {
 					((ExtendTestReporter) currentObject).addProperty(key, value);
 				} catch (Throwable ex) {
-					log.log(Level.SEVERE, "Fail to report", ex);
+					log.error("Fail to report", ex);
 				}
 			} else if (currentObject instanceof TestReporter) {
 				try {
 					((TestReporter) currentObject).report(title, null, true, false);
 				} catch (Throwable ex) {
-					log.log(Level.SEVERE, "Fail to report", ex);
+					log.error("Fail to report", ex);
 				}
 			}
 
@@ -1546,7 +1547,7 @@ public class RunnerListenersManager extends DefaultReporterImpl implements JSyst
 				try {
 					result = fl.showConfirmDialog(title, message, optionType, messageType);
 				} catch (Throwable ex) {
-					log.log(Level.SEVERE, "Fail to run executionEnded", ex);
+					log.error("Fail to run executionEnded", ex);
 				}
 			}
 		}
@@ -1565,7 +1566,7 @@ public class RunnerListenersManager extends DefaultReporterImpl implements JSyst
 				try {
 					fl.executionEnded(scenarioName);
 				} catch (Throwable ex) {
-					log.log(Level.SEVERE, "Fail to run executionEnded", ex);
+					log.error("Fail to run executionEnded", ex);
 				}
 			}
 		}
@@ -1579,7 +1580,7 @@ public class RunnerListenersManager extends DefaultReporterImpl implements JSyst
 				try {
 					fl.remoteExit();
 				} catch (Throwable ex) {
-					log.log(Level.SEVERE, "Fail to run remote exit", ex);
+					log.error("Fail to run remote exit", ex);
 				}
 			}
 		}
@@ -1593,7 +1594,7 @@ public class RunnerListenersManager extends DefaultReporterImpl implements JSyst
 				try {
 					fl.errorOccured(title, message, level);
 				} catch (Throwable ex) {
-					log.log(Level.SEVERE, "Fail to run errorOccured", ex);
+					log.error("Fail to run errorOccured", ex);
 				}
 			}
 		}
@@ -1607,7 +1608,7 @@ public class RunnerListenersManager extends DefaultReporterImpl implements JSyst
 				try {
 					fl.remotePause();
 				} catch (Throwable ex) {
-					log.log(Level.SEVERE, "Fail to run remote pause", ex);
+					log.error("Fail to run remote pause", ex);
 				}
 			}
 		}
@@ -1697,7 +1698,7 @@ public class RunnerListenersManager extends DefaultReporterImpl implements JSyst
 					try {
 						tl.startContainer(container);
 					} catch (Throwable ex) {
-						log.log(Level.SEVERE, "Fail to send startContainer notification to testlistener", ex);
+						log.error("Fail to send startContainer notification to testlistener", ex);
 					}
 				}
 			}
@@ -1725,7 +1726,7 @@ public class RunnerListenersManager extends DefaultReporterImpl implements JSyst
 					try {
 						tl.endContainer(container);
 					} catch (Throwable ex) {
-						log.log(Level.SEVERE, "Fail to send endContainer notification to testlistener", ex);
+						log.error("Fail to send endContainer notification to testlistener", ex);
 					}
 				}
 			}
@@ -1744,7 +1745,7 @@ public class RunnerListenersManager extends DefaultReporterImpl implements JSyst
 					try {
 						((ExtendLevelTestReporter) currentObject).startLevel("Loop Number: " + count + ", " + loop.getLoopParamName() +"="+ loop.getLoopValue(count), Reporter.CurrentPlace);
 					} catch (Throwable ex) {
-						log.log(Level.SEVERE, "Fail to report", ex);
+						log.error("Fail to report", ex);
 					}
 				}
 			}
@@ -1757,7 +1758,7 @@ public class RunnerListenersManager extends DefaultReporterImpl implements JSyst
 				try {
 					tl.startLoop(loop, count);
 				} catch (Throwable ex) {
-					log.log(Level.SEVERE, "Fail to send startLoop notification to testlistener", ex);
+					log.error("Fail to send startLoop notification to testlistener", ex);
 				}
 			}
 		}
@@ -1773,7 +1774,7 @@ public class RunnerListenersManager extends DefaultReporterImpl implements JSyst
 					try {
 						((ExtendLevelTestReporter) currentObject).stopLevel();
 					} catch (Throwable ex) {
-						log.log(Level.SEVERE, "Fail to report", ex);
+						log.error("Fail to report", ex);
 					}
 				}
 			}
@@ -1786,7 +1787,7 @@ public class RunnerListenersManager extends DefaultReporterImpl implements JSyst
 				try {
 					tl.endLoop(loop, count);
 				} catch (Throwable ex) {
-					log.log(Level.SEVERE, "Fail to send endLoop notification to test listener", ex);
+					log.error("Fail to send endLoop notification to test listener", ex);
 				}
 			}
 		}
@@ -1804,7 +1805,7 @@ public class RunnerListenersManager extends DefaultReporterImpl implements JSyst
 						((ExtendLevelTestReporter) currentObject).closeLevelsUpTo(lastTestLevelName, false);
 					}
 				} catch (Throwable ex) {
-					log.log(Level.SEVERE, "Fail to close all levels", ex);
+					log.error("Fail to close all levels", ex);
 				}
 			}
 		}
@@ -1818,7 +1819,7 @@ public class RunnerListenersManager extends DefaultReporterImpl implements JSyst
 				try {
 					((ScenarioListener) currentObject).scenarioDirtyStateChanged(s, isDirty);
 				} catch (Throwable ex) {
-					log.log(Level.SEVERE, "Fail to scenarioDirtyStateChanged", ex);
+					log.error("Fail to scenarioDirtyStateChanged", ex);
 				}
 			}
 		}
@@ -1832,7 +1833,7 @@ public class RunnerListenersManager extends DefaultReporterImpl implements JSyst
 				try {
 					((ScenarioListener) currentObject).testParametersChanged(testIIUUD, oldValues, newValues);
 				} catch (Throwable ex) {
-					log.log(Level.SEVERE, "Fail to testParametersChanged", ex);
+					log.error("Fail to testParametersChanged", ex);
 				}
 			}
 		}
@@ -1847,7 +1848,7 @@ public class RunnerListenersManager extends DefaultReporterImpl implements JSyst
 				try {
 					((ExtendTestReporter) currentObject).flush();
 				} catch (Throwable ex) {
-					log.log(Level.SEVERE, "Fail to flush reporter", ex);
+					log.error("Fail to flush reporter", ex);
 				}
 			}
 		}
@@ -1861,7 +1862,7 @@ public class RunnerListenersManager extends DefaultReporterImpl implements JSyst
 				try {
 					((ExtendTestReporter) currentObject).setContainerProperties(ancestorLevel, key, value);
 				} catch (Throwable ex) {
-					log.log(Level.SEVERE, "Fail to report", ex);
+					log.error("Fail to report", ex);
 				}
 			}
 		}

@@ -4,7 +4,8 @@
 package jsystem.runner.agent.mediators;
 
 import java.io.IOException;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import jsystem.framework.report.Reporter;
 import jsystem.framework.report.TestReporter;
@@ -17,7 +18,7 @@ import jsystem.runner.agent.server.RunnerAgent;
  * @author goland
  */
 public class TestReporterMediator extends BaseMediator implements TestReporter {
-	private static Logger log = Logger.getLogger(TestReporterMediator.class.getName());
+	private static Logger log = LoggerFactory.getLogger(TestReporterMediator.class);
 	public TestReporterMediator(RunnerAgent agent){
 		super(agent);
 	}
@@ -53,7 +54,7 @@ public class TestReporterMediator extends BaseMediator implements TestReporter {
 		if (NotificationLevel.getCurrentNotificationLevel().equals(NotificationLevel.ALL_ONLY_TITLE)){
 			message = null;
 		}
-		log.finest("report(String title, String message, boolean status, boolean bold)");
+		log.trace("report(String title, String message, boolean status, boolean bold)");
 		sendNotification(new ReportNotification(runnerAgent().getClass().getName(),title,message,status,bold));
 	}
 

@@ -6,7 +6,8 @@ package jsystem.runner.agent.clients;
 import java.net.SocketException;
 import java.rmi.UnmarshalException;
 import java.util.Vector;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import jsystem.framework.JSystemProperties;
 import jsystem.framework.report.ExecutionListener;
@@ -23,7 +24,7 @@ import junit.framework.AssertionFailedError;
 import junit.framework.Test;
 
 public class DefaultDistributedExecutor extends BaseJSystemDistributedExecutor {
-	private static Logger log = Logger.getLogger(DefaultDistributedExecutor.class.getName());
+	private static Logger log = LoggerFactory.getLogger(DefaultDistributedExecutor.class);
 	private Vector<JSystemAgentClient> agentsList;
 	
 	@Override
@@ -71,7 +72,7 @@ public class DefaultDistributedExecutor extends BaseJSystemDistributedExecutor {
 				internalListener.waitForEndEvent(JSystemProperties.getInstance().getLongPreference("agen.client.wait_for_events",30000));
 				long waitTimeForNotification = JSystemProperties.getInstance().getLongPreference("agen.client.wait_time_for_notifications",5000);
 				Thread.sleep(waitTimeForNotification);
-				log.fine("Finished waiting for run end");
+				log.debug("Finished waiting for run end");
 				client.removeListener(internalListener);
 				client.removeListener(listener);
 				client = null;
@@ -104,7 +105,7 @@ public class DefaultDistributedExecutor extends BaseJSystemDistributedExecutor {
 
 		@Override
 		public void executionEnded(String scenarioName) {
-			log.fine("Execution ended " + scenarioName);
+			log.debug("Execution ended " + scenarioName);
 			executionEnded = true;
 			
 		}

@@ -4,7 +4,8 @@
 package jsystem.treeui.client;
 
 import java.io.File;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import jsystem.framework.FrameworkOptions;
 import jsystem.framework.JSystemProperties;
@@ -41,7 +42,7 @@ import jsystem.utils.StringUtils;
  * @author goland
  */
 public class RunnerEngineManager {
-	private static Logger log = Logger.getLogger(RunnerEngineManager.class.getName());
+	private static Logger log = LoggerFactory.getLogger(RunnerEngineManager.class);
 	
 	private static RunnerEngine agent;
 	private static ConnectionListener connectionListener;
@@ -73,7 +74,7 @@ public class RunnerEngineManager {
 	public static void initRunnerEngine(String agentUrl) throws Exception {
 		if (agent != null){
 			agent.close();
-			log.fine("Agent closed ");
+			log.debug("Agent closed ");
 		}
 		agent = new ApplicationRunnerEngineImpl();
 		if (!StringUtils.isEmpty(agentUrl) && !LOCAL_AGNET.equals(agentUrl.trim())){
@@ -90,11 +91,11 @@ public class RunnerEngineManager {
 			connectionListener = new ConnectionListener();
 		}
 		connectionListener.stopMonitor();
-		log.fine("Monitor stopped ");
+		log.debug("Monitor stopped ");
 		connectionListener.setEngine(agent);
-		log.fine("Engine set ");
+		log.debug("Engine set ");
 		connectionListener.connect();
-		log.fine("Connected ");
+		log.debug("Connected ");
 	}
 	
 	
@@ -120,7 +121,6 @@ public class RunnerEngineManager {
 			scenario.setStatusNotRunning();
 		}
 	}
-
 
 	private static boolean validateProject(String projectName){
 		File projectFolder = new File(JSystemProperties.getInstance().getPreference(FrameworkOptions.TESTS_CLASS_FOLDER)).getParentFile();

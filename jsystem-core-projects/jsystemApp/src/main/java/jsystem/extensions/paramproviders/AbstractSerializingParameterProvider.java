@@ -5,20 +5,21 @@ import java.io.StringWriter;
 import java.util.LinkedHashMap;
 import java.util.Properties;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import jsystem.framework.scenario.ParameterProvider;
 
 public abstract class AbstractSerializingParameterProvider implements ParameterProvider {
-	private static Logger log = Logger.getLogger(GenericObjectParameterProvider.class.getName());
+	private static Logger log = LoggerFactory.getLogger(GenericObjectParameterProvider.class);
 
 	protected String propetiesToString(String className, Properties properties) {
 		StringWriter writer = new StringWriter();
 		try {
 			properties.store(writer, null);
 		} catch (IOException e) {
-			log.log(Level.WARNING, "Fail to store the property object to the StringWriter", e);
+			log.warn("Fail to store the property object to the StringWriter", e);
 		}
 		StringBuilder buf = new StringBuilder();
 		// append the class name then ';'

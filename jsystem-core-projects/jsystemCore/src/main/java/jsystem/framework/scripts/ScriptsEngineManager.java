@@ -6,8 +6,9 @@ package jsystem.framework.scripts;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import jsystem.framework.FrameworkOptions;
 import jsystem.framework.JSystemProperties;
@@ -26,7 +27,7 @@ import jsystem.runner.loader.LoadersManager;
  *
  */
 public class ScriptsEngineManager {
-	private static Logger log = Logger.getLogger(ScriptsEngineManager.class.getName());
+	private static Logger log = LoggerFactory.getLogger(ScriptsEngineManager.class);
 	
 	private static ScriptsEngineManager manager;
 	
@@ -61,7 +62,7 @@ public class ScriptsEngineManager {
 			try {
 				loadManager(engineClassName);
 			} catch (Exception e) {
-				log.log(Level.WARNING, "fail to load engine: " + engineClassName, e);
+				log.warn("fail to load engine: " + engineClassName, e);
 			}
 		}
 		

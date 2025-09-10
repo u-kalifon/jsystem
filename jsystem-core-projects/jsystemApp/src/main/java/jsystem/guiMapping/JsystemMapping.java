@@ -6,11 +6,11 @@ package jsystem.guiMapping;
 import java.io.File;
 import java.io.InputStream;
 import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import jsystem.extensions.report.html.summary.HtmlSummaryReporter;
-
 
 /**
  * Mapping Jsystem GUI
@@ -22,7 +22,7 @@ import jsystem.extensions.report.html.summary.HtmlSummaryReporter;
 public class JsystemMapping  {
 
 	Properties properties = new Properties();
-	private static Logger log = Logger.getLogger(HtmlSummaryReporter.class.getName());
+	private static Logger log = LoggerFactory.getLogger(HtmlSummaryReporter.class);
 
 	File file = new File("JSystemMapping.properties");
 	
@@ -39,7 +39,7 @@ public class JsystemMapping  {
 			}
 			properties.load(stream);
 		} catch (Exception e) {
-			log.log(Level.SEVERE, "JSystem Mapping file was not found");
+			log.error("JSystem Mapping file was not found");
 		}finally {
 			try{stream.close();}catch(Exception e){};
 		}
@@ -335,7 +335,7 @@ public class JsystemMapping  {
 			try{
 				properties.getProperty(propertyName).trim();
 			}catch(Exception e){
-				log.log(Level.SEVERE,"Property "+propertyName+" was not found in the JsystemMappingFile");
+				log.error("Property "+propertyName+" was not found in the JsystemMappingFile");
 			}
 
      return properties.getProperty(propertyName).trim();
@@ -353,12 +353,11 @@ public class JsystemMapping  {
 			try{
 				properties.getProperty(propertyName).trim();
 			}catch(Exception e){
-				log.log(Level.SEVERE,"Property "+propertyName+" was not found in the JsystemMappingFile");
+				log.error("Property "+propertyName+" was not found in the JsystemMappingFile");
 			}
 
 	  return Integer.parseInt(properties.getProperty(propertyName).trim());
 	}
-
 
 	
 }

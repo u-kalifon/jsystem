@@ -5,7 +5,8 @@ package jsystem.framework.scripts.jython;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import jsystem.framework.JSystemProperties;
 import jsystem.framework.scenario.Parameter;
@@ -25,8 +26,7 @@ public class JythonScriptExecutor extends ScriptExecutor {
 	Thread thread;
 	Throwable exception;
 
-	private static Logger log = Logger.getLogger(JythonScriptExecutor.class
-			.getName());
+	private static Logger log = LoggerFactory.getLogger(JythonScriptExecutor.class.getName());
 
 	public class InterpreterRunnable implements Runnable {
 		@Override
@@ -141,7 +141,7 @@ public class JythonScriptExecutor extends ScriptExecutor {
 
 		} catch (PyException e) {
 			String message = e.toString();
-			log.warning(String.format(
+			log.warn(String.format(
 					"Error while loading parameters from '%s':\n%s",
 					getJythonFile().getAbsolutePath(), message));
 		}

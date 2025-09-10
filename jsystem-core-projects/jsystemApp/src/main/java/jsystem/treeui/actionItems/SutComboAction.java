@@ -4,8 +4,9 @@
 package jsystem.treeui.actionItems;
 
 import java.awt.event.ActionEvent;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.Action;
 
@@ -22,7 +23,7 @@ public class SutComboAction extends IgnisAction {
 	
 	private static SutComboAction action = null;
 	
-	private static Logger log = Logger.getLogger(TestTreeView.class.getName());
+	private static Logger log = LoggerFactory.getLogger(TestTreeView.class);
 
 	private SutComboAction(){
 		super();
@@ -54,7 +55,7 @@ public class SutComboAction extends IgnisAction {
 		try {
 			RunnerEngineManager.getRunnerEngine().changeSut(sutName);
 		} catch (Exception e1) {
-			log.log(Level.SEVERE, "Fail to load sut", e1);
+			log.error("Fail to load sut", e1);
 		}
 		refreshSUTTooltip();
 	}

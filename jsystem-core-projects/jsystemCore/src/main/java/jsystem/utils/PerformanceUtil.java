@@ -4,7 +4,8 @@
 package jsystem.utils;
 
 import java.util.HashMap;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Utility for performance measuring and reporting.<br>
@@ -23,7 +24,7 @@ import java.util.logging.Logger;
  */
 public class PerformanceUtil {
 
-	private static Logger log = Logger.getLogger(PerformanceUtil.class.getName());
+	private static Logger log = LoggerFactory.getLogger(PerformanceUtil.class);
 	private static int counter = 0;
 	
 	private static HashMap<Integer, Long> times;

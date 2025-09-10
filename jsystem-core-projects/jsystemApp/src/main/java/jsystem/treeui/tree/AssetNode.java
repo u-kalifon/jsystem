@@ -11,8 +11,9 @@ import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Vector;
 import java.util.jar.JarEntry;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 
@@ -59,7 +60,7 @@ public abstract class AssetNode extends DefaultMutableTreeNode implements Compar
 	 */
 	private static final long serialVersionUID = -7663450817941582253L;
 
-	protected static Logger log = Logger.getLogger(AssetNode.class.getName());
+	protected static Logger log = LoggerFactory.getLogger(AssetNode.class);
 
 	protected boolean isSelected;
 
@@ -154,7 +155,7 @@ public abstract class AssetNode extends DefaultMutableTreeNode implements Compar
 							className = StringUtils.getClassName(f.getPath(),
 									root.getPath());
 						} catch (Throwable e) {
-							log.log(Level.FINE, "Unable to extract class name",
+							log.debug("Unable to extract class name",
 									e);
 							continue;
 						}
@@ -228,7 +229,7 @@ public abstract class AssetNode extends DefaultMutableTreeNode implements Compar
 						className = StringUtils.getClassName(entry.getName(),
 								"");
 					} catch (Exception e) {
-						log.log(Level.FINE, "Unable to extract class name", e);
+						log.debug("Unable to extract class name", e);
 						continue;
 					}
 					try {
@@ -239,7 +240,7 @@ public abstract class AssetNode extends DefaultMutableTreeNode implements Compar
 							children.add(new TestCaseNode(this, testClass));
 						}
 					} catch (Throwable ignore) {
-						log.log(Level.FINE, "Fail to add class", ignore);
+						log.debug("Fail to add class", ignore);
 					}
 
 				}

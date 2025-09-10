@@ -16,8 +16,9 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import jsystem.framework.FrameworkOptions;
 import jsystem.framework.JSystemProperties;
@@ -50,7 +51,7 @@ import jsystem.utils.exec.Execute;
  */
 public class RemoteExecutorImpl implements RemoteExecutor {
 
-	private static Logger log = Logger.getLogger(RemoteExecutorImpl.class.getName());
+	private static Logger log = LoggerFactory.getLogger(RemoteExecutorImpl.class);
 
 	/**
 	 * use to send report message
@@ -255,7 +256,7 @@ public class RemoteExecutorImpl implements RemoteExecutor {
 				RunningProperties.RUNNER_HOST + "=" + "127.0.0.1", RunningProperties.ANT_EXECUTOR + "=" + "true" });
 
 		String cmdString = cmd.getCommandAsString();
-		log.fine(cmdString);
+		log.debug(cmdString);
 
 		cmd.setDir(new File(System.getProperty("user.dir")));
 		Execute.execute(cmd, false, true, false);
@@ -428,26 +429,26 @@ public class RemoteExecutorImpl implements RemoteExecutor {
 						notifyOnError(m.getField(0), m.getField(1), ErrorLevel.Error);
 						break;
 					case M_SUT_CHANGED:
-						log.fine("got change sut message");
+						log.debug("got change sut message");
 						reporter.sutChanged(m.getField(0));
 						break;
 					case M_PAUSED:
-						log.fine("got pause message");
+						log.debug("got pause message");
 						runEndListener.remotePause();
 						break;
 					case M_EXIT:
-						log.fine("got exit message");
+						log.debug("got exit message");
 						runEndListener.remoteExit();
 						close();
 						break;
 					case M_SAVE_STATE:
-						log.fine("got save state message");
+						log.debug("got save state message");
 						fullUuid = m.getField(0);
 						reporter.saveState(ScenariosManager.getInstance().getCurrentScenario()
 								.getRunnerTestByFullId(fullUuid).getTest());
 						break;
 					case M_CONTAINER_PROPERTY:
-						log.fine("got set container props");
+						log.debug("got set container props");
 						String level = m.getField(0);
 						int anLevel = 0;
 						try {
@@ -461,7 +462,7 @@ public class RemoteExecutorImpl implements RemoteExecutor {
 						break;
 					case M_ANT_MESSAGE_LOGED:
 						// TODO: log the message to log file
-						// log.log(Level.WARNING, m.getField(0));
+						// log.warn(m.getField(0));
 						break;
 					case M_BUILD_START:
 						break;
@@ -478,16 +479,16 @@ public class RemoteExecutorImpl implements RemoteExecutor {
 						}
 						break;
 					case M_BUILD_FINISH:
-						log.fine("got build finished message");
+						log.debug("got build finished message");
 						interrupted = true;
 						runEndListener.endRun();
 						break;
 					case M_SYNCH:
-						log.fine("Got M_SYNCH message");
+						log.debug("Got M_SYNCH message");
 						Message mm = new Message();
 						mm.setType(RemoteMessage.M_SYNCHED);
 						sendMessage(mm);
-						log.fine("Sent M_SYNCHED id message");
+						log.debug("Sent M_SYNCHED id message");
 						break;
 					case M_TARGET_FINISH:
 						break;
@@ -542,7 +543,7 @@ public class RemoteExecutorImpl implements RemoteExecutor {
 	 * 
 	 */
 	private void notifyOnError(String title, String fullMessage, ErrorLevel errorLevel) {
-		log.severe(title + ": " + fullMessage);
+		log.error(title + ": " + fullMessage);
 		runEndListener.errorOccured(title, fullMessage, errorLevel);
 	}
 
@@ -640,7 +641,7 @@ public class RemoteExecutorImpl implements RemoteExecutor {
 		Message m = new Message();
 		m.setType(RemoteMessage.M_EXIT);
 		sendMessage(m);
-		log.fine("sent exit message");
+		log.debug("sent exit message");
 	}
 
 	public void interruptTest() {
@@ -648,7 +649,7 @@ public class RemoteExecutorImpl implements RemoteExecutor {
 		Message m = new Message();
 		m.setType(RemoteMessage.M_INTERRUPT);
 		sendMessage(m);
-		log.fine("sent interrupt message");
+		log.debug("sent interrupt message");
 		if (cmd != null) {
 			cmd.getProcess().destroy();
 		}
@@ -658,21 +659,21 @@ public class RemoteExecutorImpl implements RemoteExecutor {
 		Message m = new Message();
 		m.setType(RemoteMessage.M_PAUSE);
 		sendMessage(m);
-		log.fine("sent pause message");
+		log.debug("sent pause message");
 	}
 
 	public void gracefulStop() {
 		Message m = new Message();
 		m.setType(RemoteMessage.M_GRACEFUL_STOP);
 		sendMessage(m);
-		log.fine("sent graceful stop message");
+		log.debug("sent graceful stop message");
 	}
 
 	public void resume() {
 		Message m = new Message();
 		m.setType(RemoteMessage.M_RESUME);
 		sendMessage(m);
-		log.fine("sent resume message");
+		log.debug("sent resume message");
 	}
 
 	private synchronized void sendMessage(Message m) {
@@ -691,7 +692,7 @@ public class RemoteExecutorImpl implements RemoteExecutor {
 			out.reset();
 		} catch (Exception e) {
 			if (!interrupted) {
-				Logger.getLogger(this.getClass().getName()).log(Level.WARNING, "Fail to send message", e);
+				LoggerFactory.getLogger(this.getClass().getName()).warn("Fail to send message", e);
 			}
 		}
 	}

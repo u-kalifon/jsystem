@@ -10,8 +10,9 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Vector;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import jsystem.runner.ClassPathFixtureCollector;
 import jsystem.runner.loader.LoadersManager;
@@ -23,7 +24,7 @@ import jsystem.runner.loader.LoadersManager;
  * @author Guy Arieli
  */
 public class FixtureManager {
-	private static Logger log = Logger.getLogger(FixtureManager.class.getName());
+	private static Logger log = LoggerFactory.getLogger(FixtureManager.class);
 
 	private static FixtureManager fm = null;
 
@@ -80,7 +81,7 @@ public class FixtureManager {
 				c = LoadersManager.getInstance().getLoader().loadClass(classToLoad);
 
 			} catch (Exception e) {
-				log.log(Level.FINE, "Unable to load class", e);
+				log.debug("Unable to load class", e);
 				continue;
 			}
 			if (!(Fixture.class.isAssignableFrom(c))) {
@@ -90,7 +91,7 @@ public class FixtureManager {
 			try {
 				t = createFixtureObject(c);
 			} catch (Exception e) {
-				log.log(Level.FINE, "Unable to create fixture object", e);
+				log.debug("Unable to create fixture object", e);
 				continue;
 			}
 			if (t != null && t instanceof Fixture) {

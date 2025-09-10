@@ -3,7 +3,8 @@
  */
 package jsystem.runner.agent.mediators;
 
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import jsystem.framework.report.ExtendTestListener;
 import jsystem.framework.report.TestInfo;
@@ -22,7 +23,7 @@ import junit.framework.Test;
  * @author goland
  */
 public class ExtendsTestListenerMediator extends BaseMediator implements ExtendTestListener {
-	private static Logger log = Logger.getLogger(ExtendsTestListenerMediator.class.getName());
+	private static Logger log = LoggerFactory.getLogger(ExtendsTestListenerMediator.class);
 	public ExtendsTestListenerMediator(RunnerAgent agent){
 		super(agent);
 	}
@@ -31,7 +32,7 @@ public class ExtendsTestListenerMediator extends BaseMediator implements ExtendT
 		if (NotificationLevel.getCurrentNotificationLevel().compareTo(NotificationLevel.NO_FAIL) > 0){
 			return;
 		}		
-		log.finest("addWarning(Test arg0- sent");
+		log.trace("addWarning(Test arg0- sent");
 		int index =ScenariosManager.getInstance().getCurrentScenario().getGeneralIndex(test,false);
 		sendNotification(new AddWarningNotification(runnerAgent().getClass().getName(),index));
 	}

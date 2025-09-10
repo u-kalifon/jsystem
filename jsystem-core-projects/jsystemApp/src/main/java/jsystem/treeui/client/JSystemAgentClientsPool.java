@@ -8,8 +8,9 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import jsystem.runner.agent.clients.JSystemAgentClient;
 import jsystem.runner.agent.server.RunnerEngine;
@@ -25,7 +26,7 @@ import jsystem.runner.agent.server.RunnerEngine.ConnectionState;
  */
 public class JSystemAgentClientsPool {
 	
-	private static Logger log = Logger.getLogger(JSystemAgentClientsPool.class.getName());
+	private static Logger log = LoggerFactory.getLogger(JSystemAgentClientsPool.class);
 	private static Map<String,RunnerEngine> clients;
 	
 	/**
@@ -41,7 +42,7 @@ public class JSystemAgentClientsPool {
 				JSystemAgentClient client = new JSystemAgentClient(url);
 				clients.put(url,client);
 			}catch (Exception e){
-				log.warning("Failed adding agent " + url + " to agents list. " + e.getMessage() + " removing agent from database.");
+				log.warn("Failed adding agent " + url + " to agents list. " + e.getMessage() + " removing agent from database.");
 				AgentList.removeFromAgentList(url);
 			}
 		}
@@ -56,7 +57,7 @@ public class JSystemAgentClientsPool {
 								client.init();
 							}
 						}catch (Throwable t){
-							log.log(Level.FINE,"Failed opening connection to " + "",t);
+							log.debug("Failed opening connection to " + "",t);
 						}					
 					}
 					try{Thread.sleep(5000);}catch(Exception e){}

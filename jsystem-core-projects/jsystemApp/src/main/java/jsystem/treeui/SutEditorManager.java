@@ -4,8 +4,9 @@
 package jsystem.treeui;
 
 import java.io.File;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import jsystem.framework.FrameworkOptions;
 import jsystem.framework.JSystemProperties;
@@ -25,7 +26,7 @@ public class SutEditorManager {
 
 	private static SutEditorManager manager = null;
 
-	private static Logger log = Logger.getLogger(SutEditorManager.class.getName());
+	private static Logger log = LoggerFactory.getLogger(SutEditorManager.class);
 
 	private SutEditorManager() {
 		// singleton
@@ -92,7 +93,7 @@ public class SutEditorManager {
 					try {
 						FileUtils.copyFile(sutFile, sutSrcFile);
 					} catch (Exception e) {
-						log.log(Level.SEVERE, "Failed updating SUT file", e);
+						log.error("Failed updating SUT file", e);
 					}
 				}
 			}

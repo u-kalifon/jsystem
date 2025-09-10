@@ -3,7 +3,8 @@
  */
 package jsystem.runner.agent.clients;
 
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.management.Notification;
 import javax.management.NotificationListener;
@@ -20,7 +21,7 @@ import jsystem.runner.agent.server.RunnerAgentMBean;
  * @author goland
  */
 public class ClientEventsHub implements NotificationListener {
-	private static Logger log = Logger.getLogger(ClientEventsHub.class.getName());
+	private static Logger log = LoggerFactory.getLogger(ClientEventsHub.class);
 	private AgentClientListenersManager listeners;
 	private RunnerAgentMBean agentMBean;
 	
@@ -29,7 +30,7 @@ public class ClientEventsHub implements NotificationListener {
 	}
 	
 	public void handleNotification(Notification notification, Object handback) {
-		log.fine("Got event: " + notification.getType() + " " + notification.getSource());
+		log.debug("Got event: " + notification.getType() + " " + notification.getSource());
 		if (notification instanceof RunnerNotification){
 			((RunnerNotification)notification).setAgentMBean(agentMBean);
 			((RunnerNotification)notification).invokeDispatcher(listeners);

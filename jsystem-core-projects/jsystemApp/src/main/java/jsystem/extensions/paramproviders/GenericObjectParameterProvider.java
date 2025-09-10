@@ -20,12 +20,13 @@ import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class GenericObjectParameterProvider extends AbstractSerializingParameterProvider{
 
-	private static Logger log = Logger.getLogger(GenericObjectParameterProvider.class.getName());
+	private static Logger log = LoggerFactory.getLogger(GenericObjectParameterProvider.class);
 	
 	public GenericObjectParameterProvider(){
 	}
@@ -39,7 +40,6 @@ public class GenericObjectParameterProvider extends AbstractSerializingParameter
 		if(o instanceof String){
 			return (String)o;
 		}
-
 
 		ArrayList<BeanElement> beanElements = BeanUtils.getBeans(o.getClass(), true, true, BeanUtils.getBasicTypes());
 		
@@ -56,13 +56,12 @@ public class GenericObjectParameterProvider extends AbstractSerializingParameter
 					properties.setProperty(be.getName(), propertyValue);
 				}
 			} catch (Exception e) {
-				log.log(Level.WARNING,"Fail to invoke the getter: " + be.getName(), e);
+				log.warn("Fail to invoke the getter: " + be.getName(), e);
 			}
 		}
 		
 		return propetiesToString(o.getClass().getName(), properties);
 	}
-
 
 	@Override
 	public Object getFromString(String stringRepresentation) throws Exception {
@@ -84,7 +83,7 @@ public class GenericObjectParameterProvider extends AbstractSerializingParameter
 			propertiesString = multiplySingleBackslashes(propertiesString);
 			properties.load(new StringReader(propertiesString));
 		} catch (IOException e1) {
-			log.log(Level.WARNING, "Fail to load properties: " + propertiesString, e1);
+			log.warn("Fail to load properties: " + propertiesString, e1);
 			return null;
 		}
 		// create the class from the input string
@@ -92,7 +91,7 @@ public class GenericObjectParameterProvider extends AbstractSerializingParameter
 		try {
 			c = LoadersManager.getInstance().getLoader().loadClass(className);
 		} catch (ClassNotFoundException e) {
-			log.log(Level.WARNING, "Fail to create class: " + className, e);
+			log.warn("Fail to create class: " + className, e);
 			return null;
 		}
 		// create the object and init it using the properties

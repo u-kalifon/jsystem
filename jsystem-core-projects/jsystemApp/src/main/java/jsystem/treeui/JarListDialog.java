@@ -19,8 +19,9 @@ import java.io.InputStream;
 import java.util.Properties;
 import java.util.Vector;
 import java.util.jar.JarFile;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.util.zip.ZipEntry;
 
 import javax.swing.BorderFactory;
@@ -67,7 +68,7 @@ public class JarListDialog {
 	// dialog itself.
 	JarsTableDialog tableDialog;
 
-	private static Logger log = Logger.getLogger(Reader.class.getName());
+	private static Logger log = LoggerFactory.getLogger(Reader.class);
 
 	/**
 	 * The constructor is creating the jarlist and init the Table Dialog.
@@ -138,7 +139,7 @@ public class JarListDialog {
 					}
 
 				} catch (Exception e) {
-					log.log(Level.WARNING, "Fail to read " + jars[i], e);
+					log.warn("Fail to read " + jars[i], e);
 					jarVersions.add("");
 				}
 			}
@@ -227,11 +228,9 @@ public class JarListDialog {
 			mainPanel.setMinimumSize(d);
 			//ImageIcon icon = ImageCenter.getInstance().getImage(ImageCenter.ICON_AQUA_LOGO);
 
-
 			// define button and add a action listner to it.
 			JButton findButton = new JButton("Find Jars");
 			findButton.addActionListener(this);
-
 
 			
 			JPanel findPanel = new JPanel();

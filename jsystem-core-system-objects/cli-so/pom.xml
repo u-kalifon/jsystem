@@ -23,5 +23,11 @@
 			<groupId>javax.comm</groupId>
 			<artifactId>comm</artifactId>
 		</dependency>
+		<!-- SLF4J API dependency (runtime provided by consuming modules) -->
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<scope>provided</scope>
+		</dependency>
 	</dependencies>
 </project>

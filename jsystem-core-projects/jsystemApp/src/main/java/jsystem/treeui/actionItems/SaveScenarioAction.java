@@ -18,13 +18,14 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.io.File;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class SaveScenarioAction extends IgnisAction implements ScenarioListener {
 
 	private static final long serialVersionUID = 1L;
 
-	private static Logger log = Logger.getLogger(SaveScenarioAction.class.getName());
+	private static Logger log = LoggerFactory.getLogger(SaveScenarioAction.class);
 
 	private static SaveScenarioAction action;
 
@@ -83,7 +84,7 @@ public class SaveScenarioAction extends IgnisAction implements ScenarioListener 
 		} catch (Exception ex) {
 			ErrorPanel.showErrorDialog("Save Scenario", ex, ErrorLevel.Error);
 		}
-		log.fine("Save Scenario swing worker - closing waitDialog");
+		log.debug("Save Scenario swing worker - closing waitDialog");
 		WaitDialog.endWaitDialog();
 	}
 
@@ -107,7 +108,7 @@ public class SaveScenarioAction extends IgnisAction implements ScenarioListener 
 		}
 
 		protected void done() {
-			log.fine("Save Scenario swing worker - closing waitDialog");
+			log.debug("Save Scenario swing worker - closing waitDialog");
 			WaitDialog.endWaitDialog();
 		}
 	}

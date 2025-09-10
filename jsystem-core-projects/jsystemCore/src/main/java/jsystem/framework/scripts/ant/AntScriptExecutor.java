@@ -9,7 +9,8 @@ import java.io.FileNotFoundException;
 import java.io.InputStreamReader;
 import java.util.Iterator;
 import java.util.Properties;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -23,14 +24,13 @@ import jsystem.utils.FileUtils;
 import jsystem.utils.exec.Command;
 
 public class AntScriptExecutor extends ScriptExecutor {
-	private static Logger log = Logger.getLogger(AntScriptExecutor.class.getName());
+	private static Logger log = LoggerFactory.getLogger(AntScriptExecutor.class);
 	protected String target;
 	protected String scriptName;
 	Command command;
 	public AntScriptExecutor() {
 		//
 	}
-
 
 	@Override
 	public String getTagName() {
@@ -114,7 +114,6 @@ public class AntScriptExecutor extends ScriptExecutor {
 		return p;
 	}
 
-
 	@Override
 	public void initParamsFromFile() {
 		/*
@@ -122,7 +121,7 @@ public class AntScriptExecutor extends ScriptExecutor {
 		 */
 		File buildFile = new File(JSystemProperties.getCurrentTestsPath() + File.separatorChar + filePath);
 		if(!buildFile.exists()){
-			log.warning("File not found: " + buildFile.getAbsolutePath());
+			log.warn("File not found: " + buildFile.getAbsolutePath());
 			return;
 		}
 		try {

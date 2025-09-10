@@ -3,8 +3,9 @@ package jsystem.treeui.utilities;
 import java.awt.Dimension;
 import java.io.File;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
@@ -31,7 +32,7 @@ import jsystem.utils.StringUtils;
  */
 public class UnmodifiableFileHandler {
 
-	private static Logger log = Logger.getLogger(UnmodifiableFileHandler.class.getName());
+	private static Logger log = LoggerFactory.getLogger(UnmodifiableFileHandler.class);
 
 	private static UnmodifiableFileHandler instance;
 
@@ -61,7 +62,7 @@ public class UnmodifiableFileHandler {
 							modifyFileOptions.addAvailableOptions(Option.VCS);
 						}
 					} catch (SourceControlException e) {
-						log.log(Level.WARNING, "Failed to instanciate source control", e);
+						log.warn("Failed to instanciate source control", e);
 						JOptionPane.showConfirmDialog(TestRunner.treeView, "Failed to instanciate source control",
 								"Source Control Failure", JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE);
 					}
@@ -72,7 +73,7 @@ public class UnmodifiableFileHandler {
 			// to add the relevant feature to make a file modifiable for the
 			// user.
 		} catch (Exception e) {
-			log.log(Level.WARNING, "Failed to load SCM plugin", e);
+			log.warn("Failed to load SCM plugin", e);
 		}
 
 	}

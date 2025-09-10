@@ -3,7 +3,8 @@
  */
 package jsystem.runner.agent.mediators;
 
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import jsystem.framework.scenario.ScenariosManager;
 import jsystem.runner.agent.notifications.AddErrorNotification;
@@ -22,7 +23,7 @@ import junit.framework.TestListener;
  * @author goland
  */
 public class TestListenerMediator extends BaseMediator implements TestListener {
-	private static Logger log = Logger.getLogger(TestListenerMediator.class.getName());
+	private static Logger log = LoggerFactory.getLogger(TestListenerMediator.class);
 	public TestListenerMediator(RunnerAgent agent){
 		super(agent);
 	}
@@ -30,7 +31,7 @@ public class TestListenerMediator extends BaseMediator implements TestListener {
 		if (NotificationLevel.getCurrentNotificationLevel().compareTo(NotificationLevel.NO_FAIL) >= 0){
 			return;
 		}				
-		log.finest("addError(Test arg0, Throwable arg1) - sent");
+		log.trace("addError(Test arg0, Throwable arg1) - sent");
 		int index =ScenariosManager.getInstance().getCurrentScenario().getGeneralIndex(arg0,false);
 		sendNotification(new AddErrorNotification(runnerAgent().getClass().getName(),index,arg1));
 	}
@@ -39,7 +40,7 @@ public class TestListenerMediator extends BaseMediator implements TestListener {
 		if (NotificationLevel.getCurrentNotificationLevel().compareTo(NotificationLevel.NO_FAIL) >= 0){
 			return;
 		}						
-		log.finest("addFailure(Test arg0, AssertionFailedError arg1) - sent");
+		log.trace("addFailure(Test arg0, AssertionFailedError arg1) - sent");
 		int index =ScenariosManager.getInstance().getCurrentScenario().getGeneralIndex(arg0,false);
 		sendNotification(new AddFailureNotification(runnerAgent().getClass().getName(),index,arg1));
 	}
@@ -48,7 +49,7 @@ public class TestListenerMediator extends BaseMediator implements TestListener {
 		if (NotificationLevel.getCurrentNotificationLevel().compareTo(NotificationLevel.NO_TEST_INDICATION) >= 0){
 			return;
 		}				
-		log.finest("endTest(Test arg0) - sent");
+		log.trace("endTest(Test arg0) - sent");
 		int index =ScenariosManager.getInstance().getCurrentScenario().getGeneralIndex(arg0,false);
 		sendNotification(new EndTestNotification(runnerAgent().getClass().getName(),index));
 
@@ -58,7 +59,7 @@ public class TestListenerMediator extends BaseMediator implements TestListener {
 		if (NotificationLevel.getCurrentNotificationLevel().compareTo(NotificationLevel.NO_TEST_INDICATION) >= 0){
 			return;
 		}				
-		log.finest("endTest(Test arg0) - sent");
+		log.trace("endTest(Test arg0) - sent");
 		int index =ScenariosManager.getInstance().getCurrentScenario().getGeneralIndex(arg0,false);
 		sendNotification(new SimpleStartTestNotification(runnerAgent().getClass().getName(),index));
 	}

@@ -14,7 +14,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -32,7 +33,7 @@ class PropertiesGuiPanel extends JPanel {
 
 	private static final long serialVersionUID = 1L;
 	private static final int PREFERRED_TEXT_FIELD_WIDTH = 400;
-	private static Logger log = Logger.getLogger(PropertiesGuiPanel.class.getName());
+	private static Logger log = LoggerFactory.getLogger(PropertiesGuiPanel.class);
 
 	private final File propertiesFile;
 	private Properties properties;
@@ -115,7 +116,7 @@ class PropertiesGuiPanel extends JPanel {
 	}
 
 	private void cancel() {
-		log.finer("Canceling the editing of the properties");
+		log.debug("Canceling the editing of the properties");
 		try {
 			readPropertiesFromFile();
 			addPropertiesToConfigEntryPanel();
@@ -124,7 +125,7 @@ class PropertiesGuiPanel extends JPanel {
 			JOptionPane.showMessageDialog(this, "Changes in the Difido properties were canceled", "Cancel message",
 					JOptionPane.INFORMATION_MESSAGE);
 		} catch (IOException e1) {
-			log.warning("Failed to read properties file due to " + e1.getMessage());
+			log.warn("Failed to read properties file due to " + e1.getMessage());
 			e1.printStackTrace();
 		}
 
@@ -172,7 +173,7 @@ class PropertiesGuiPanel extends JPanel {
 	}
 
 	private void save() {
-		log.finer("Saving the properties to file");
+		log.debug("Saving the properties to file");
 		for (Entry<String, JTextField> entry : textFields.entrySet()) {
 			properties.setProperty(entry.getKey(), entry.getValue().getText());
 		}
@@ -181,7 +182,7 @@ class PropertiesGuiPanel extends JPanel {
 			JOptionPane.showMessageDialog(this, "Difido properties were saved successfully", "Save confirmation",
 					JOptionPane.INFORMATION_MESSAGE);
 		} catch (Exception e) {
-			log.warning("Failed to save to propeties file due to " + e.getMessage());
+			log.warn("Failed to save to propeties file due to " + e.getMessage());
 			JOptionPane.showMessageDialog(this, "Failed saving Difido properties due to " + e.getMessage(),
 					"Error message", JOptionPane.ERROR_MESSAGE);
 		}

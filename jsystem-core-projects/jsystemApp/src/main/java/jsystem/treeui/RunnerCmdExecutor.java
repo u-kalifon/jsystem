@@ -3,7 +3,8 @@
  */
 package jsystem.treeui;
 
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import jsystem.framework.FrameworkOptions;
 import jsystem.framework.JSystemProperties;
@@ -34,7 +35,7 @@ public class RunnerCmdExecutor implements ExecutionListener{
 	 *  the separator between runs
 	 */
 	private final String argsSeperator = "&&";
-	private static Logger log = Logger.getLogger(RunnerCmdExecutor.class.getName());
+	private static Logger log = LoggerFactory.getLogger(RunnerCmdExecutor.class);
 
 	public RunnerCmdExecutor(String[] args){
 		this.args = args;
@@ -49,7 +50,7 @@ public class RunnerCmdExecutor implements ExecutionListener{
 			try{
 				argList = readFileContent(args[0]);
 			}catch (Exception e) {
-				log.warning("Failed reading file "+args[0]+" content");
+				log.warn("Failed reading file "+args[0]+" content");
 			}
 			if(StringUtils.isEmpty(argList)){
 				log.info("file is empty");

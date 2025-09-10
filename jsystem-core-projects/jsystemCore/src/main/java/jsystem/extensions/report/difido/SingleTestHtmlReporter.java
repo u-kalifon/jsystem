@@ -2,8 +2,9 @@ package jsystem.extensions.report.difido;
 
 import java.io.File;
 import java.util.Date;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import il.co.topq.difido.model.Enums.ElementType;
 import il.co.topq.difido.model.Enums.Status;
@@ -22,7 +23,7 @@ import junit.framework.Test;
 
 public class SingleTestHtmlReporter extends HtmlReporter {
 
-	private static final Logger log = Logger.getLogger(SingleTestHtmlReporter.class.getName());
+	private static final Logger log = LoggerFactory.getLogger(SingleTestHtmlReporter.class);
 
 	private static final int MAX_VALUE_LENGTH = 64;
 	
@@ -149,7 +150,7 @@ public class SingleTestHtmlReporter extends HtmlReporter {
 
 	@Override
 	public void addError(Test arg0, Throwable arg1) {
-		log.fine("Received error event");
+		log.debug("Received error event");
 		if (DifidoConfig.getInstance().getBoolean(DifidoProperty.ERRORS_TO_FAILURES)) {
 			// We don't want errors in the report, so we will change each error
 			// to failure.
@@ -161,7 +162,7 @@ public class SingleTestHtmlReporter extends HtmlReporter {
 
 	@Override
 	public void addFailure(Test arg0, AssertionFailedError arg1) {
-		log.fine("Received failure event");
+		log.debug("Received failure event");
 		singleTest.setStatus(Status.failure);
 	}
 
@@ -177,7 +178,7 @@ public class SingleTestHtmlReporter extends HtmlReporter {
 			jsystem.utils.FileUtils.addPropertyToFile(CommonResources.TEST_INNER_TEMP_FILENAME,
 					CommonResources.TEST_DIR_KEY, folder);
 		} catch (Exception e) {
-			log.log(Level.WARNING, "Failed updating tmp properties", e);
+			log.warn("Failed updating tmp properties", e);
 		}
 	}
 

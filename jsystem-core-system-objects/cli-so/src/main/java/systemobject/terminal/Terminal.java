@@ -8,13 +8,14 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public abstract class Terminal {
 	
-	Logger log = Logger.getLogger(Terminal.class.getName());
+	Logger log = LoggerFactory.getLogger(Terminal.class);
     protected static final int IN_BUFFER_SIZE = 65536;
     private StringBuffer result = new StringBuffer();
     protected OutputStream out = null;

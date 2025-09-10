@@ -7,8 +7,9 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.SocketException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import jsystem.framework.system.SystemObjectImpl;
 
@@ -19,7 +20,7 @@ import jsystem.framework.system.SystemObjectImpl;
  */
 public class FTPClient extends SystemObjectImpl {
 	
-	private static Logger log = Logger.getLogger(FTPClient.class.getName());
+	private static Logger log = LoggerFactory.getLogger(FTPClient.class);
 	private String server;
 	private int port = 21;
 	private String username;
@@ -35,7 +36,7 @@ public class FTPClient extends SystemObjectImpl {
 		try {
 			disconnect();
 		}catch (Exception e){
-			log.log(Level.WARNING,"Failed disconnecting from ftp server " + e.getMessage());
+			log.warn("Failed disconnecting from ftp server " + e.getMessage());
 		}
 		super.close();
 	}

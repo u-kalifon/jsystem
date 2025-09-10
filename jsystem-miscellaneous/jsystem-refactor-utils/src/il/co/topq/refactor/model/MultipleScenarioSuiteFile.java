@@ -4,7 +4,6 @@ import il.co.topq.refactor.exception.MultipleScenarioSuiteException;
 import il.co.topq.refactor.utils.XmlUtils;
 
 import java.io.File;
-import java.util.logging.Level;
 
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Result;
@@ -34,11 +33,11 @@ public class MultipleScenarioSuiteFile extends JSystemFile {
 		if (doc != null) {
 			return;
 		}
-		log.fine("Init multiple scenario suit file");
+		log.debug("Init multiple scenario suit file");
 		try {
 			doc = XmlUtils.parseDocument(file);
 		} catch (Exception e) {
-			log.log(Level.SEVERE, "Failed to parse file " + file.getName(), e);
+			log.error("Failed to parse file " + file.getName(), e);
 			throw new MultipleScenarioSuiteException("Failed to parse file " + file.getName());
 		}
 
@@ -46,7 +45,7 @@ public class MultipleScenarioSuiteFile extends JSystemFile {
 
 	public boolean isScenarioExists(String scenarioSourceNamePath) throws MultipleScenarioSuiteException {
 		init();
-		log.fine("Checking if scenario " + scenarioSourceNamePath + " exists in file");
+		log.debug("Checking if scenario " + scenarioSourceNamePath + " exists in file");
 		try {
 			return XmlUtils.getNodeList(doc, String.format(XPATH_GET_ALL_SCENARIOS, scenarioSourceNamePath))
 					.getLength() > 0 ? true : false;
@@ -65,14 +64,14 @@ public class MultipleScenarioSuiteFile extends JSystemFile {
 			throw new MultipleScenarioSuiteException("Failed to get scenarios");
 		}
 		for (int i = 0; i < scenariosNodes.getLength(); i++) {
-			log.fine("Renaming scenario from " + scenarioSourceNamePath + " to " + scenarioTargetNamePath);
+			log.debug("Renaming scenario from " + scenarioSourceNamePath + " to " + scenarioTargetNamePath);
 			((Element) scenariosNodes.item(i)).setTextContent(scenarioTargetNamePath + ".xml");
 		}
 
 	}
 
 	public void save() throws TransformerException {
-		log.fine("Saving file " + file.getName());
+		log.debug("Saving file " + file.getName());
 		TransformerFactory factory = TransformerFactory.newInstance();
 		Transformer transformer = factory.newTransformer();
 		transformer.setOutputProperty(OutputKeys.INDENT, "yes");

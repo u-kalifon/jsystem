@@ -4,7 +4,8 @@
 package jsystem.treeui.client;
 
 import java.io.File;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.JOptionPane;
 
@@ -33,7 +34,7 @@ import jsystem.utils.StringUtils;
  * @author goland
  */
 public class RemoteAgentClient extends JSystemAgentClient {
-	private static Logger log = Logger.getLogger(RemoteAgentClient.class.getName());
+	private static Logger log = LoggerFactory.getLogger(RemoteAgentClient.class);
 
 	/**
 	 * agent synchronization enum
@@ -98,7 +99,7 @@ public class RemoteAgentClient extends JSystemAgentClient {
 			if (engine.getConnectionState().equals(ConnectionState.connected)) {
 				engine.initReporters();
 			} else {
-				log.fine(engine.getId() + " is disconnected. skipping activation");
+				log.debug(engine.getId() + " is disconnected. skipping activation");
 			}
 		}
 

@@ -8,8 +8,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import jsystem.extensions.sourcecontrol.SourceControlException;
 import jsystem.extensions.sourcecontrol.SourceControlI;
@@ -21,7 +22,7 @@ import jsystem.extensions.sourcecontrol.SourceControlI;
  */
 public abstract class JSystemFile {
 
-	protected Logger log = Logger.getLogger(this.getClass().getSimpleName());
+	protected Logger log = LoggerFactory.getLogger(this.getClass().getSimpleName());
 
 	protected File file;
 
@@ -31,7 +32,7 @@ public abstract class JSystemFile {
 	}
 
 	public void backup() {
-		log.fine("Creating backup of file " + file.getAbsolutePath());
+		log.debug("Creating backup of file " + file.getAbsolutePath());
 		File backupFile = new File(file.getAbsolutePath() + ".old");
 		if (backupFile.exists()) {
 			backupFile.delete();
@@ -39,7 +40,7 @@ public abstract class JSystemFile {
 		try {
 			FileUtils.copyFile(file, backupFile);
 		} catch (Exception e) {
-			log.log(Level.WARNING, "Failed to create backup file", e);
+			log.warn("Failed to create backup file", e);
 		}
 	}
 
@@ -68,11 +69,11 @@ public abstract class JSystemFile {
                         sourceControHandler.makeWritable(filesList);
                     }
                     catch (SourceControlException e) {
-                        log.log(Level.SEVERE, "Exception was caught while trying to make file writable", e);
+                        log.error("Exception was caught while trying to make file writable", e);
                         throw new IOException("Exception was caught while trying to make file writable");
                     }
                     if (!file.canWrite()) {
-                        log.severe("Failed to make file writable");
+                        log.error("Failed to make file writable");
                         throw new IOException("Failed to make file writable");
                     }
 
@@ -98,11 +99,11 @@ public abstract class JSystemFile {
 //			try {
 //				sourceControHandler.makeWritable(filesList);
 //			} catch (SourceControlException e) {
-//				log.log(Level.SEVERE, "Exception was caught while trying to make file writeable", e);
+//				log.error("Exception was caught while trying to make file writeable", e);
 //				throw new IOException("Exception was caught while trying to make file writeable");
 //			}
 //			if (!file.canWrite()) {
-//				log.severe("Failed to make file writeable");
+//				log.error("Failed to make file writeable");
 //				throw new IOException("Failed to make file writeable");
 //			}
 //

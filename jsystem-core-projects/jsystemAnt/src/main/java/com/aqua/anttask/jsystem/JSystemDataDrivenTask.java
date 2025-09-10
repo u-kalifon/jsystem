@@ -8,8 +8,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import jsystem.framework.FrameworkOptions;
 import jsystem.framework.JSystemProperties;
@@ -28,7 +29,7 @@ public class JSystemDataDrivenTask extends PropertyReaderTask {
 
 	private static final String DELIMITER = ";";
 
-	static Logger log = Logger.getLogger(JSystemDataDrivenTask.class.getName());
+	static Logger log = LoggerFactory.getLogger(JSystemDataDrivenTask.class);
 
 	private String type;
 
@@ -61,11 +62,11 @@ public class JSystemDataDrivenTask extends PropertyReaderTask {
 			String fileName = (String) ParametersManager.replaceReferenceWithValue(file, ParameterType.FILE);
 			data = provider.provide(new File(file), param);
 		} catch (Exception e) {
-			log.log(Level.WARNING, "Failed to collect data due to " + e.getMessage());
+			log.warn("Failed to collect data due to " + e.getMessage());
 			return;
 		}
 		if (data == null || data.size() == 0) {
-			log.log(Level.INFO, "Invalid data");
+			log.info("Invalid data");
 			return;
 		}
 		filterData();
@@ -81,13 +82,13 @@ public class JSystemDataDrivenTask extends PropertyReaderTask {
 
 	private DataProvider initProvider() {
 		if (StringUtils.isEmpty(type)) {
-			log.log(Level.WARNING, "No data provider type was specified. Rolling back to CSV provider");
+			log.warn("No data provider type was specified. Rolling back to CSV provider");
 			return new CsvDataProvider();
 		}
 		final String allProviderTypes = JSystemProperties.getInstance().getPreferenceOrDefault(
 				FrameworkOptions.DATA_PROVIDER_CLASSES);
 		if (StringUtils.isEmpty(allProviderTypes)) {
-			log.log(Level.WARNING, "No providers were specified in the framework options. Rolling back to CSV provider");
+			log.warn("No providers were specified in the framework options. Rolling back to CSV provider");
 			return new CsvDataProvider();
 		}
 		List<DataProvider> dataProvidersList = new ArrayList<DataProvider>();
@@ -102,7 +103,7 @@ public class JSystemDataDrivenTask extends PropertyReaderTask {
 				return provider;
 			}
 		}
-		log.log(Level.WARNING, "No provider was found with name " + type + ". Rolling back to CSV provider");
+		log.warn("No provider was found with name " + type + ". Rolling back to CSV provider");
 		return new CsvDataProvider();
 	}
 
@@ -121,7 +122,7 @@ public class JSystemDataDrivenTask extends PropertyReaderTask {
 		try {
 			param = ParametersManager.replaceAllReferenceValues(param, ParameterType.STRING);
 		} catch (Exception e) {
-			log.log(Level.SEVERE, "Error trying to replace reference parameters for input: " + param, e);
+			log.error("Error trying to replace reference parameters for input: " + param, e);
 		}
 		lineIndexes = getParameterFromProperties("LineIndexes", "");
 		shuffle = Boolean.valueOf(getParameterFromProperties("Shuffle", "false"));

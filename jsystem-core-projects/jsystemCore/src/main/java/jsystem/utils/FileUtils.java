@@ -35,8 +35,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 import java.util.Vector;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.util.regex.Pattern;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.ZipEntry;
@@ -85,7 +86,7 @@ public class FileUtils {
 		}
 	}
 
-	private static Logger log = Logger.getLogger(FileUtils.class.getName());
+	private static Logger log = LoggerFactory.getLogger(FileUtils.class);
 
 	public static void copyDirectory(String sourceDirName, String destinationDirName) throws IOException {
 
@@ -158,7 +159,7 @@ public class FileUtils {
 			try {
 				stream.close();
 			} catch (IOException e) {
-				log.warning("Failed closing stream");
+				log.warn("Failed closing stream");
 			}
 		}
 	}
@@ -247,7 +248,7 @@ public class FileUtils {
 				try {
 					Thread.sleep(timeBetweenRetries);
 				} catch (InterruptedException e) {
-					log.log(Level.WARNING, "Problem sleeping between file exist checking", e);
+					log.warn("Problem sleeping between file exist checking", e);
 				}
 			}
 			if (file.exists()) {
@@ -571,7 +572,7 @@ public class FileUtils {
 				try {
 					extractOneFile(file, zip.getInputStream(entry));
 				} catch (Exception e) {
-					log.log(Level.WARNING, "Fail to extract " + entry.getName());
+					log.warn("Fail to extract " + entry.getName());
 				}
 			}
 		}
@@ -643,26 +644,26 @@ public class FileUtils {
 	private static InputStream getInputStream(String tarFileName) throws IOException {
 		if (tarFileName.substring(tarFileName.lastIndexOf(".") + 1, tarFileName.lastIndexOf(".") + 3).equalsIgnoreCase(
 				"gz")) {
-			log.log(Level.INFO, "Creating an GZIPInputStream for the file");
+			log.info("Creating an GZIPInputStream for the file");
 			return new GZIPInputStream(new FileInputStream(new File(tarFileName)));
 		} else {
-			log.log(Level.INFO, "Creating an InputStream for the file");
+			log.info("Creating an InputStream for the file");
 			return new FileInputStream(new File(tarFileName));
 		}
 	}
 
 	private static void untar(InputStream in, File untarDir) throws IOException {
-		log.log(Level.INFO, "Reading TarInputStream... ");
+		log.info("Reading TarInputStream... ");
 		TarInputStream tin = new TarInputStream(in);
 		TarEntry tarEntry = tin.getNextEntry();
-		log.log(Level.INFO, "UNTARDIR " + untarDir);
+		log.info("UNTARDIR " + untarDir);
 		if (!untarDir.exists()) {
 			untarDir.mkdir();
 		}
 		while (tarEntry != null) {
 			File destPath = new File(untarDir.getAbsolutePath() + File.separatorChar + tarEntry.getName());
 
-			log.log(Level.INFO, "Processing " + destPath.getAbsoluteFile());
+			log.info("Processing " + destPath.getAbsoluteFile());
 			if (!tarEntry.isDirectory()) {
 				FileOutputStream fout = new FileOutputStream(destPath);
 				tin.copyEntryContents(fout);
@@ -974,7 +975,7 @@ public class FileUtils {
 	 */
 	public static Properties loadPropertiesFromFile(String fileName) throws IOException {
 		fileName = replaceSeparator(fileName);
-		log.finest("Loading properties from file " + fileName);
+		log.trace("Loading properties from file " + fileName);
 		Properties p = new Properties();
 		FileInputStream input = null;
 		InputStreamReader inputStreamReader = null;
@@ -1006,7 +1007,7 @@ public class FileUtils {
 	 */
 	public static synchronized void savePropertiesToFile(Properties properties, String fileName, boolean addDate)
 			throws IOException {
-		log.finest("Saving properties to file " + fileName);
+		log.trace("Saving properties to file " + fileName);
 		if (addDate) {
 
 			FileOutputStream output = null;
@@ -1109,7 +1110,7 @@ public class FileUtils {
 		try {
 			FileUtils.winRename("C:\\Documents and Settings\\AQUA\\Desktop\\JSystem 4.ppt", "JSystem 4.ppt");
 		} catch (Exception e) {
-			log.log(Level.FINEST, "Exception while trying to rename");
+			log.trace("Exception while trying to rename");
 		}
 	}
 
@@ -1283,11 +1284,11 @@ public class FileUtils {
 	public static void moveDirectory(String sourceDirectory, String destinationDirectory){
 		File dir = new File(sourceDirectory);
 		if(!dir.isDirectory()){
-			log.log(Level.INFO, sourceDirectory + " is not a directory!");
+			log.info(sourceDirectory + " is not a directory!");
 			return;
 		}
 		if(!dir.exists()){
-			log.log(Level.INFO, sourceDirectory + " does not exist!");
+			log.info(sourceDirectory + " does not exist!");
 			return;
 		}
 		//Move folder
@@ -1296,13 +1297,13 @@ public class FileUtils {
 		// Destination directory
 		File newDirectory = new File(JSystemProperties.getInstance().getPreference(FrameworkOptions.LOG_FOLDER) + "\\log_" + String.valueOf(System.currentTimeMillis()));
 		if(!newDirectory.mkdir()){
-			log.log(Level.INFO, "Create Directory Failed!");
+			log.info("Create Directory Failed!");
 			return;
 		}
 		
 		for(File file : files){
 			if (!file.renameTo(new File(newDirectory, file.getName()))) {
-				log.log(Level.INFO, "Moving Failed!");
+				log.info("Moving Failed!");
 				return;
 			}
 		}

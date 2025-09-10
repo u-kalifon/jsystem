@@ -10,8 +10,9 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.transform.Result;
@@ -43,7 +44,7 @@ import org.w3c.dom.NodeList;
  */
 public class SutImpl implements Sut {
 	
-	private static Logger log = Logger.getLogger(SutImpl.class.getName());
+	private static Logger log = LoggerFactory.getLogger(SutImpl.class);
 
 	private Document doc;
 
@@ -65,7 +66,7 @@ public class SutImpl implements Sut {
 		}
 		
 		if (!FileUtils.existsWithRetry(sutXml.getAbsolutePath(), sutFileRetries, 3000)) {
-			log.log(Level.SEVERE,"Couldn't find SUT file: " + sutXml.getAbsolutePath());
+			log.error("Couldn't find SUT file: " + sutXml.getAbsolutePath());
 			throw new FileNotFoundException(sutXml.getAbsolutePath());
 		}
 		this.fileName = sutXml.getName();
@@ -130,7 +131,7 @@ public class SutImpl implements Sut {
 			Transformer xformer = TransformerFactory.newInstance().newTransformer();
 			xformer.transform(s, r);
 		} catch (Exception e) {
-			log.log(Level.WARNING, "Unable to get xml as byte array", e);
+			log.warn("Unable to get xml as byte array", e);
 		}
 		return out.toByteArray();
 	}
@@ -153,7 +154,7 @@ public class SutImpl implements Sut {
 	public List<Node> getAllValues(String path) throws Exception {
 		List<Node> list = new ArrayList<Node>();
 		if (doc == null){
-			log.warning("No SUT file is defined.");
+			log.warn("No SUT file is defined.");
 			return list;
 		}
 		String xpath = path;
@@ -211,12 +212,12 @@ public class SutImpl implements Sut {
 			if (reporterClass != null){
 				Object instance = reporterClass.newInstance();
 				if (instance instanceof SutReader){
-					log.log(Level.INFO,"Sut reader : " + reader + " Was loaded.");
+					log.info("Sut reader : " + reader + " Was loaded.");
 					sutReader = (SutReader) instance;
 				}
 			}
 		}catch (Exception e) {
-			log.log(Level.WARNING,"Fail to init Sut reader : " + reader,e);
+			log.warn("Fail to init Sut reader : " + reader,e);
 		}
 	}
 

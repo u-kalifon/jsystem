@@ -6,8 +6,9 @@ package jsystem.extensions.report.xml;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -54,7 +55,7 @@ import org.xml.sax.helpers.DefaultHandler;
  */
 public class XmlReporter implements ExtendTestReporter, ExtendTestListener, SutListener, ScenarioListener {
 	
-	static Logger log = Logger.getLogger(XmlReporter.class.getName());
+	static Logger log = LoggerFactory.getLogger(XmlReporter.class);
 	
 	public static final String DESCRIPTION = "Description";
 
@@ -102,7 +103,7 @@ public class XmlReporter implements ExtendTestReporter, ExtendTestListener, SutL
 		try {
 			db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 		} catch (ParserConfigurationException e) {
-			log.log(Level.WARNING, "problem creating document builder");
+			log.warn("problem creating document builder");
 		}
 		start();
 	}
@@ -173,7 +174,7 @@ public class XmlReporter implements ExtendTestReporter, ExtendTestListener, SutL
 		try {
 			reader = new Reader(reportFile, doc);
 		} catch (Exception e) {
-			log.log(Level.SEVERE, "creating a Reader failed");
+			log.error("creating a Reader failed");
 			return;
 		}
 	}
@@ -387,7 +388,7 @@ class ReportCreator extends DefaultHandler implements ContentHandler {
 	public void startElement(final String namespace, final String localname, final String type,
 			final Attributes attributes) throws SAXException {
 
-		XmlReporter.log.log(Level.INFO, StringUtils.getStackTrace(Thread.currentThread()));
+		XmlReporter.log.info(StringUtils.getStackTrace(Thread.currentThread()));
 
 		if (type.equals("package")) {
 			currentPackage = attributes.getValue("name");
@@ -400,7 +401,7 @@ class ReportCreator extends DefaultHandler implements ContentHandler {
 				try {
 					count = Integer.parseInt(scount);
 				} catch (Throwable t) {
-					XmlReporter.log.log(Level.WARNING, "Fail to get test count for test: " + tname);
+					XmlReporter.log.warn("Fail to get test count for test: " + tname);
 				}
 			}
 			name = tname.split("\\.");

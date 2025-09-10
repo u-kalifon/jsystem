@@ -4,7 +4,8 @@
 package jsystem.framework.report;
 
 import java.util.Stack;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import jsystem.framework.scenario.JTest;
 import jsystem.framework.scenario.JTestContainer;
@@ -23,7 +24,7 @@ import jsystem.framework.scenario.flow_control.AntSwitchDefault;
  */
 public class EventParser {
 
-	private Logger log = Logger.getLogger(EventParser.class.getName());
+	private Logger log = LoggerFactory.getLogger(EventParser.class);
 	private Stack<LoopHandler> loopStack;
 	private Stack<JTestContainer> containersStack;
 	private boolean loopWasClosed;
@@ -52,7 +53,7 @@ public class EventParser {
 		try{
 			notifyOnAllContainers(container,test,true);
 		}catch (Exception e) {
-			log.warning("Failed creating correct hierarchical reports");
+			log.warn("Failed creating correct hierarchical reports");
 		}
 	}
 	

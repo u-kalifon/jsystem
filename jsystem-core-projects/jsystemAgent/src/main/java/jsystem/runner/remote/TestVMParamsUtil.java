@@ -5,8 +5,9 @@ package jsystem.runner.remote;
 
 import java.net.BindException;
 import java.net.ServerSocket;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -36,7 +37,7 @@ import jsystem.utils.StringUtils;
  */
 public class TestVMParamsUtil {
 	
-	private static Logger log = Logger.getLogger(TestVMParamsUtil.class.getName());
+	private static Logger log = LoggerFactory.getLogger(TestVMParamsUtil.class);
 	
 	private static Pattern p = Pattern.compile("\\$\\{(\\d*)\\}");
 	
@@ -67,10 +68,10 @@ public class TestVMParamsUtil {
 				socket = new ServerSocket(portNumber);
 				found = true;
 			} catch (BindException e) {
-				log.log(Level.FINEST, "port " + portNumber + " not available");
+				log.trace("port " + portNumber + " not available");
 				portNumber += 1;
 			} catch (Exception e) {
-				log.log(Level.WARNING, "failed checking port " + portNumber, e);
+				log.warn("failed checking port " + portNumber, e);
 				return startNumber;
 			} finally {
 				try {

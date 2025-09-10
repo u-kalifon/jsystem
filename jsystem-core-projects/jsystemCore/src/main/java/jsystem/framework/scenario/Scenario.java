@@ -13,7 +13,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Properties;
 import java.util.Vector;
-import java.util.logging.Level;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -160,7 +160,7 @@ public class Scenario extends JTestContainer {
 			Element root = doc.getDocumentElement();
 			setRoot(root);
 		} catch (Exception e) {
-			log.log(Level.SEVERE, "fail to load scenario from file " + scenarioFile, e);
+			log.error("fail to load scenario from file " + scenarioFile, e);
 			throw e;
 		} finally {
 			fis.close();
@@ -250,7 +250,7 @@ public class Scenario extends JTestContainer {
 						scenarioElementTarget, null, targetAndParent.get(targetName));
 
 				if (test == null) {
-					log.log(Level.WARNING, "Fail to load test " + targetName);
+					log.warn("Fail to load test " + targetName);
 					continue;
 				}
 				try {
@@ -329,7 +329,7 @@ public class Scenario extends JTestContainer {
 	}
 
 	private void showScenarioLoadErrorMsgAndHaltIfNeeded(String msg) throws Exception {
-		log.log(Level.SEVERE, msg);
+		log.error(msg);
 		if (JSystemProperties.getInstance().getPreferenceOrDefault(FrameworkOptions.HALT_ON_SCENARIO_ERROR)
 				.equals("true")) {
 			log.info("Press on Enter to continue scenario load");
@@ -411,7 +411,7 @@ public class Scenario extends JTestContainer {
 		if (uuidProp != null) {
 			return uuidProp.getAttribute("value");
 		}
-		log.fine("Scenario did not have a UUID, Generating a new one");
+		log.debug("Scenario did not have a UUID, Generating a new one");
 		return getRandomUUID();
 	}
 
@@ -866,15 +866,14 @@ public class Scenario extends JTestContainer {
 	private void saveToSrcDirectory() throws Exception {
 		File scenarioSrcFile = getSourceScenarioFile();
 		if (scenarioSrcFile == null) {
-			log.log(Level.SEVERE,
-					"fail to write scenario to src directory, directory is not set in jsystem.properties or does not exist");
+			log.error("fail to write scenario to src directory, directory is not set in jsystem.properties or does not exist");
 			return;
 		}
 		scenarioSrcFile.getParentFile().mkdirs();
 		try {
 			FileUtils.copyFile(scenarioFile, scenarioSrcFile);
 		} catch (Exception e) {
-			log.log(Level.SEVERE, "fail to write scenario to src directory", e);
+			log.error("fail to write scenario to src directory", e);
 		}
 
 	}
@@ -933,8 +932,8 @@ public class Scenario extends JTestContainer {
 			Matcher m = SCENARIO_PATTERN.matcher(charSequence);
 			return m.find();
 		} catch (Exception e) {
-			log.log(Level.WARNING, "Failed checking whether " + scenarioName + " is a scenario file. " + e.getMessage());
-			log.log(Level.FINE, "Failed checking whether " + scenarioName + " is a scenario file. ", e);
+			log.warn("Failed checking whether " + scenarioName + " is a scenario file. " + e.getMessage());
+			log.debug("Failed checking whether " + scenarioName + " is a scenario file. ", e);
 			return false;
 		}
 	}
@@ -993,7 +992,7 @@ public class Scenario extends JTestContainer {
 		} catch (IOException e) {
 			return null;
 		} catch (Throwable e) {
-			log.warning("Problem reading meaningful name from Scenario: " + scenarioFile.getAbsolutePath()
+			log.warn("Problem reading meaningful name from Scenario: " + scenarioFile.getAbsolutePath()
 					+ "! Please check the xml file.");
 			return null;
 		}

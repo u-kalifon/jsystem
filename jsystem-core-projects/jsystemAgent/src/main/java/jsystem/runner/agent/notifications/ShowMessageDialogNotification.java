@@ -3,8 +3,8 @@
  */
 package jsystem.runner.agent.notifications;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import jsystem.framework.report.JSystemListeners;
 import jsystem.framework.report.Reporter;
@@ -36,7 +36,7 @@ import jsystem.runner.agent.server.RunnerAgent;
 public class ShowMessageDialogNotification extends RunnerNotification {
 	private static long messageIndex;
 	private static final long serialVersionUID = 468127957018314228L;
-	private static Logger log = Logger.getLogger(ShowMessageDialogNotification.class.getName());
+	private static Logger log = LoggerFactory.getLogger(ShowMessageDialogNotification.class);
 	private String title;
 	private String message;
 	private int optionType;
@@ -55,7 +55,7 @@ public class ShowMessageDialogNotification extends RunnerNotification {
 		try {
 			getAgentMBean().returnMessageConfirmationResult(result,getSequenceNumber());
 		}catch (Exception e) {
-			log.log(Level.WARNING, "Failed returning to agent confirm dialog results",e);
+			log.warn("Failed returning to agent confirm dialog results",e);
 		}
 	}
 }

@@ -12,8 +12,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -41,7 +42,7 @@ import org.w3c.dom.NodeList;
  * All SystemObjects are gathered to a HashMap allowing retrieval of all pre-created SystemObjects
  */
 public class SystemManagerImpl implements SystemObjectManager, TestListener {
-    private static Logger log = Logger.getLogger(SystemManagerImpl.class.getName());
+    private static Logger log = LoggerFactory.getLogger(SystemManagerImpl.class);
     /*
      * Singleton object
      */
@@ -146,7 +147,7 @@ public class SystemManagerImpl implements SystemObjectManager, TestListener {
         try {
         	ref = usedSut.getValue(xPath +"/@ref");
         } catch(Exception e){
-        	log.log(Level.FINE,"the ref: " + xPath + " was not found",e);
+        	log.debug("the ref: " + xPath + " was not found",e);
         }
         if(ref != null){ // will init the object from the referance
         	systemObject = processReferance(ref, xPath, parent, tag, name);
@@ -157,7 +158,7 @@ public class SystemManagerImpl implements SystemObjectManager, TestListener {
             try {
             	className = usedSut.getValue(xPath + "/class/text()");
             } catch(Exception e){
-            	log.log(Level.FINE,"the object: " + xPath + " wasn't init",e);
+            	log.debug("the object: " + xPath + " wasn't init",e);
             	return null;
             }
             if (className == null){
@@ -628,7 +629,7 @@ public class SystemManagerImpl implements SystemObjectManager, TestListener {
 			}
 
 		} catch (Exception e) {
-			log.log(Level.WARNING, "Fail To get all System Objects");
+			log.warn("Fail To get all System Objects");
 		}
 		return sysObjs;
 	}
@@ -686,7 +687,7 @@ public class SystemManagerImpl implements SystemObjectManager, TestListener {
 
 class SystemObjectCloseThread extends Thread{
 
-	private static Logger log = Logger.getLogger(SystemObjectCloseThread.class.getName());
+	private static Logger log = LoggerFactory.getLogger(SystemObjectCloseThread.class);
 	SystemObject so;
 	
 	public SystemObjectCloseThread(SystemObject so){
@@ -696,7 +697,7 @@ class SystemObjectCloseThread extends Thread{
 	public void run(){
 		if(so != null){
 			setName("Close" + so.getName());
-			log.fine("Closing " + so.getName());
+			log.debug("Closing " + so.getName());
 			so.close();
 		}
 	}

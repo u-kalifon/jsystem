@@ -7,8 +7,9 @@ package jsystem.framework.sut;
 import java.io.File;
 import java.util.Arrays;
 import java.util.Vector;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.JOptionPane;
 
@@ -27,7 +28,7 @@ public class SutFactory {
 
 	public static final String CREATE_A_NEW_SUT_FILE = "Create a new SUT file...";
 
-	private static Logger log = Logger.getLogger(SutFactory.class.getName());
+	private static Logger log = LoggerFactory.getLogger(SutFactory.class);
 
 	private static SutFactory factory = null;
 
@@ -85,7 +86,7 @@ public class SutFactory {
 				usedSut = getNewSutInstance();
 				init();
 			} catch (Exception e) {
-				log.log(Level.SEVERE, "Unable to load sut class: " + JSystemProperties.getInstance().getPreference(FrameworkOptions.SUT_CLASS_NAME), e);
+				log.error("Unable to load sut class: " + JSystemProperties.getInstance().getPreference(FrameworkOptions.SUT_CLASS_NAME), e);
 			}
 		}
 		return usedSut;
@@ -108,7 +109,7 @@ public class SutFactory {
 	private void init() {
 		File sutFile = getSutFile();
 		if (sutFile == null) {
-			log.fine("Fail to load SUT file");
+			log.debug("Fail to load SUT file");
 			return;
 		}
 		JSystemProperties.getInstance().setPreference(FrameworkOptions.USED_SUT_FILE, sutFile.getName());
@@ -116,11 +117,11 @@ public class SutFactory {
 		try {
 			File file = new File(getSutDirectory(), sutFile.getName());
 			usedSut.setSutXml(file);
-			log.log(Level.FINE, "Use sut file: " + sutFile.getName());
+			log.debug("Use sut file: " + sutFile.getName());
 		} catch (Exception e) {
 			String message = "Unable to init sut with file: " + sutFile.getName() + " " + e.getMessage(); 
-			log.log(Level.WARNING, message);
-			log.log(Level.FINE, message,e);
+			log.warn(message);
+			log.debug(message,e);
 		}
 	}
 
@@ -178,7 +179,7 @@ public class SutFactory {
 			if (sutFile.exists() && sutFile.isFile()) {
 				return sutFile;
 			}
-			log.warning("Can't find sut file: " + sutFile.getPath());
+			log.warn("Can't find sut file: " + sutFile.getPath());
 		}
 
 		Vector<String> v = getOptionalSuts();
@@ -230,7 +231,7 @@ public class SutFactory {
 			if (sd.exists() && sd.isDirectory()) {
 				return sd;
 			} else {
-				log.log(Level.WARNING, "SUT directory: " + sutDir + " couldn't be found");
+				log.warn("SUT directory: " + sutDir + " couldn't be found");
 			}
 		}
 		final File testsPath = new File(JSystemProperties.getCurrentTestsPath());

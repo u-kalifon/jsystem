@@ -13,8 +13,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 import java.util.Vector;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import jsystem.extensions.report.html.HtmlCodeWriter;
 import jsystem.framework.FrameworkOptions;
@@ -51,7 +52,7 @@ public class RunnerEngineImpl implements RunnerEngine {
 	 */
 	private ExecutionStateListener executionStateListener;
 
-	private static Logger log = Logger.getLogger(RunnerEngineImpl.class.getName());
+	private static Logger log = LoggerFactory.getLogger(RunnerEngineImpl.class);
 
 	/**
 	 * Single point where project path properties are set.
@@ -64,7 +65,7 @@ public class RunnerEngineImpl implements RunnerEngine {
 		try {
 			parent = new File(testClassesPath).getCanonicalFile().getParentFile();
 		} catch (IOException e) {
-			log.log(Level.WARNING,"Failed to get parent of " + testClassesPath);
+			log.warn("Failed to get parent of " + testClassesPath);
 		}
 		if (parent != null) {
 			File testsSrcFolder = new File(parent, "tests");
@@ -73,11 +74,11 @@ public class RunnerEngineImpl implements RunnerEngine {
 				//ITAI: This is adaptation to Maven project structure. 
 				testsSrcFolder = new File(parent.getParentFile(), "src/main/java");
 				if (!testsSrcFolder.exists()) {
-					log.log(Level.WARNING, "Tests source folder doesn't exist. " + testsSrcFolder.getAbsolutePath());
+					log.warn("Tests source folder doesn't exist. " + testsSrcFolder.getAbsolutePath());
 				}
 				resourcesSrcFolder = new File(parent.getParentFile(), "src/main/resources");
 				if (!resourcesSrcFolder.exists()) {
-					log.log(Level.WARNING, "Tests source folder doesn't exist. " + testsSrcFolder.getAbsolutePath());
+					log.warn("Tests source folder doesn't exist. " + testsSrcFolder.getAbsolutePath());
 				}
 
 			}
@@ -225,7 +226,7 @@ public class RunnerEngineImpl implements RunnerEngine {
 	public void changeSut(String sutName) throws Exception {
 		if (sutName == null) {
 			sutName = "";
-			log.warning("Sut file name is set to empty value");
+			log.warn("Sut file name is set to empty value");
 		}
 		SutFactory.getInstance().setSut(sutName);
 	}
@@ -329,7 +330,7 @@ public class RunnerEngineImpl implements RunnerEngine {
 		try {
 			stop();
 		} catch (Exception e) {
-			log.log(Level.FINE, "Failed stopping execution", e);
+			log.debug("Failed stopping execution", e);
 		}
 	}
 

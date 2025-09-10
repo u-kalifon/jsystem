@@ -4,10 +4,11 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Properties;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ConfigurationHandler {
-	private Logger log = Logger.getLogger(this.getClass().getSimpleName());
+	private Logger log = LoggerFactory.getLogger(this.getClass().getSimpleName());
 	private final File configFile;
 	private Properties prop;
 
@@ -29,12 +30,12 @@ public class ConfigurationHandler {
 			fis = new FileInputStream(configFile);
 			prop.load(fis);
 		} catch (IOException e) {
-			log.warning("Failed to read configuration file");
+			log.warn("Failed to read configuration file");
 		} finally {
 			try {
 				fis.close();
 			} catch (IOException e) {
-				log.warning("Failed to close file input stream");
+				log.warn("Failed to close file input stream");
 			}
 		}
 	}

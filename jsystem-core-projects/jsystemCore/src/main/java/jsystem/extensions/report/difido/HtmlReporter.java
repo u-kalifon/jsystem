@@ -6,8 +6,9 @@ import il.co.topq.difido.model.test.TestDetails;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import jsystem.framework.FrameworkOptions;
 import jsystem.framework.JSystemProperties;
@@ -29,7 +30,7 @@ import org.apache.commons.io.FileUtils;
  */
 public class HtmlReporter extends AbstractHtmlReporter {
 
-	private static final Logger log = Logger.getLogger(HtmlReporter.class.getName());
+	private static final Logger log = LoggerFactory.getLogger(HtmlReporter.class);
 
 	private boolean isZipLogDisable;
 
@@ -62,7 +63,7 @@ public class HtmlReporter extends AbstractHtmlReporter {
 		try {
 			initReporter(!isZipLogDisable);
 		} catch (Exception e) {
-			log.log(Level.SEVERE, "Fail to init HtmlTestReporter", e);
+			log.error("Fail to init HtmlTestReporter", e);
 		}
 		executedTests = 0;
 
@@ -91,7 +92,7 @@ public class HtmlReporter extends AbstractHtmlReporter {
 			jsystem.utils.FileUtils.addPropertyToFile(CommonResources.TEST_INNER_TEMP_FILENAME,
 					CommonResources.TEST_DIR_KEY, folder);
 		} catch (Exception e) {
-			log.log(Level.WARNING, "Failed updating tmp properties", e);
+			log.warn("Failed updating tmp properties", e);
 		}
 	}
 
@@ -181,7 +182,7 @@ public class HtmlReporter extends AbstractHtmlReporter {
 	}
 
 	static class ZipDeleteLogDirectory extends Thread {
-		private static Logger log = Logger.getLogger(ZipDeleteLogDirectory.class.getName());
+		private static Logger log = LoggerFactory.getLogger(ZipDeleteLogDirectory.class);
 
 		File toDelete = null;
 
@@ -243,7 +244,7 @@ public class HtmlReporter extends AbstractHtmlReporter {
 							JSystemProperties.getInstance().isJsystemRunner());
 				}
 			} catch (Exception e) {
-				log.log(Level.WARNING, "Fail to zip old log - Current logs are not deleted!!!", e);
+				log.warn("Fail to zip old log - Current logs are not deleted!!!", e);
 				return;
 			}
 			File sutFile = SutFactory.getInstance().getSutFile(false);
@@ -270,7 +271,7 @@ public class HtmlReporter extends AbstractHtmlReporter {
 						FileUtils.copyFile(zipFile, new File(dest, fileName + ".zip"));
 					}
 				} catch (IOException e1) {
-					log.log(Level.WARNING, "Fail to copy old log to Hierarchical folders of Sut and Version", e1);
+					log.warn("Fail to copy old log to Hierarchical folders of Sut and Version", e1);
 					return;
 				}
 				/**
@@ -291,7 +292,7 @@ public class HtmlReporter extends AbstractHtmlReporter {
 				try {
 					jsystem.utils.FileUtils.write(toDelete.getPath() + File.separator + ".zipped", "");
 				} catch (IOException e) {
-					log.warning("Creating .zip file was failed");
+					log.warn("Creating .zip file was failed");
 				}
 			}
 		}

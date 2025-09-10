@@ -4,8 +4,9 @@
 package jsystem.runner.agent.server;
 
 import java.lang.management.ManagementFactory;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.management.MBeanServer;
 
@@ -18,7 +19,6 @@ import jsystem.framework.sut.SutFactory;
 import jsystem.runner.agent.MBeanNames;
 import jsystem.utils.FileLock;
 
-
 import com.aqua.filetransfer.ftp.FTPServer;
 import com.ignis.embeddedcatalina.EmbeddedCatalina;
 
@@ -27,7 +27,7 @@ import com.ignis.embeddedcatalina.EmbeddedCatalina;
  */
 public class RunnerAgentMain implements StartRunner {
 	
-	private static Logger log = Logger.getLogger(RunnerAgentMain.class.getName());
+	private static Logger log = LoggerFactory.getLogger(RunnerAgentMain.class);
 	private volatile boolean restart;
 	
 	public void stop(){
@@ -112,7 +112,7 @@ public class RunnerAgentMain implements StartRunner {
 			JSystemProperties.getInstance();
 			run();
 		}catch (Throwable t){
-			log.log(Level.SEVERE,"Error in jsystem agent.",t);
+			log.error("Error in jsystem agent.",t);
 		}
 	}
 
@@ -123,7 +123,7 @@ public class RunnerAgentMain implements StartRunner {
 		try {
 			webPortInt = Integer.parseInt(webPort);
 		} catch (Exception e) {
-			log.fine("Error in WEB port parsing");
+			log.debug("Error in WEB port parsing");
 		}
 		JSystemProperties.getInstance().setPreference(FrameworkOptions.AGENT_WEB_PORT, "" + webPortInt);
 		return webPortInt;
@@ -135,7 +135,7 @@ public class RunnerAgentMain implements StartRunner {
 		try {
 			ftpPortInt = Integer.parseInt(ftpPort);
 		} catch (Exception e) {
-			log.fine("Error in FTP port parsing");
+			log.debug("Error in FTP port parsing");
 		}
 		JSystemProperties.getInstance().setPreference(FrameworkOptions.AGENT_FTP_PORT, "" + ftpPortInt);
 		return ftpPortInt;

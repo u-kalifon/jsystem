@@ -12,8 +12,9 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Toolkit;
 import java.util.Vector;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.ImageIcon;
 import javax.swing.JDialog;
@@ -117,7 +118,7 @@ public class ErrorPanel {
 	 */
 	public static void showErrorDialog(String title, String message, ErrorLevel errorLevel) {
 		WaitDialog.endWaitDialog();
-		Logger.getLogger(ErrorPanel.class.getName()).log(Level.INFO, message);
+		LoggerFactory.getLogger(ErrorPanel.class).info(message);
 		ERROR_DIALOG = new ErrorDialog(title, message, errorLevel, false);
 		ERROR_DIALOG.init();
 	}
@@ -130,7 +131,7 @@ public class ErrorPanel {
 	 */
 	public static boolean showErrorDialogOkCancel(String title, String message, ErrorLevel errorLevel) {
 		WaitDialog.endWaitDialog();
-		Logger.getLogger(ErrorPanel.class.getName()).log(Level.INFO, message);
+		LoggerFactory.getLogger(ErrorPanel.class).info(message);
 		ERROR_DIALOG = new ErrorDialog(title, message, errorLevel, true);
 		ERROR_DIALOG.init();
 		return ERROR_DIALOG.isCancel();

@@ -11,8 +11,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Properties;
 import java.util.Vector;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import jsystem.framework.scenario.Parameter;
 import jsystem.framework.scenario.RunnerTest;
@@ -30,7 +31,7 @@ import junit.framework.TestListener;
  * 
  */
 public class ProgressController extends Thread implements ScenarioListener, TestListener {
-	private static Logger log = Logger.getLogger(ProgressController.class.getName());
+	private static Logger log = LoggerFactory.getLogger(ProgressController.class);
 
 	ProgressListener view;
 
@@ -158,8 +159,7 @@ public class ProgressController extends Thread implements ScenarioListener, Test
 				try {
 					times.store(new FileOutputStream("testtimes.properties"), null);
 				} catch (IOException e) {
-					log.log(Level.INFO,
-							"Fail to store data to testtimes.properties please check it is not source controled");
+					log.info("Fail to store data to testtimes.properties please check it is not source controled");
 				}
 			}
 		}

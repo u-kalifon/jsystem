@@ -2,8 +2,9 @@ package jsystem.extensions.sourcecontrol;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.JOptionPane;
 
@@ -27,8 +28,7 @@ import jsystem.utils.FileUtils;
 
 public class SourceControlHandler implements ScenarioListener, SutListener {
 
-	private static Logger log = Logger.getLogger(SourceControlHandler.class
-			.getName());
+	private static Logger log = LoggerFactory.getLogger(SourceControlHandler.class.getName());
 
 	private boolean enabled;
 
@@ -90,7 +90,7 @@ public class SourceControlHandler implements ScenarioListener, SutListener {
 		repository = JSystemProperties.getInstance().getPreference(
 				FrameworkOptions.SCM_REPOSITORY);
 		if (null == repository || repository.isEmpty()) {
-			log.fine("No SVN repository was defined");
+			log.debug("No SVN repository was defined");
 			enabled = false;
 		}
 		user = JSystemProperties.getInstance().getPreference(
@@ -117,13 +117,13 @@ public class SourceControlHandler implements ScenarioListener, SutListener {
 								"All scnearios and SUT files will be deleted and replaced with repository files",
 								"Checkout warning", JOptionPane.YES_NO_OPTION);
 				if (JOptionPane.NO_OPTION == answer) {
-					log.fine("User select not to initialize working copy");
+					log.debug("User select not to initialize working copy");
 					enabled = false;
 					return;
 				}
 				sourceControl.initWorkingCopy();
 			} catch (SourceControlException e) {
-				log.log(Level.WARNING, "Failed to initialize working copy", e);
+				log.warn("Failed to initialize working copy", e);
 				enabled = false;
 				JOptionPane.showConfirmDialog(TestRunner.treeView,
 						"Failed to initialize working copy",
@@ -145,7 +145,7 @@ public class SourceControlHandler implements ScenarioListener, SutListener {
 			sourceControl.connect(repository, user, password);
 		} catch (SourceControlException e) {
 			enabled = false;
-			log.log(Level.WARNING, "Failed to connect to SCM repository", e);
+			log.warn("Failed to connect to SCM repository", e);
 			e.printStackTrace();
 		}
 
@@ -181,7 +181,7 @@ public class SourceControlHandler implements ScenarioListener, SutListener {
 		final String svnClass = JSystemProperties.getInstance().getPreference(
 				FrameworkOptions.SCM_PLUGIN_CLASS);
 		if (null == svnClass || svnClass.isEmpty()) {
-			log.fine("No SVN class was defined");
+			log.debug("No SVN class was defined");
 			enabled = false;
 			return;
 		}
@@ -189,7 +189,7 @@ public class SourceControlHandler implements ScenarioListener, SutListener {
 			Class<?> myclass = Class.forName(svnClass);
 			sourceControl = (SourceControlI) myclass.newInstance();
 		} catch (Exception e) {
-			log.log(Level.WARNING, "Failed to instanciate source control", e);
+			log.warn("Failed to instanciate source control", e);
 			enabled = false;
 			e.printStackTrace();
 			JOptionPane.showConfirmDialog(TestRunner.treeView,
@@ -213,7 +213,7 @@ public class SourceControlHandler implements ScenarioListener, SutListener {
 		try {
 			sourceControl.updateScenario(scenario);
 		} catch (SourceControlException e) {
-			log.log(Level.WARNING, "Failed to update scenario", e);
+			log.warn("Failed to update scenario", e);
 			e.printStackTrace();
 			JOptionPane.showConfirmDialog(TestRunner.treeView,
 					"Failed to update scenario", "Source Control Failure",
@@ -258,7 +258,7 @@ public class SourceControlHandler implements ScenarioListener, SutListener {
 		try {
 			sourceControl.addScenario(scenario);
 		} catch (SourceControlException e) {
-			log.log(Level.WARNING, "Failed to add scenario", e);
+			log.warn("Failed to add scenario", e);
 			e.printStackTrace();
 			JOptionPane.showConfirmDialog(TestRunner.treeView,
 					"Failed to add scenario", "Source Control Failure",
@@ -279,7 +279,7 @@ public class SourceControlHandler implements ScenarioListener, SutListener {
 		try {
 			sourceControl.commitScenario(scenario);
 		} catch (SourceControlException e) {
-			log.log(Level.WARNING, "Failed to commit scenario", e);
+			log.warn("Failed to commit scenario", e);
 			e.printStackTrace();
 			JOptionPane.showConfirmDialog(TestRunner.treeView,
 					"Failed to commit scenario", "Source Control Failure",
@@ -301,7 +301,7 @@ public class SourceControlHandler implements ScenarioListener, SutListener {
 		try {
 			sourceControl.revertScenario(scenario);
 		} catch (SourceControlException e) {
-			log.log(Level.WARNING, "Failed to revert scenario", e);
+			log.warn("Failed to revert scenario", e);
 			e.printStackTrace();
 		}
 		loadScenario(scenario);
@@ -320,7 +320,7 @@ public class SourceControlHandler implements ScenarioListener, SutListener {
 			TestRunner.treeView.getTableController().selectScenario(
 					scenario.getName());
 		} catch (Exception e) {
-			log.log(Level.WARNING, "Failed to select scenario after reverting",
+			log.warn("Failed to select scenario after reverting",
 					e);
 			e.printStackTrace();
 		}
@@ -333,7 +333,7 @@ public class SourceControlHandler implements ScenarioListener, SutListener {
 		try {
 			SaveScenarioAction.getInstance().saveCurrentScenario();
 		} catch (Exception e) {
-			log.log(Level.WARNING, "Failed to save scenario after change", e);
+			log.warn("Failed to save scenario after change", e);
 			e.printStackTrace();
 		}
 
@@ -367,7 +367,7 @@ public class SourceControlHandler implements ScenarioListener, SutListener {
 		try {
 			sourceControl.addSut(sutName);
 		} catch (SourceControlException e) {
-			log.log(Level.WARNING, "Failed to add sut", e);
+			log.warn("Failed to add sut", e);
 			e.printStackTrace();
 			JOptionPane.showConfirmDialog(TestRunner.treeView,
 					"Failed to add sut", "Source Control Failure",
@@ -386,7 +386,7 @@ public class SourceControlHandler implements ScenarioListener, SutListener {
 		try {
 			sourceControl.commitSut(sutName);
 		} catch (SourceControlException e) {
-			log.log(Level.WARNING, "Failed to commit file", e);
+			log.warn("Failed to commit file", e);
 			e.printStackTrace();
 			JOptionPane.showConfirmDialog(TestRunner.treeView,
 					"Failed to commit scenario", "Source Control Failure",
@@ -406,12 +406,11 @@ public class SourceControlHandler implements ScenarioListener, SutListener {
 			return;
 		}
 
-
 		final File sutFile = SutFactory.getInstance().getSutFile();
 		try {
 			sourceControl.revertSut(sutFile.getName());
 		} catch (SourceControlException e) {
-			log.log(Level.WARNING, "Failed to revert sut", e);
+			log.warn("Failed to revert sut", e);
 			e.printStackTrace();
 		}
 		updateSutStatus(sutFile.getName());
@@ -427,13 +426,12 @@ public class SourceControlHandler implements ScenarioListener, SutListener {
 					"Failed to copy SUT file to tests folder",
 					"Source Control Failure", JOptionPane.DEFAULT_OPTION,
 					JOptionPane.ERROR_MESSAGE);
-			log.severe("Failed to copy SUT file to tests folder");
+			log.error("Failed to copy SUT file to tests folder");
 			e.printStackTrace();
 		}
 		SutFactory.getInstance().setSut(sutFile.getName());
 
 	}
-
 
 	public void updateCurrentSut() {
 		if (!verifyEnabled()) {
@@ -443,14 +441,14 @@ public class SourceControlHandler implements ScenarioListener, SutListener {
 		try {
 			sourceControl.updateSut(sutFile.getName());
 		} catch (SourceControlException e) {
-			log.log(Level.WARNING, "Failed to update sut", e);
+			log.warn("Failed to update sut", e);
 			e.printStackTrace();
 		}
 		updateSutStatus(sutFile.getName());
 		try {
 			copySutToTestsFolder(sutFile);
 		} catch (IOException e) {
-			log.severe("Failed to copy SUT file to tests folder");
+			log.error("Failed to copy SUT file to tests folder");
 			e.printStackTrace();
 			JOptionPane.showConfirmDialog(TestRunner.treeView,
 					"Failed to copy SUT file to tests folder",
@@ -496,7 +494,6 @@ public class SourceControlHandler implements ScenarioListener, SutListener {
 		}
 		return true;
 	}
-
 
 	// ****** Events Handling**************
 

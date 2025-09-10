@@ -9,7 +9,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
-import java.util.logging.Level;
 
 import jsystem.framework.FrameworkOptions;
 import jsystem.framework.JSystemProperties;
@@ -96,7 +95,7 @@ public class HtmlTestList extends TestReport {
 		File listFile = new File(getReportFileCanonicalDirectory(), fileName);
 		listFile.getParentFile().mkdirs();
 		if (!listFile.getParentFile().exists()) {
-			log.log(Level.INFO, "Fail to create log directory: " + listFile.getParent());
+			log.info("Fail to create log directory: " + listFile.getParent());
 		}
 		
 		BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(listFile,fastList),"UTF-8"));

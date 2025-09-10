@@ -10,7 +10,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 import java.util.TreeMap;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import jsystem.extensions.report.xml.XmlReportHandler;
 import jsystem.extensions.report.xml.XmlReporter;
@@ -40,7 +41,7 @@ import org.junit.Test;
  */
 public class PublishTest extends SystemTestCase4 {
 
-	protected static Logger log = Logger.getLogger(PublishTest.class.getName());
+	protected static Logger log = LoggerFactory.getLogger(PublishTest.class);
 
 	public final static String delimiter = ":ABCDEDCBA:";
 	/**
@@ -148,7 +149,7 @@ public class PublishTest extends SystemTestCase4 {
 				descriptionOptions = getOptionsArray(XmlReporter.DESCRIPTION);
 				buildOptions = getOptionsArray(XmlReporter.BUILD);
 			} catch (IOException ioException) {
-				log.fine("couldn't find file " + valuesFile);
+				log.debug("couldn't find file " + valuesFile);
 			}
 		}
 		initParametersValues();
@@ -268,7 +269,7 @@ public class PublishTest extends SystemTestCase4 {
 			setParametersVisibility(map, PUBLISH_PARAMS, false);
 			break;
 		default:
-			log.warning("Unknown action type: " + currentActionType);
+			log.warn("Unknown action type: " + currentActionType);
 			break;
 		}
 

@@ -3,7 +3,8 @@
  */
 package junit.framework;
 
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.junit.internal.runners.ErrorReportingRunner;
 import org.junit.runner.Description;
@@ -28,7 +29,7 @@ public class JUnit4TestAdapterForJSystem implements Test {
 	private Class<?> testClass;
 	private String methodName;
 	
-	private static Logger log = Logger.getLogger(JUnit4TestAdapterForJSystem.class.getName());
+	private static Logger log = LoggerFactory.getLogger(JUnit4TestAdapterForJSystem.class);
 	
 	public JUnit4TestAdapterForJSystem(Class<?> testClass, String methodName) {
 		this.testClass = testClass;

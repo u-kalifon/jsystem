@@ -21,8 +21,9 @@ import java.io.File;
 import java.lang.reflect.Constructor;
 import java.util.StringTokenizer;
 import java.util.Vector;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.BoxLayout;
 import javax.swing.DefaultComboBoxModel;
@@ -117,7 +118,7 @@ public class TestTreeView extends JFrame implements ActionListener, TestsTreeLis
 		SutListener, KeyListener {
 	private static final long serialVersionUID = -1201843524227517726L;
 
-	private static Logger log = Logger.getLogger(TestTreeView.class.getName());
+	private static Logger log = LoggerFactory.getLogger(TestTreeView.class);
 
 	public static final String SUT_COMBO_NAME = "SUT_COMBO_NAME";
 
@@ -271,7 +272,7 @@ public class TestTreeView extends JFrame implements ActionListener, TestsTreeLis
 					tabInstance.setTestsTableController(tableController);
 					tabbes.addTab(tabInstance.getTabName(), tabInstance.init());
 				} catch (Exception e) {
-					log.log(Level.WARNING, "fail to load tab: " + className, e);
+					log.warn("fail to load tab: " + className, e);
 				}
 			}
 		}
@@ -691,7 +692,7 @@ public class TestTreeView extends JFrame implements ActionListener, TestsTreeLis
 			urlFromFile = UploadRunner.getReportsApplicationUrl();
 			return validateUrl(urlFromFile);
 		} catch (Exception e) {
-			log.log(Level.FINE, "Failed validating url " + urlFromFile, e);
+			log.debug("Failed validating url " + urlFromFile, e);
 			return false;
 		}
 	}
@@ -728,7 +729,7 @@ public class TestTreeView extends JFrame implements ActionListener, TestsTreeLis
 		try {
 			RunnerEngineManager.getRunnerEngine().changeSut(sutName);
 		} catch (Exception e1) {
-			log.log(Level.SEVERE, "Fail to load sut", e1);
+			log.error("Fail to load sut", e1);
 		}
 		refreshSUTTooltip();
 	}

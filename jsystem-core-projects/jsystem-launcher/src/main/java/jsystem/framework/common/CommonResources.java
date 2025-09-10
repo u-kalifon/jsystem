@@ -11,8 +11,9 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import jsystem.framework.launcher.Locator;
 
@@ -24,8 +25,17 @@ import jsystem.framework.launcher.Locator;
  */
 public class CommonResources {
 	
-	public static Logger log = Logger
-			.getLogger(CommonResources.class.getName());
+	private static Logger log;
+	
+	/**
+	 * Get logger instance with lazy initialization to avoid bootstrap classpath issues
+	 */
+	public static Logger getLogger() {
+		if (log == null) {
+			log = LoggerFactory.getLogger(CommonResources.class.getName());
+		}
+		return log;
+	}
 	
 	/**
 	 * Properties file for ant script properties.
@@ -281,7 +291,7 @@ public class CommonResources {
 			try {
 				uJars = Locator.getLocationURLs(libsDir[i]);
 			} catch (MalformedURLException e) {
-				log.log(Level.WARNING, libsDir[i].getName(), e);
+				getLogger().warn(libsDir[i].getName(), e);
 			}
 			if (uJars != null) {
 				for (int j = 0; j < uJars.length; j++) {

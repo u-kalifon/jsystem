@@ -5,7 +5,8 @@ package jsystem.framework.scripts.jython;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.ImageIcon;
 
@@ -19,7 +20,7 @@ import org.python.util.PythonInterpreter;
 
 public class JythonScriptEngine implements ScriptEngine {
 
-	private static Logger log = Logger.getLogger(JythonScriptEngine.class.getName());
+	private static Logger log = LoggerFactory.getLogger(JythonScriptEngine.class);
 	
 	@Override
 	public boolean accept(File file) {
@@ -58,7 +59,7 @@ public class JythonScriptEngine implements ScriptEngine {
 			}
 		} catch (PyException e) {
 			String message = e.toString();
-			log.warning(String.format("Error while loading '%s':\n%s", file.getAbsolutePath(), message));
+			log.warn(String.format("Error while loading '%s':\n%s", file.getAbsolutePath(), message));
 		}
 		
 		return executors.toArray(new ScriptExecutor[0]);

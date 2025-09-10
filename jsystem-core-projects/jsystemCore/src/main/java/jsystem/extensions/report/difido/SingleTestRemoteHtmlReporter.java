@@ -1,7 +1,8 @@
 package jsystem.extensions.report.difido;
 
 import java.util.Date;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import il.co.topq.difido.model.Enums.ElementType;
 import il.co.topq.difido.model.Enums.Status;
@@ -18,7 +19,7 @@ import junit.framework.AssertionFailedError;
 import junit.framework.Test;
 
 public class SingleTestRemoteHtmlReporter extends RemoteHtmlReporter {
-	private static final Logger log = Logger.getLogger(SingleTestRemoteHtmlReporter.class.getName());
+	private static final Logger log = LoggerFactory.getLogger(SingleTestRemoteHtmlReporter.class);
 
 	private static final int MAX_VALUE_LENGTH = 64;
 
@@ -145,7 +146,7 @@ public class SingleTestRemoteHtmlReporter extends RemoteHtmlReporter {
 
 	@Override
 	public void addError(Test arg0, Throwable arg1) {
-		log.fine("Received error event");
+		log.debug("Received error event");
 		if (DifidoConfig.getInstance().getBoolean(DifidoProperty.ERRORS_TO_FAILURES)) {
 			// We don't want errors in the report, so we will change each error
 			// to failure.
@@ -157,7 +158,7 @@ public class SingleTestRemoteHtmlReporter extends RemoteHtmlReporter {
 
 	@Override
 	public void addFailure(Test arg0, AssertionFailedError arg1) {
-		log.fine("Received failure event");
+		log.debug("Received failure event");
 		singleTest.setStatus(Status.failure);
 	}
 

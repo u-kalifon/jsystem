@@ -13,8 +13,9 @@ import java.util.Hashtable;
 import java.util.Properties;
 import java.util.StringTokenizer;
 import java.util.Vector;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -68,7 +69,7 @@ public class ClassSearchUtil {
 }
 
 class GeneralCollector {
-	private static Logger log = Logger.getLogger(GeneralCollector.class.getName());
+	private static Logger log = LoggerFactory.getLogger(GeneralCollector.class);
 	private Class<?> ofType = null;
 	private String classPath;
 	private boolean filterAbstract;
@@ -161,7 +162,7 @@ class GeneralCollector {
 			try {
 				gatherFiles(new File(classElement), "", result);
 			} catch (Exception e1) {
-				log.log(Level.INFO, "Fail to process file", e1);
+				log.info("Fail to process file", e1);
 			}
 		}
 		return result;

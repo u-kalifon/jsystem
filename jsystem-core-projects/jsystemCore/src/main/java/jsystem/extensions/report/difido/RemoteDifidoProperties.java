@@ -7,13 +7,14 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import jsystem.utils.StringUtils;
 
 public class RemoteDifidoProperties {
 
-	private static final Logger log = Logger.getLogger(RemoteDifidoProperties.class.getName());
+	private static final Logger log = LoggerFactory.getLogger(RemoteDifidoProperties.class);
 
 	public static final String FILE_NAME = "remoteDifido.properties";
 
@@ -113,7 +114,7 @@ public class RemoteDifidoProperties {
 		try (final FileWriter writer = new FileWriter(propertiesFile)) {
 			properties.store(writer, "Default Difido properties");
 		} catch (IOException e) {
-			log.warning("Failed to write Difido properties to file");
+			log.warn("Failed to write Difido properties to file");
 		}
 	}
 

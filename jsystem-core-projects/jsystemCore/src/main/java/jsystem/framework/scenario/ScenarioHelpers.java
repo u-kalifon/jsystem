@@ -17,8 +17,9 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.Vector;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -49,8 +50,7 @@ import org.w3c.dom.Element;
 public class ScenarioHelpers {
 
 	private static Map<String, Properties> propertiesCache;
-	private static Logger log = Logger.getLogger(ScenarioHelpers.class
-			.getName());
+	private static Logger log = LoggerFactory.getLogger(ScenarioHelpers.class.getName());
 
 	static {
 		resetCache();
@@ -1647,7 +1647,7 @@ public class ScenarioHelpers {
 			}
 			return false;
 		} catch (Exception e1) {
-			log.warning("failed updating scenario as test flag");
+			log.warn("failed updating scenario as test flag");
 			return true;
 		}
 	}
@@ -1664,7 +1664,7 @@ public class ScenarioHelpers {
 					RunningProperties.SCENARIO_AS_TEST_START);
 			removeFailFlag();
 		} catch (Exception e1) {
-			log.warning("failed updating scenario as test flag");
+			log.warn("failed updating scenario as test flag");
 		}
 	}
 
@@ -1700,7 +1700,7 @@ public class ScenarioHelpers {
 				RunProperties.getInstance().setRunProperty(
 						RunningProperties.SCENARIO_AS_TEST_FAILURE, "true");
 			} catch (IOException e) {
-				log.warning("failed updating scenario as test FAIL flag");
+				log.warn("failed updating scenario as test FAIL flag");
 			}
 		}
 	}
@@ -1710,7 +1710,7 @@ public class ScenarioHelpers {
 			return RunProperties.getInstance().getRunProperty(
 					RunningProperties.SCENARIO_AS_TEST_FAILURE) != null;
 		} catch (IOException e) {
-			log.warning("failed checking scenario as test FAIL flag");
+			log.warn("failed checking scenario as test FAIL flag");
 			return false;
 		}
 	}
@@ -1720,7 +1720,7 @@ public class ScenarioHelpers {
 			RunProperties.getInstance().removeRunProperty(
 					RunningProperties.SCENARIO_AS_TEST_FAILURE);
 		} catch (IOException e) {
-			log.warning("failed updating scenario as test FAIL flag");
+			log.warn("failed updating scenario as test FAIL flag");
 		}
 	}
 
@@ -1729,7 +1729,7 @@ public class ScenarioHelpers {
 			return RunProperties.getInstance().getRunProperty(
 					RunningProperties.SCENARIO_AS_TEST_START) != null;
 		} catch (IOException e) {
-			log.fine("failed checking scenario as test flag");
+			log.debug("failed checking scenario as test flag");
 			return false;
 		}
 	}
@@ -1744,7 +1744,7 @@ public class ScenarioHelpers {
 			return "true".equals(RunProperties.getInstance().getRunProperty(
 					RunningProperties.ABORT_CURRENT_SCENARIO_EXECUTION));
 		} catch (IOException e) {
-			log.fine("Problem checking scenario as test flag");
+			log.debug("Problem checking scenario as test flag");
 			return false;
 		}
 	}
@@ -1770,7 +1770,7 @@ public class ScenarioHelpers {
 				}
 			}
 		} catch (IOException e) {
-			log.fine("Problem checking scenario as test flag");
+			log.debug("Problem checking scenario as test flag");
 		}
 	}
 
@@ -1784,7 +1784,7 @@ public class ScenarioHelpers {
 			ListenerstManager.getInstance().report(
 					"Scenario abort flag was raised");
 		} catch (IOException e) {
-			log.fine("Problem checking scenario as test flag");
+			log.debug("Problem checking scenario as test flag");
 		}
 	}
 
@@ -1818,7 +1818,7 @@ public class ScenarioHelpers {
 			doc = db.parse(fis);
 			root = doc.getDocumentElement();
 		} catch (Exception e) {
-			log.log(Level.SEVERE, "fail to load scenario from file "
+			log.error("fail to load scenario from file "
 					+ scenarioXml, e);
 			throw e;
 		} finally {

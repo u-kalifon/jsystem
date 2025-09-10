@@ -28,8 +28,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.Action;
 import javax.swing.DefaultComboBoxModel;
@@ -81,8 +82,7 @@ import org.w3c.dom.Document;
 public class SutTreeDialog extends JDialog implements TreeSelectionListener,
 		MouseListener, SutEditor {
 
-	protected static final Logger log = Logger.getLogger(SutTreeDialog.class
-			.getName());
+	protected static final Logger log = LoggerFactory.getLogger(SutTreeDialog.class.getName());
 
 	private static final long serialVersionUID = 3140310446094044200L;
 
@@ -319,7 +319,6 @@ public class SutTreeDialog extends JDialog implements TreeSelectionListener,
 	public void mouseReleased(MouseEvent e) {
 		// ignored
 	}
-
 
 	private JPopupMenu getMenu() {
 		JPopupMenu popup = new JPopupMenu();
@@ -654,7 +653,6 @@ public class SutTreeDialog extends JDialog implements TreeSelectionListener,
 	public void keyTyped(KeyEvent e) {
 	}
 
-
 	public boolean isEnableAddToRoot() {
 		return enableAddToRoot;
 	}
@@ -875,8 +873,7 @@ class AddAction extends IgnisAction {
 			optionalSOs = dialog.treeTableModel
 					.getSystemObjectsOfType(baseClass);
 		} catch (Exception e1) {
-			SutTreeDialog.log.log(Level.WARNING,
-					"Fail to process system objects", e1);
+			SutTreeDialog.log.warn("Fail to process system objects", e1);
 			return;
 		}
 
@@ -923,7 +920,7 @@ class AddAction extends IgnisAction {
 				break;
 			}
 		} catch (Exception e1) {
-			SutTreeDialog.log.log(Level.WARNING, "Fail to add system object",
+			SutTreeDialog.log.warn("Fail to add system object",
 					e1);
 		}
 	}
@@ -996,8 +993,7 @@ class RemoveAction extends IgnisAction {
 		try {
 			dialog.treeTableModel.removeObject(dialog.selectedNode, true);
 		} catch (Exception e1) {
-			SutTreeDialog.log.log(Level.WARNING,
-					"Fail to remove system objects", e1);
+			SutTreeDialog.log.warn("Fail to remove system objects", e1);
 		}
 	}
 
@@ -1052,8 +1048,7 @@ class UpAction extends IgnisAction {
 			//dialog.treeTableModel.removeObject(dialog.selectedNode, true);
 			dialog.treeTableModel.moveUp(dialog.selectedNode);
 		} catch (Exception e1) {
-			SutTreeDialog.log.log(Level.WARNING,
-					"Fail to move object up system objects", e1);
+			SutTreeDialog.log.warn("Fail to move object up system objects", e1);
 		}
 	}
 
@@ -1102,8 +1097,7 @@ class DownAction extends IgnisAction {
 			//dialog.treeTableModel.removeObject(dialog.selectedNode, true);
 			dialog.treeTableModel.moveDown(dialog.selectedNode);
 		} catch (Exception e1) {
-			SutTreeDialog.log.log(Level.WARNING,
-					"Fail to move object down system objects", e1);
+			SutTreeDialog.log.warn("Fail to move object down system objects", e1);
 		}
 	}
 

@@ -8,7 +8,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
-import java.util.logging.Level;
 
 import jsystem.utils.StringUtils;
 
@@ -76,7 +75,7 @@ public class TestReport extends Report {
 			listFile.getParentFile().mkdirs();
 
 			if (!listFile.getParentFile().exists()) {
-				log.log(Level.INFO, "Fail to create log directory: " + listFile.getParent());
+				log.info("Fail to create log directory: " + listFile.getParent());
 			}
 
 			BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(listFile),"UTF-8"));

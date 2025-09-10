@@ -5,7 +5,8 @@ package jsystem.treeui.threads;
 
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import jsystem.framework.FrameworkOptions;
 import jsystem.framework.JSystemProperties;
@@ -20,7 +21,7 @@ import jsystem.utils.StringUtils;
  *	A class to manage the activity of auto save scenario in the jsystem.
  */
 public class AutoSaveThread implements JsystemPropertiesChangeListener{
-	private static Logger log = Logger.getLogger(AutoSaveThread.class.getName());
+	private static Logger log = LoggerFactory.getLogger(AutoSaveThread.class);
 	private static AutoSaveThread INSTANCE = null;
 	private TimerTask task;
 	private Timer timer;
@@ -43,7 +44,7 @@ public class AutoSaveThread implements JsystemPropertiesChangeListener{
 					try{
 						SaveScenarioAction.getInstance().saveCurrentScenario();
 					}catch (Exception e){
-						log.severe(StringUtils.getStackTrace(e));
+						log.error(StringUtils.getStackTrace(e));
 					}
 				}
 			};

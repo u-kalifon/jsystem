@@ -12,8 +12,9 @@ import java.io.IOException;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import jsystem.extensions.report.html.summary.Attribute;
 import jsystem.extensions.report.html.summary.Chapter;
@@ -32,7 +33,7 @@ import junit.framework.TestCase;
 import junit.framework.TestListener;
 
 public class HtmlSummaryReporterExtentsion implements TestReporter, TestListener {
-	private static Logger log = Logger.getLogger(HtmlSummaryReporter.class.getName());
+	private static Logger log = LoggerFactory.getLogger(HtmlSummaryReporter.class);
 
 	private File summaryFile;
 
@@ -98,7 +99,7 @@ public class HtmlSummaryReporterExtentsion implements TestReporter, TestListener
 		try {
 			saveFile();
 		} catch (Exception e) {
-			log.log(Level.WARNING, "Fail to write file: " + summaryFile.getPath(), e);
+			log.warn("Fail to write file: " + summaryFile.getPath(), e);
 		}
 
 		String srcPath = JSystemProperties.getInstance().getPreference(FrameworkOptions.TESTS_SOURCE_FOLDER);
@@ -155,7 +156,7 @@ public class HtmlSummaryReporterExtentsion implements TestReporter, TestListener
 		try {
 			saveFile();
 		} catch (Exception e) {
-			log.log(Level.WARNING, "fail to save summary file", e);
+			log.warn("fail to save summary file", e);
 		}
 
 	}

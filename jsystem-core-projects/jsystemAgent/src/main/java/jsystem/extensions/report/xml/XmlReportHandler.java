@@ -14,8 +14,9 @@ import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -49,7 +50,7 @@ import org.xml.sax.SAXException;
 public class XmlReportHandler implements ReportInformation {
 	private static final String PROPERTIES_SEPARATOR = "/SEP/";
 
-	private static Logger log = Logger.getLogger(XmlReportHandler.class.getName());
+	private static Logger log = LoggerFactory.getLogger(XmlReportHandler.class);
 
 	File xmlDirectory;
 
@@ -101,7 +102,7 @@ public class XmlReportHandler implements ReportInformation {
 			try {
 				instance = new XmlReportHandler(logFolder);
 			} catch (Exception e) {
-				log.log(Level.SEVERE, "Failed to create instance of XmlReporter", e);
+				log.error("Failed to create instance of XmlReporter", e);
 			}
 		}
 		if (instance != null) {
@@ -116,7 +117,7 @@ public class XmlReportHandler implements ReportInformation {
 		try {
 			readXmlFiles();
 		} catch (Exception e) {
-			log.log(Level.WARNING, "Failed to refresh XML files", e);
+			log.warn("Failed to refresh XML files", e);
 		}
 
 	}
@@ -203,7 +204,7 @@ public class XmlReportHandler implements ReportInformation {
 							// ////////////////////////////////////////////
 
 						} catch (Throwable t) {
-							log.log(Level.WARNING, "no endTime for test: " + e.getAttribute("name"), t);
+							log.warn("no endTime for test: " + e.getAttribute("name"), t);
 						}
 					}
 				}
@@ -288,7 +289,7 @@ public class XmlReportHandler implements ReportInformation {
 				try {
 					os.close();
 				} catch (IOException e) {
-					log.warning("Failed closing report file");
+					log.warn("Failed closing report file");
 				}
 			}
 		}
@@ -428,10 +429,10 @@ public class XmlReportHandler implements ReportInformation {
 		// XmlReportHandler xml = new XmlReportHandler(new File(
 		// "C:\\work\\projects\\automation\\jsystem\\log\\current"));
 		// for (int i = 0; i < xml.getNumberOfTests(); i++) {
-		// log.log(Level.INFO, xml.getTestInfo(i));
+		// log.info(xml.getTestInfo(i));
 		// }
 		// } catch (Exception e) {
-		// log.log(Level.WARNING, "fail to publish to DB");
+		// log.warn("fail to publish to DB");
 		// }
 	}
 

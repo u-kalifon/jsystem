@@ -4,7 +4,8 @@
 package jsystem.runner.projectsync;
 
 import java.io.File;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import jsystem.runner.agent.ProjectComponent;
 
@@ -15,7 +16,7 @@ import org.apache.commons.io.FileUtils;
  */
 public class ProjectZip {
 	
-	private static Logger log = Logger.getLogger(ProjectZip.class.getName());
+	private static Logger log = LoggerFactory.getLogger(ProjectZip.class);
 	
 	private File projectClassesPath;
 	
@@ -98,7 +99,7 @@ public class ProjectZip {
 	private void copyTestsCode(File root) throws Exception{
 		File testsCodeFolderSrc = new File(projectClassesPath.getParent(),"tests");
 		if (!testsCodeFolderSrc.exists()){
-			log.fine("tests code folder was not found in project");
+			log.debug("tests code folder was not found in project");
 			return;
 		}
 		File testsCodeFolderDest = new File(root,"tests");
@@ -111,7 +112,7 @@ public class ProjectZip {
 	private void copyLibs(File root) throws Exception{
 		File libFolderSrc = new File(projectClassesPath.getParent(),"lib");
 		if (!libFolderSrc.exists()){
-			log.fine("lib folder was not found in project");
+			log.debug("lib folder was not found in project");
 			return;
 		}
 		File libFolderDest = new File(root,"lib");
@@ -124,7 +125,7 @@ public class ProjectZip {
 	private void copyResources(File root) throws Exception{
 		File resourcesFolder = new File(projectClassesPath.getParent(),"resources");
 		if (!resourcesFolder.exists()){
-			log.fine("resources folder was not found in project");
+			log.debug("resources folder was not found in project");
 			return;
 		}
 		File resourcesFolderDest = new File(root,"resources");
@@ -137,7 +138,7 @@ public class ProjectZip {
 	private void copySut(File root) throws Exception{
 		File sutFolderSrc = new File(projectClassesPath,"sut");
 		if (!sutFolderSrc.exists()){
-			log.warning("sut folder was not found in project");
+			log.warn("sut folder was not found in project");
 			return;
 		}
 		File classesFolder = getAndCreateClassesFolder(root);
@@ -151,7 +152,7 @@ public class ProjectZip {
 	private void copyScenarios(File root) throws Exception{
 		File scenariosFolderSrc = new File(projectClassesPath,"scenarios");
 		if (!scenariosFolderSrc.exists()){
-			log.warning("scenarios folder was not found in project");
+			log.warn("scenarios folder was not found in project");
 			return;
 		}
 		File classesFolder = getAndCreateClassesFolder(root);
@@ -161,7 +162,6 @@ public class ProjectZip {
 		}
 		FileUtils.copyDirectory(scenariosFolderSrc,scenariosFolderDest);
 	}
-
 
 	private File getAndCreateClassesFolder(File root) throws Exception {
 		File classesFolder = new File(root,projectClassesPath.getName());

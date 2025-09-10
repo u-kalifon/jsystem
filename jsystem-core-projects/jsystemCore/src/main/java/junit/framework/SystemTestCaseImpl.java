@@ -4,8 +4,9 @@
 package junit.framework;
 
 import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.JOptionPane;
 
@@ -33,7 +34,7 @@ public class SystemTestCaseImpl {
 	 * Analyze object can be used to run analyzers that don't require
 	 * SystemObject
 	 */
-	protected static Logger log = Logger.getLogger(SystemTestCase4.class.getName());
+	protected static Logger log = LoggerFactory.getLogger(SystemTestCase4.class);
 	private Class<?> fixture = RootFixture.class;
 	private Class<?> tearDownFixture = null;
 	/**
@@ -181,7 +182,7 @@ public class SystemTestCaseImpl {
 			executedSteps.append(step);
 			executedSteps.append("\n");
 		}catch (OutOfMemoryError e) {
-			log.log(Level.SEVERE, "Steps buffer was Exceeded. this is probably done due to misusage of" +
+			log.error("Steps buffer was Exceeded. this is probably done due to misusage of" +
 					" the step mechanism.\n" +
 					"for Bold reporting please use: report.report(\"Your title\",ReportAttribute.BOLD); instead ");
 		}
@@ -315,7 +316,7 @@ public class SystemTestCaseImpl {
 		try {
 			ParametersManager.initTestParameters(test);
 		} catch (Exception e) {
-			log.log(Level.WARNING, "Fail to init parameters", e);
+			log.warn("Fail to init parameters", e);
 		}
 		log.info("Running test: " + test.getName());
 		try { // setup fixtures
@@ -339,7 +340,7 @@ public class SystemTestCaseImpl {
 				ParametersManager.retrieveTestParameters((SystemTest)test);
 
 			} catch (Exception e) {
-				log.log(Level.WARNING, "Fail to retrieve parameters", e);
+				log.warn("Fail to retrieve parameters", e);
 			}
 		}
 
@@ -384,7 +385,7 @@ public class SystemTestCaseImpl {
 				}
 				FixtureManager.getInstance().failTo(tearDownName);
 			} catch (Throwable tt) {
-				log.log(Level.WARNING, "tearDown fixture failed", tt);
+				log.warn("tearDown fixture failed", tt);
 				testResult.addError(test, tt);
 			}
 		}

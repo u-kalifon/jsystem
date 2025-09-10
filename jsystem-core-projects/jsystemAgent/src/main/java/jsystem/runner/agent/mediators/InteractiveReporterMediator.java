@@ -3,8 +3,8 @@
  */
 package jsystem.runner.agent.mediators;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.management.Notification;
 
@@ -14,7 +14,7 @@ import jsystem.runner.agent.notifications.ShowMessageDialogNotification;
 import jsystem.runner.agent.server.RunnerAgent;
 
 public class InteractiveReporterMediator extends BaseMediator implements InteractiveReporter{
-	private static Logger log = Logger.getLogger(InteractiveReporterMediator.class.getName());
+	private static Logger log = LoggerFactory.getLogger(InteractiveReporterMediator.class);
 	
 	public InteractiveReporterMediator(RunnerAgent agent){
 		super(agent);	
@@ -25,13 +25,13 @@ public class InteractiveReporterMediator extends BaseMediator implements Interac
 		if (NotificationLevel.getCurrentNotificationLevel().compareTo(NotificationLevel.ALL) > 0){
 			return 0;
 		}				
-		log.finest("showConfirmDialog(String title, String message, int optionType, int messageType) - sent");
+		log.trace("showConfirmDialog(String title, String message, int optionType, int messageType) - sent");
 		Notification n = new ShowMessageDialogNotification(runnerAgent().getClass().getName(),title,message,optionType,messageType);
 		sendNotification(n);
 		try {
 			return runnerAgent().waitForConfirmDialogResults(n.getSequenceNumber());
 		}catch (Exception e){
-			log.log(Level.WARNING,"Error when waiting for confirm dialog",e);
+			log.warn("Error when waiting for confirm dialog",e);
 		}
 		return 0;
 	}

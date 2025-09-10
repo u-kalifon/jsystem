@@ -4,7 +4,8 @@
 package jsystem.runner.projectsync;
 
 import java.io.File;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import jsystem.runner.agent.ProjectComponent;
 
@@ -15,7 +16,7 @@ import org.apache.commons.io.FileUtils;
  */
 public class ProjectUnZip {
 	
-	private static Logger log = Logger.getLogger(ProjectUnZip.class.getName());
+	private static Logger log = LoggerFactory.getLogger(ProjectUnZip.class);
 	private File projectClassesPath;
 	private File projectZip;
 	
@@ -74,7 +75,7 @@ public class ProjectUnZip {
 	private void extractClasses(File zipFileDirectory) throws Exception {
 		File zipDirectoryClassesDir = new File(zipFileDirectory,projectClassesPath.getName());
 		if (!zipDirectoryClassesDir.exists()){
-			log.fine("classes dir was not found in extracted project file. " + zipDirectoryClassesDir.getAbsolutePath());
+			log.debug("classes dir was not found in extracted project file. " + zipDirectoryClassesDir.getAbsolutePath());
 			return;
 		}
 		
@@ -113,7 +114,7 @@ public class ProjectUnZip {
 	private void extractLibs(File zipFileDirectory) throws Exception{
 		File zipDirectoryLibDir = new File(zipFileDirectory,"lib");
 		if (!zipDirectoryLibDir.exists()){
-			log.fine("lib dir was not found in extracted project file. " + zipDirectoryLibDir.getAbsolutePath());
+			log.debug("lib dir was not found in extracted project file. " + zipDirectoryLibDir.getAbsolutePath());
 			return;
 		}
 		File projectDirectoryLibDir = new File(projectClassesPath.getParent(),"lib");
@@ -124,7 +125,7 @@ public class ProjectUnZip {
 	private void extractResources(File zipFileDirectory) throws Exception{
 		File zipDirectoryResourcesDir = new File(zipFileDirectory,"resources");
 		if (!zipDirectoryResourcesDir.exists()){
-			log.fine("lib dir was not found in extracted project file. " + zipDirectoryResourcesDir.getAbsolutePath());
+			log.debug("lib dir was not found in extracted project file. " + zipDirectoryResourcesDir.getAbsolutePath());
 			return;
 		}
 		File projectDirectoryResourcesDir = new File(projectClassesPath.getParent(),"resources");
@@ -135,7 +136,7 @@ public class ProjectUnZip {
 	private void extractTestsCode(File zipFileDirectory) throws Exception{
 		File zipDirectoryTestsCodeDir = new File(zipFileDirectory,"tests");
 		if (!zipDirectoryTestsCodeDir.exists()){
-			log.fine("tests code dir was not found in extracted project file. " + zipDirectoryTestsCodeDir.getAbsolutePath());
+			log.debug("tests code dir was not found in extracted project file. " + zipDirectoryTestsCodeDir.getAbsolutePath());
 			return;
 		}
 		File projectDirectoryTestsCodeDir = new File(projectClassesPath.getParent(),"tests");
@@ -147,7 +148,7 @@ public class ProjectUnZip {
 		File zipDirectoryClassesDir = new File(zipFileDirectory,projectClassesPath.getName());
 		File zipDirectorySutDir = new File(zipDirectoryClassesDir,"sut");
 		if (!zipDirectorySutDir.exists()){
-			log.fine("sut dir was not found in extracted project file. " + zipDirectorySutDir.getAbsolutePath());
+			log.debug("sut dir was not found in extracted project file. " + zipDirectorySutDir.getAbsolutePath());
 			return;
 		}
 		File projectDirectorySutDir = new File(projectClassesPath,"sut");
@@ -159,7 +160,7 @@ public class ProjectUnZip {
 		File zipDirectoryClassesDir = new File(zipFileDirectory,projectClassesPath.getName());
 		File zipDirectoryScenariosDir = new File(zipDirectoryClassesDir,"scenarios");
 		if (!zipDirectoryScenariosDir.exists()){
-			log.fine("sut dir was not found in extracted project file. " + zipDirectoryScenariosDir.getAbsolutePath());
+			log.debug("sut dir was not found in extracted project file. " + zipDirectoryScenariosDir.getAbsolutePath());
 			return;
 		}
 		File projectDirectoryScenariosDir = new File(projectClassesPath,"scenarios");

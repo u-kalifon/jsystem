@@ -9,7 +9,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 import java.util.UUID;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.management.NotificationBroadcasterSupport;
 
@@ -85,7 +86,7 @@ public class RunnerAgent extends  NotificationBroadcasterSupport implements Runn
 	 * @see #FILES_ROOT
 	 */	
 	private File filesRootDir;
-	private static Logger log = Logger.getLogger(RunnerAgent.class.getName());
+	private static Logger log = LoggerFactory.getLogger(RunnerAgent.class);
 	
 	/**
 	 * members for confirmation dialog  synchronization.
@@ -434,7 +435,6 @@ public class RunnerAgent extends  NotificationBroadcasterSupport implements Runn
 		if (path == null) {
 			RunnerEngineImpl.setTestsPath(defaultProjectDir.getPath());
 		}		
-
 
        //verifying/initializing agent.id
        String agentId = JSystemProperties.getInstance().getPreference(FrameworkOptions.AGENT_ID);

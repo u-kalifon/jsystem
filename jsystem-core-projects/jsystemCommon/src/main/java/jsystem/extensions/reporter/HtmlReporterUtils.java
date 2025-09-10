@@ -4,7 +4,8 @@
 package jsystem.extensions.reporter;
 
 import java.io.File;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -20,7 +21,7 @@ import jsystem.framework.report.Reporter;
  */
 public class HtmlReporterUtils {
 	
-	protected static Logger log = Logger.getLogger(HtmlReporterUtils.class.getName());
+	protected static Logger log = LoggerFactory.getLogger(HtmlReporterUtils.class);
 
 	/**
 	 * Get the current test file name for current test running.
@@ -66,7 +67,7 @@ public class HtmlReporterUtils {
 			Matcher m = p.matcher(file.getName());
 			//look for file pattern with: report\d+.html 
 			if (!m.find()) {
-				log.severe("Expect file name format to be: 'report(\\d+).html' but file name is "+file.getName());				
+				log.error("Expect file name format to be: 'report(\\d+).html' but file name is "+file.getName());				
 			} else {
 				//get html file number
 				int lastReportNum = Integer.parseInt(m.group(1));

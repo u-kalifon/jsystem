@@ -7,14 +7,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import jsystem.utils.StringUtils;
 
-
 public class CsvDataProvider implements DataProvider {
 
-	static Logger log = Logger.getLogger(CsvDataProvider.class.getName());
+	static Logger log = LoggerFactory.getLogger(CsvDataProvider.class);
 	private static final String SEPARATION_STRING = ",";
 	
 	@Override
@@ -57,7 +57,7 @@ public class CsvDataProvider implements DataProvider {
 				}
 				Map<String, Object> dataRow = new HashMap<String, Object>();
 				if (cells.size() != titles.size()) {
-					log.warning("Titles number is " + titles.size()
+					log.warn("Titles number is " + titles.size()
 							+ " while the cells number in one of the rows is " + cells.size());
 				}
 				// We would iterate over the smaller list size to avoid out

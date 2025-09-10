@@ -10,7 +10,8 @@ import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.Properties;
 import java.util.Set;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.util.regex.Pattern;
 
 import javax.swing.JOptionPane;
@@ -44,7 +45,7 @@ import junit.framework.SystemTest;
  */
 public class ParametersManager {
 	
-	private static Logger log = Logger.getLogger(ParametersManager.class.getName());
+	private static Logger log = LoggerFactory.getLogger(ParametersManager.class);
 	
 	public static Pattern PARAMETER_PATTERN = Pattern.compile("\\$\\{(.*?)\\}");
 
@@ -282,7 +283,7 @@ public class ParametersManager {
 	private static void retrieveTestParametersToEnvironment(SystemTest test) throws Exception {
 		if (StringUtils.isEmpty(test.getFullUUID())){
 			if (JSystemProperties.getInstance().isReporterVm()){
-				log.fine("running from dev studio, no need to return parameters");
+				log.debug("running from dev studio, no need to return parameters");
 				return;
 			}else {
 				throw new Exception("Empty test id. " +test.getName());

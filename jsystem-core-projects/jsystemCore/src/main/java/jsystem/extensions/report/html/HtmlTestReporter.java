@@ -9,8 +9,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import jsystem.extensions.report.html.summary.HtmlSummaryReporter;
 import jsystem.framework.FrameworkOptions;
@@ -42,8 +43,7 @@ import junit.framework.Test;
 public class HtmlTestReporter implements ExtendTestReporter,
 		ExtendTestListener, Externalizable {
 
-	protected static Logger log = Logger.getLogger(HtmlTestReporter.class
-			.getName());
+	protected static Logger log = LoggerFactory.getLogger(HtmlTestReporter.class.getName());
 
 	protected HtmlWriter writer = null;
 
@@ -151,7 +151,7 @@ public class HtmlTestReporter implements ExtendTestReporter,
 		try {
 			init(!isZipLogDisable, true);
 		} catch (Exception e) {
-			log.log(Level.SEVERE, "Fail to init HtmlTestReporter", e);
+			log.error("Fail to init HtmlTestReporter", e);
 		}
 	}
 
@@ -226,7 +226,7 @@ public class HtmlTestReporter implements ExtendTestReporter,
 			}
 			writer.addReport(new TestReport(title, String.valueOf(message),status, bold, ignore, null));
 		} catch (Exception e) {
-			log.log(Level.WARNING, "Fail to add report", e);
+			log.warn("Fail to add report", e);
 		}
 	}
 
@@ -268,7 +268,7 @@ public class HtmlTestReporter implements ExtendTestReporter,
 				writer.endTest(time, true);
 			}
 		} catch (Exception e) {
-			log.log(Level.WARNING, "End test notification fail", e);
+			log.warn("End test notification fail", e);
 		}
 
 	}
@@ -293,7 +293,7 @@ public class HtmlTestReporter implements ExtendTestReporter,
 		try {
 			lastTestFileName = writer.newTestStart(testInfo);
 		} catch (Exception e) {
-			log.log(Level.WARNING, "Start test notification failed", e);
+			log.warn("Start test notification failed", e);
 		}
 	}
 
@@ -344,7 +344,7 @@ public class HtmlTestReporter implements ExtendTestReporter,
 				out.close();
 			}
 		} catch (IOException e) {
-			log.log(Level.WARNING, "Fail to save file", e);
+			log.warn("Fail to save file", e);
 		}
 	}
 
@@ -395,7 +395,7 @@ public class HtmlTestReporter implements ExtendTestReporter,
 		try {
 			writer.addReport(tr);
 		} catch (Exception e) {
-			log.log(Level.WARNING, "Fail to add report", e);
+			log.warn("Fail to add report", e);
 		}
 	}
 
@@ -408,7 +408,7 @@ public class HtmlTestReporter implements ExtendTestReporter,
 		try {
 			writer.addReport(new SectionReport(true));
 		} catch (Exception e) {
-			log.log(Level.WARNING, "Fail to add report", e);
+			log.warn("Fail to add report", e);
 		}
 
 	}
@@ -422,7 +422,7 @@ public class HtmlTestReporter implements ExtendTestReporter,
 		try {
 			writer.addReport(new SectionReport(false));
 		} catch (Exception e) {
-			log.log(Level.WARNING, "Fail to add report", e);
+			log.warn("Fail to add report", e);
 		}
 	}
 
@@ -533,13 +533,12 @@ public class HtmlTestReporter implements ExtendTestReporter,
 }
 
 class ZipDeleteLogDirectory extends Thread {
-	private static Logger log = Logger.getLogger(ZipDeleteLogDirectory.class
+	private static Logger log = LoggerFactory.getLogger(ZipDeleteLogDirectory.class
 			.getName());
 
 	File toDelete = null;
 
 	File oldDir = null;
-
 
 	boolean deleteCurrent = false;
 
@@ -599,7 +598,7 @@ class ZipDeleteLogDirectory extends Thread {
 						.isJsystemRunner());
 			}
 		} catch (Exception e) {
-			log.log(Level.WARNING, "Fail to zip old log - Current logs are not deleted!!!", e);
+			log.warn("Fail to zip old log - Current logs are not deleted!!!", e);
 			return;
 		}
 		File sutFile = SutFactory.getInstance().getSutFile(false);
@@ -632,7 +631,7 @@ class ZipDeleteLogDirectory extends Thread {
 					FileUtils.copyFile(zipFile, new File(dest, fileName + ".zip"));
 				}
 			} catch (IOException e1) {
-				log.log(Level.WARNING, "Fail to copy old log to Hierarchical folders of Sut and Version", e1);
+				log.warn("Fail to copy old log to Hierarchical folders of Sut and Version", e1);
 				return;
 			}
 			/**
@@ -654,7 +653,7 @@ class ZipDeleteLogDirectory extends Thread {
 				FileUtils.write(
 						toDelete.getPath() + File.separator + ".zipped", "");
 			} catch (IOException e) {
-				log.warning("Creating .zip file was failed");
+				log.warn("Creating .zip file was failed");
 			}
 		}
 	}

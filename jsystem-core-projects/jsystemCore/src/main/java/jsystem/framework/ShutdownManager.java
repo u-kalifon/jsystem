@@ -5,15 +5,15 @@
  */
 package jsystem.framework;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author guy.arieli
  * 
  */
 public class ShutdownManager {
-	private static Logger log = Logger.getLogger(ShutdownManager.class.getName());
+	private static Logger log = LoggerFactory.getLogger(ShutdownManager.class);
 
 	private static boolean wasInit = false;
 
@@ -37,7 +37,7 @@ public class ShutdownManager {
 					t = (Thread) c.newInstance();
 					Runtime.getRuntime().addShutdownHook(t);
 				} catch (Throwable e) {
-					log.log(Level.WARNING, "Fail to load thread", e);
+					log.warn("Fail to load thread", e);
 				}
 
 			}

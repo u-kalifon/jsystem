@@ -7,7 +7,8 @@ import java.io.File;
 import java.io.StringReader;
 import java.lang.reflect.Method;
 import java.util.Properties;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import jsystem.framework.FrameworkOptions;
 import jsystem.framework.JSystemProperties;
@@ -22,7 +23,7 @@ import jsystem.utils.exec.JavaExecute;
  * @author guy.arieli
  */
 public class BeanDefaultsExtractor {
-	private static Logger log = Logger.getLogger(BeanDefaultsExtractor.class.getName());
+	private static Logger log = LoggerFactory.getLogger(BeanDefaultsExtractor.class);
 	public static Properties getBeanDefaults(Class<?> c, String...properties) throws Exception{
 		String[] args = new String[properties.length + 1];
 		boolean debug = false;
@@ -39,7 +40,7 @@ public class BeanDefaultsExtractor {
 		if(debug)
 			JSystemProperties.getInstance().setPreference(FrameworkOptions.TEST_VM_PARMS, debugString);
 		if(returnCode != 0){
-			log.warning("Fail to process " + c.getName());
+			log.warn("Fail to process " + c.getName());
 			throw new Exception(command.getStd().toString());
 		}
 		

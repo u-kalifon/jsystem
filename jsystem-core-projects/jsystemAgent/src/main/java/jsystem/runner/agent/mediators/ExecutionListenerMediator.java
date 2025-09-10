@@ -3,7 +3,8 @@
  */
 package jsystem.runner.agent.mediators;
 
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import jsystem.framework.report.ExecutionListener;
 import jsystem.framework.report.TestInfo;
@@ -29,30 +30,30 @@ import junit.framework.Test;
  */
 public class ExecutionListenerMediator extends BaseMediator implements ExecutionListener {
 
-	private static Logger log = Logger.getLogger(RunnerTest.class.getName());
+	private static Logger log = LoggerFactory.getLogger(RunnerTest.class);
 	
 	public ExecutionListenerMediator(RunnerAgent agent){
 		super(agent);
 	}
 	
 	public void errorOccured(String title, String message, ErrorLevel level) {
-		log.finest("errorOccured(String title, String message, ErrorLevel level)");
+		log.trace("errorOccured(String title, String message, ErrorLevel level)");
 		sendNotification(new ErrorInExecutionNotification(runnerAgent().getClass().getName(),message,title,level));
 
 	}
 
 	public void executionEnded(String scenarioName) {
-		log.finest("executionEnded()");
+		log.trace("executionEnded()");
 		sendNotification(new ExecutionEndedNotification(runnerAgent().getClass().getName(),scenarioName));
 	}
 
 	public void remoteExit() {
-		log.finest("remoteExit()");
+		log.trace("remoteExit()");
 		sendNotification(new RemoteExitNotification(runnerAgent().getClass().getName()));
 	}
 
 	public void remotePause() {
-		log.finest("remotePause()");
+		log.trace("remotePause()");
 		sendNotification(new RemotePauseNotification(runnerAgent().getClass().getName()));
 	}
 
@@ -62,7 +63,7 @@ public class ExecutionListenerMediator extends BaseMediator implements Execution
 	}
 
 	public void endRun() {
-		log.finest("endRun()");
+		log.trace("endRun()");
 		sendNotification(new EndRunNotification(runnerAgent().getClass().getName()));
 
 	}
@@ -71,7 +72,7 @@ public class ExecutionListenerMediator extends BaseMediator implements Execution
 		if (NotificationLevel.getCurrentNotificationLevel().equals(NotificationLevel.NO_TEST_INDICATION)){
 			return;
 		}		
-		log.finest("startTest(String className, String methodName, String meaningfulName, String comment,String paramString, int count) - sent");
+		log.trace("startTest(String className, String methodName, String meaningfulName, String comment,String paramString, int count) - sent");
 		sendNotification(new StartTestNotification(runnerAgent().getClass().getName(),testInfo));
 	}
 

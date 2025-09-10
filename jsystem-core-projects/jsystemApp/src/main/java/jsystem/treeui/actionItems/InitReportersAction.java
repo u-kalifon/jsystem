@@ -6,7 +6,8 @@ package jsystem.treeui.actionItems;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.util.concurrent.Executors;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.Action;
 import javax.swing.JOptionPane;
@@ -34,7 +35,7 @@ public class InitReportersAction extends IgnisAction {
 	
 	private static final long serialVersionUID = 1L;
 	
-	private static Logger log = Logger.getLogger(InitReportersAction.class.getName());
+	private static Logger log = LoggerFactory.getLogger(InitReportersAction.class);
 	
 	private static InitReportersAction action;
 	
@@ -90,7 +91,7 @@ public class InitReportersAction extends IgnisAction {
 				try {
 					engine.initReporters();
 				}catch (Exception e){
-					log.warning("Failed initializing reports on " + engine.getId());
+					log.warn("Failed initializing reports on " + engine.getId());
 				}
 			}
 		}		
@@ -117,7 +118,7 @@ public class InitReportersAction extends IgnisAction {
 //        	TestRunner.treeView.getPublishPanel().refreshAndSelect(true);
 			 // After Init Reporters pushed, disable Publish button.
 			PublisherTreePanel.setPublishBtnEnable(false);
-			log.fine("InitReportersAction - closing waitDialog");
+			log.debug("InitReportersAction - closing waitDialog");
 			WaitDialog.endWaitDialog();
 			
 			//setting back value to true, here to prevent a calling thread to wait, to be stuck because

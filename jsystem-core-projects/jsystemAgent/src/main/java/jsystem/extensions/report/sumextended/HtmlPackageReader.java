@@ -7,8 +7,9 @@ package jsystem.extensions.report.sumextended;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -21,7 +22,7 @@ import jsystem.utils.FileUtils;
  * Preferences - Java - Code Style - Code Templates
  */
 public class HtmlPackageReader implements DataReader {
-	private static Logger log = Logger.getLogger(HtmlPackageReader.class.getName());
+	private static Logger log = LoggerFactory.getLogger(HtmlPackageReader.class);
 
 	private File srcDirectory;
 
@@ -40,13 +41,13 @@ public class HtmlPackageReader implements DataReader {
 		try {
 			html = FileUtils.read(packageFile);
 		} catch (IOException e) {
-			log.log(Level.INFO, "Fail to read file", e);
+			log.info("Fail to read file", e);
 			return null;
 		}
 		Pattern p = Pattern.compile("<title.*>(.*)</title>");
 		Matcher m = p.matcher(html);
 		if (!m.find()) {
-			log.log(Level.FINE, "Title wasn't found");
+			log.debug("Title wasn't found");
 			return null;
 		}
 		return m.group(1);
@@ -64,14 +65,14 @@ public class HtmlPackageReader implements DataReader {
 		try {
 			html = FileUtils.read(packageFile);
 		} catch (IOException e) {
-			log.log(Level.INFO, "Fail to read file", e);
+			log.info("Fail to read file", e);
 			return null;
 		}
 
 		Pattern p = Pattern.compile("<body>(.*)</body>", Pattern.DOTALL);
 		Matcher m = p.matcher(html);
 		if (!m.find()) {
-			log.log(Level.FINE, "Body wasn't found");
+			log.debug("Body wasn't found");
 			return null;
 		}
 		return m.group(1);

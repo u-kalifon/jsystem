@@ -5,7 +5,8 @@ package jsystem.treeui.properties;
 
 import java.awt.Component;
 import java.util.Vector;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.AbstractCellEditor;
 import javax.swing.JComboBox;
@@ -42,7 +43,7 @@ public class JSystemPropertiesTableEditor extends AbstractCellEditor implements 
 	String errorMessage = null;
 	String editorValue = null;
 
-	private static Logger logger = Logger.getLogger(JSystemPropertiesTableEditor.class.getName());
+	private static Logger logger = LoggerFactory.getLogger(JSystemPropertiesTableEditor.class);
 
 	public JSystemPropertiesTableEditor(Vector<JSystemProperty> properties) {
 		this.properties = properties;
@@ -159,7 +160,7 @@ public class JSystemPropertiesTableEditor extends AbstractCellEditor implements 
 			try {
 				value = Encryptor.encrypt(value);
 			} catch (Exception e) {
-				logger.warning(StringUtils.getStackTrace(e));
+				logger.warn(StringUtils.getStackTrace(e));
 			}
 			break;
 		}// switch

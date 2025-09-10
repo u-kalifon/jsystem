@@ -7,7 +7,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import jsystem.extensions.report.html.CssUtils.CssType;
 import jsystem.framework.report.Reporter;
@@ -17,7 +18,7 @@ public abstract class Report implements Serializable  {
 
 	private static final long serialVersionUID = 1L;
 
-	protected static Logger log = Logger.getLogger(HtmlTestList.class.getName());
+	protected static Logger log = LoggerFactory.getLogger(HtmlTestList.class);
 	
 	protected int changedStatus = Reporter.PASS;
 	

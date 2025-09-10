@@ -5,7 +5,8 @@ package jsystem.utils.build;
 
 import java.io.File;
 import java.util.Properties;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import jsystem.framework.JSystemProperties;
 import jsystem.framework.common.CommonResources;
@@ -15,7 +16,7 @@ import jsystem.utils.exec.Command;
 
 public class BuildUtils {
 
-	private static Logger log = Logger.getLogger(BuildUtils.class.getName());
+	private static Logger log = LoggerFactory.getLogger(BuildUtils.class);
 
 	public static void compile(String srcDir, String classDir, String classpath, String include) throws Exception {
 		Properties p = new Properties();
@@ -26,7 +27,7 @@ public class BuildUtils {
 		p.setProperty("user.dir", System.getProperty("user.dir"));
 		Command cmd = AntExecutor.executeAnt(CommonResources.getAntDirectory(), (BuildUtils.class).getClassLoader()
 				.getResourceAsStream("jsystem/utils/build/buildTasks.xml"), p, "compile");
-		log.fine(cmd.getStd().toString());
+		log.debug(cmd.getStd().toString());
 	}
 
 	/**
@@ -117,7 +118,7 @@ public class BuildUtils {
 		p.setProperty("zip.file", zipFile);
 		Command cmd = AntExecutor.executeAnt(CommonResources.getAntDirectory(), BuildUtils.class.getClassLoader()
 				.getResourceAsStream("jsystem/utils/build/buildTasks.xml"), p, "export");
-		log.fine(cmd.getStd().toString());
+		log.debug(cmd.getStd().toString());
 	}
 	
 	public static void importProject(boolean importSrc, boolean importSut, boolean importScenarios,boolean importLib,boolean deleteTests,
@@ -167,6 +168,6 @@ public class BuildUtils {
 		p.setProperty("zip.file", zipFile);
 		Command cmd = AntExecutor.executeAnt(CommonResources.getAntDirectory(), BuildUtils.class.getClassLoader()
 				.getResourceAsStream("jsystem/utils/build/buildTasks.xml"), p, "import");
-		log.fine(cmd.getStd().toString());
+		log.debug(cmd.getStd().toString());
 	}
 }

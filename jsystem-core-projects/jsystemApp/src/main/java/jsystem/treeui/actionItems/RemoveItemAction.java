@@ -11,7 +11,6 @@ import jsystem.treeui.teststable.TestsTableController.ActionType;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
-import java.util.logging.Level;
 
 public class RemoveItemAction extends IgnisAction {
 	
@@ -44,7 +43,7 @@ public class RemoveItemAction extends IgnisAction {
 					try {
 						TestRunner.treeView.getTableController().handleUpDownAndDelete(ActionType.DELETE);
 					} catch (Exception e1) {
-						TestRunner.getLog().log(Level.SEVERE, "Fail to delete tests", e1);
+						TestRunner.getLog().error("Fail to delete tests", e1);
 					}
 				} finally {
 					WaitDialog.endWaitDialog();

@@ -10,8 +10,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import jsystem.framework.FrameworkOptions;
 import jsystem.framework.JSystemProperties;
@@ -24,7 +24,7 @@ import junit.framework.Test;
 
 public abstract class DefaultReporterImpl implements Reporter {
 	
-	private Logger log = Logger.getLogger(DefaultReporterImpl.class.getName());
+	private Logger log = LoggerFactory.getLogger(DefaultReporterImpl.class);
 
 	protected boolean failToWarning = false;
 
@@ -160,14 +160,14 @@ public abstract class DefaultReporterImpl implements Reporter {
 		try{
 			Thread.sleep(200);
 		}catch (Exception e) {
-			log.log(Level.WARNING,"Thread sleep interrupted",e);
+			log.warn("Thread sleep interrupted",e);
 		}
 		try {
 			Properties p = FileUtils.loadPropertiesFromFile(CommonResources.TEST_INNER_TEMP_FILENAME);
 			String value = p.getProperty(CommonResources.LAST_REPORT_NAME);
 			return value == null? "" : value;
 		} catch (IOException e) {
-			log.log(Level.WARNING,"Failed reading last report file name",e);
+			log.warn("Failed reading last report file name",e);
 			return "";
 		}
 	}
@@ -179,7 +179,7 @@ public abstract class DefaultReporterImpl implements Reporter {
 			String value = currentProperties.getProperty(key);
 			return value;
 		} catch (Exception e) {
-			log.warning("couldn't read the "+CommonResources.TEST_INNER_TEMP_FILENAME+" file");
+			log.warn("couldn't read the "+CommonResources.TEST_INNER_TEMP_FILENAME+" file");
 		}
 		return null;
 	}

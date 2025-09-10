@@ -10,8 +10,9 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -43,7 +44,7 @@ public class PublisherTreePanel extends JPanel implements ActionListener, TreeSe
 
 	private static final long serialVersionUID = 5322978703651238455L;
 
-	private static Logger log = Logger.getLogger(PublisherTreePanel.class.getName());
+	private static Logger log = LoggerFactory.getLogger(PublisherTreePanel.class);
 
 	private String reportFileName = "reports.0.xml";
 
@@ -80,7 +81,7 @@ public class PublisherTreePanel extends JPanel implements ActionListener, TreeSe
 
 			treeModel = new PublisherTreeModel(reportFile);
 		} catch (Exception e) {
-			log.log(Level.WARNING, "Fail to create tree model", e);
+			log.warn("Fail to create tree model", e);
 		}
 
 		// tree configuration
@@ -194,7 +195,7 @@ public class PublisherTreePanel extends JPanel implements ActionListener, TreeSe
 		try {
 			treeModel.refresh(fromXml);
 		} catch (Exception e) {
-			log.log(Level.WARNING, "fail to refresh model", e);
+			log.warn("fail to refresh model", e);
 			return;
 		}
 
@@ -277,7 +278,7 @@ public class PublisherTreePanel extends JPanel implements ActionListener, TreeSe
 				FileUtils.copyFile(file, new File(reportFileName));
 				refreshTree(true);
 			} catch (Exception e1) {
-				log.log(Level.WARNING, "fail to load model", e1);
+				log.warn("fail to load model", e1);
 			}
 		} 
 	}

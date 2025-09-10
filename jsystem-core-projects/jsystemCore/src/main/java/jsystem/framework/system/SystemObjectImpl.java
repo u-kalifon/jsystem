@@ -11,8 +11,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Properties;
 import java.util.Vector;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import jsystem.framework.IgnoreMethod;
 import jsystem.framework.RunProperties;
@@ -41,7 +42,7 @@ import org.w3c.dom.NodeList;
  * @author Guy Arieli
  */
 public abstract class SystemObjectImpl extends AnalyzerImpl implements SystemObject {
-	private static Logger log = Logger.getLogger(SystemObjectImpl.class.getName());
+	private static Logger log = LoggerFactory.getLogger(SystemObjectImpl.class);
 
 	private String tagName = null;
 
@@ -209,7 +210,7 @@ public abstract class SystemObjectImpl extends AnalyzerImpl implements SystemObj
 					try {
 						currentField.set(this, sObject);
 					} catch (Exception t) {
-						log.warning("Fail to init field: " + fieldName);
+						log.warn("Fail to init field: " + fieldName);
 					}
 				}
 				systemObjects.remove(sObject);
@@ -269,11 +270,11 @@ public abstract class SystemObjectImpl extends AnalyzerImpl implements SystemObj
 				try {
 					BeanUtils.invoke(this, beanElement.getSetMethod(), properties.getProperty(name), beanElement.getType());
 				} catch (Throwable tt) {
-					log.log(Level.INFO, "Fail to set setters: " + beanElement.getSetMethod().getName(), tt);
+					log.info("Fail to set setters: " + beanElement.getSetMethod().getName(), tt);
 				}
 			}
 		} catch (Throwable t) {
-			log.log(Level.INFO, "Fail to set setters", t);
+			log.info("Fail to set setters", t);
 		}
 		// ---
 	}
@@ -313,7 +314,7 @@ public abstract class SystemObjectImpl extends AnalyzerImpl implements SystemObj
 				}
 			}
 		} catch (Exception e) {
-			log.log(Level.INFO, "Fail to init properties", e);
+			log.info("Fail to init properties", e);
 		}
 
 	}

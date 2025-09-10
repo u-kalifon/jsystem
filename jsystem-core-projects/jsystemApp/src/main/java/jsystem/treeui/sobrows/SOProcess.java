@@ -14,8 +14,9 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Vector;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -60,7 +61,7 @@ import com.thoughtworks.qdox.model.Type;
  * 
  */
 public class SOProcess {
-	private static final Logger log = Logger.getLogger(SOProcess.class.getName());
+	private static final Logger log = LoggerFactory.getLogger(SOProcess.class);
 	/**
 	 * The main class method, process a system object. Will create 2 class one
 	 * is abstract that is auto generate, the second extends the first and is
@@ -694,13 +695,13 @@ public class SOProcess {
 								String code = readInputStreamToString(zipFile.getInputStream(ze));
 								builder.addSource(HtmlCodeWriter.preProcessCode(code));
 							} catch (Exception e) {
-								log.log(Level.WARNING, "Fail to load source: " + ze.getName());
-								log.log(Level.FINE, "Fail to load source: " + ze.getName(), e);
+								log.warn("Fail to load source: " + ze.getName());
+								log.debug("Fail to load source: " + ze.getName(), e);
 							}
 						}
 					}
 				} catch (Exception e){
-					log.log(Level.WARNING, "Fail to process file: " + sourcePaths[i].getAbsolutePath(), e);
+					log.warn("Fail to process file: " + sourcePaths[i].getAbsolutePath(), e);
 					continue;
 				}
 			} else { // A source directory
@@ -717,7 +718,7 @@ public class SOProcess {
 						String code = readInputStreamToString(new FileInputStream(allFiles.elementAt(j)));
 						builder.addSource(HtmlCodeWriter.preProcessCode(code));
 					} catch (Exception e) {
-						log.log(Level.WARNING, "Fail to load source: " + allFiles.elementAt(j), e);
+						log.warn("Fail to load source: " + allFiles.elementAt(j), e);
 					}
 				}
 			}

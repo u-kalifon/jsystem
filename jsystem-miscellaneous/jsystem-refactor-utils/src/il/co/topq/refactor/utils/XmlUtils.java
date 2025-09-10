@@ -2,7 +2,8 @@ package il.co.topq.refactor.utils;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -21,14 +22,14 @@ import org.xml.sax.SAXException;
 
 public class XmlUtils {
 	
-	private static Logger log = Logger.getLogger("XmlUtils");
+	private static Logger log = LoggerFactory.getLogger("XmlUtils");
 
 	private XmlUtils() {
 		// Utils
 	}
 	
 	public static Document parseDocument(final File xmlFile) throws ParserConfigurationException, SAXException, IOException{
-		log.finer("Parsing document from file "+xmlFile.getName());
+		log.debug("Parsing document from file "+xmlFile.getName());
 		DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();
 		domFactory.setNamespaceAware(true);
 		DocumentBuilder builder = domFactory.newDocumentBuilder();
@@ -48,7 +49,7 @@ public class XmlUtils {
 		if (null == expression || expression.isEmpty() || null == doc) {
 			return null;
 		}
-		log.finer("Executing xpath xpression " + expression);
+		log.debug("Executing xpath xpression " + expression);
 		XPath xPath = XPathFactory.newInstance().newXPath();
 		XPathExpression expr = xPath.compile(expression);
 		Object result = expr.evaluate(doc, XPathConstants.NODESET);
@@ -67,7 +68,7 @@ public class XmlUtils {
 		if (null == expression || expression.isEmpty() || null == doc) {
 			return null;
 		}
-		log.finer("Executing xpath xpression " + expression);
+		log.debug("Executing xpath xpression " + expression);
 		XPath xPath = XPathFactory.newInstance().newXPath();
 		XPathExpression expr = xPath.compile(expression);
 		Object result = expr.evaluate(doc, XPathConstants.NODE);
@@ -88,7 +89,7 @@ public class XmlUtils {
 		if (null == expression || expression.isEmpty() || null == doc) {
 			return null;
 		}
-		log.finer("Executing xpath xpression " + expression);
+		log.debug("Executing xpath xpression " + expression);
 		XPath xPath = XPathFactory.newInstance().newXPath();
 		XPathExpression expr = xPath.compile(expression);
 		Object result = expr.evaluate(doc, XPathConstants.NODE);

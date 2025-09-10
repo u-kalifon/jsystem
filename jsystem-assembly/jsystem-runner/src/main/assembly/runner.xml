@@ -89,7 +89,11 @@
 				<include>*:jfreechart:*</include>
 				<include>*:junit:*</include>
 				<include>*:jython:*</include>
-				<include>*:log4j:*</include>
+				<!-- include>*:log4j:*</include -->
+				<include>*:slf4j-api:*</include>
+				<include>*:logback-classic:*</include>
+				<include>*:logback-core:*</include>
+				<include>*:jul-to-slf4j:*</include>
 				<include>*:logkit:*</include>
 				<include>*:mail:*</include>
 				<include>*:qdox:*</include>

@@ -4,7 +4,6 @@
 package jsystem.treeui.tree;
 
 import java.lang.reflect.Method;
-import java.util.logging.Level;
 
 import jsystem.framework.scenario.RunnerTest;
 import jsystem.utils.StringUtils;
@@ -33,7 +32,7 @@ public class TestNode extends AssetNode {
 				}
 			}
 		} catch (Exception e) {
-			log.log(Level.FINE,"Failed getting meaningfull name");
+			log.debug("Failed getting meaningfull name");
 		}
 	}
 	protected TestNode(){

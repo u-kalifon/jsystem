@@ -4,8 +4,9 @@
 package jsystem.treeui;
 
 import java.util.Enumeration;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.event.TreeModelListener;
 import javax.swing.tree.TreeModel;
@@ -21,7 +22,7 @@ import jsystem.utils.PerformanceUtil;
  */
 public class TestTreeModel implements TreeModel {
 
-	private static Logger log = Logger.getLogger(TestTreeModel.class.getName());
+	private static Logger log = LoggerFactory.getLogger(TestTreeModel.class);
 
 	private AssetNode root = null;
 
@@ -35,7 +36,7 @@ public class TestTreeModel implements TreeModel {
 			PerformanceUtil.endMeasure(index, "Loading all assets tree");
 			root.cleanLeafsWithoutTests();
 		} catch (Exception e) {
-			log.log(Level.WARNING, "Unable to create a root node for TestTreeModel", e);
+			log.warn("Unable to create a root node for TestTreeModel", e);
 		}
 	}
 
