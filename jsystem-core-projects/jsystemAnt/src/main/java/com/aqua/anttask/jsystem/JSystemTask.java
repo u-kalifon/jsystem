@@ -1120,10 +1120,10 @@ public class JSystemTask extends Task {
         File propsFile = createTempPropertiesFile("junit");
         cmd.createArgument().setValue(Constants.PROPSFILE
                                       + propsFile.getAbsolutePath());
-        Hashtable p = getProject().getProperties();
+        Hashtable<String,Object> p = getProject().getProperties();
         Properties props = new Properties();
-        for (Enumeration e = p.keys(); e.hasMoreElements();) {
-            Object key = e.nextElement();
+        for (Enumeration<String> e = p.keys(); e.hasMoreElements();) {
+            String key = e.nextElement();
             props.put(key, p.get(key));
         }
         try {
@@ -1322,7 +1322,13 @@ public class JSystemTask extends Task {
      */
     private TestResultHolder executeInVM(JUnitTest arg) throws BuildException {
         JUnitTest test = (JUnitTest) arg.clone();
-        test.setProperties(getProject().getProperties());
+        // Convert Hashtable<String,Object> to Hashtable<Object,Object>
+        Hashtable<String,Object> projectProps = getProject().getProperties();
+        Hashtable<Object,Object> testProps = new Hashtable<Object,Object>();
+        for (String key : projectProps.keySet()) {
+            testProps.put(key, projectProps.get(key));
+        }
+        test.setProperties(testProps);
         if (dir != null) {
             log("dir attribute ignored if running in the same VM",
                 Project.MSG_WARN);
@@ -1582,7 +1588,13 @@ public class JSystemTask extends Task {
             }
 
             test.setCounts(1, 0, 1);
-            test.setProperties(getProject().getProperties());
+            // Convert Hashtable<String,Object> to Hashtable<Object,Object>
+            Hashtable<String,Object> projectProps = getProject().getProperties();
+            Hashtable<Object,Object> testProps = new Hashtable<Object,Object>();
+            for (String key : projectProps.keySet()) {
+                testProps.put(key, projectProps.get(key));
+            }
+            test.setProperties(testProps);
             for (int i = 0; i < feArray.length; i++) {
                 FormatterElement fe = feArray[i];
                 File outFile = getOutput(fe, test);
