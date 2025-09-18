@@ -409,7 +409,7 @@ public abstract class AbstractHtmlReporter implements ExtendLevelTestReporter, E
 		addPropertyIfExist("Test Documentation", testInfo.testDoc);
 		addPropertyIfExist("User Documentation", testInfo.userDoc);
 		if (!StringUtils.isEmpty(testInfo.parameters)) {
-			log.info("Adding parameters " + testInfo.parameters);
+			log.debug("Adding parameters " + testInfo.parameters);
 			try (Scanner scanner = new Scanner(testInfo.parameters)) {
 				while (scanner.hasNextLine()) {
 					final String parameter = scanner.nextLine();

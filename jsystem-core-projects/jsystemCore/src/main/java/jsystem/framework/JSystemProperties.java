@@ -49,7 +49,7 @@ public class JSystemProperties {
 	public static JSystemProperties getInstance(boolean isReportVm) {
 		if (jSystemProperties == null) {
 			jSystemProperties = new JSystemProperties(isReportVm);
-			log.debug("JSystem instance init");
+			log.debug("JSystemProperties instance initialized");
 		}
 		return jSystemProperties;
 	}
@@ -122,14 +122,14 @@ public class JSystemProperties {
 		try {
 			settingFile.createNewFile();
 		} catch (IOException e1) {
-			log.error("Problem creating new properties file!");
+			log.error("Problem creating new properties file: " + e1.getMessage());
 		}
 		if (baseFile.exists()) {
 			try {
 				FileUtils.copyFile(baseFile, settingFile);
 				log.debug("Base file copied to jsystem properties file.");
 			} catch (IOException e) {
-				log.warn("Couldn't copy base file!");
+				log.warn("Couldn't copy base file to jsystem properties file: " + e.getMessage());
 			}
 		}
 	}

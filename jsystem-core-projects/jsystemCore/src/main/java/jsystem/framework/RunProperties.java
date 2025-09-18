@@ -28,7 +28,7 @@ public class RunProperties {
 
 	private RunProperties() {
 		// singleton
-		log.info("create run properties at :"+runPropertiesFile.getAbsolutePath());
+		log.debug("create run properties at :"+runPropertiesFile.getAbsolutePath());
 	}
 
 	public static RunProperties getInstance() {
@@ -48,9 +48,9 @@ public class RunProperties {
 	 * DO NOT SYNCHRONIZE THIS METHOD - COULD CAUSE DEADLOCKS WITH SUMMARY CLASS!!!
 	 */
 	public void resetRunProperties() {
-		log.info("Reset the Run properties file");
+		log.debug("Reset the Run properties file");
 		if (!runPropertiesFile.delete() && runPropertiesFile.exists()){
-			log.warn("Failed deleting .run.properties file");
+			log.warn("Reset the Run properties file: Failed deleting .run.properties file");
 		}
 		Summary.getInstance().initPublishValues();
 	}
@@ -113,9 +113,9 @@ public class RunProperties {
 		Properties p = new Properties();
 		if (runPropertiesFile.getAbsoluteFile().exists()) {
 			p = FileUtils.loadPropertiesFromFile(runPropertiesFile.getAbsolutePath());
-			log.info("load run properties at: " + runPropertiesFile.getAbsolutePath());
+			log.debug("load run properties at: " + runPropertiesFile.getAbsolutePath());
 		}else{
-			log.info("the run properties doesn't exist, return new Properties object");
+			log.debug("the run properties doesn't exist, return new Properties object");
 		}
 		return p;
 	}
