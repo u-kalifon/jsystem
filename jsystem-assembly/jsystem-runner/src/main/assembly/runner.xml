@@ -96,7 +96,7 @@
 				<include>*:jul-to-slf4j:*</include>
 				<include>*:logkit:*</include>
 				<include>*:mail:*</include>
-				<include>*:qdox:*</include>
+				<include>*:javaparser-core:*</include>
 				<include>*:serializer:*</include>
 				<include>*:servlet-api:*</include>
 				<include>*:spring:*</include>

@@ -26,7 +26,6 @@ import com.aqua.filetransfer.ftp.FTPRemoteClient;
 	 /runner/thirdparty/lib/commons-logging-1.0.4.jar 
 	 /runner/lib/cli.jar 
 	 /runner/lib/infra.jar 
-	 /runner/thirdparty/commonLib/qdox.jar 
 	 /runner/lib/jsystem.jar 
 
    SUT file example:

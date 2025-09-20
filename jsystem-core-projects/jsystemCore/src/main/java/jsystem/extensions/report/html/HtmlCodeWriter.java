@@ -20,10 +20,12 @@ import jsystem.framework.JSystemProperties;
 import jsystem.runner.loader.LoadersManager;
 import jsystem.utils.FileUtils;
 
-import com.thoughtworks.qdox.JavaDocBuilder;
-import com.thoughtworks.qdox.model.DocletTag;
-import com.thoughtworks.qdox.model.JavaClass;
-import com.thoughtworks.qdox.model.JavaMethod;
+import com.github.javaparser.JavaParser;
+import com.github.javaparser.ast.CompilationUnit;
+import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
+import com.github.javaparser.ast.body.MethodDeclaration;
+import com.github.javaparser.ast.comments.JavadocComment;
+import java.util.Optional;
 
 /**
  * This class give general code base services.
@@ -60,7 +62,7 @@ public class HtmlCodeWriter {
 	/**
 	 * Contain all the sources to parse.
 	 */
-	JavaDocBuilder docBuilder = null;
+	JavaParser javaParser = null;
 	File srcDir;
 	
 	/**
@@ -102,11 +104,11 @@ public class HtmlCodeWriter {
 			}
 		}
 		srcDir = new File(testsSourceFolder);
-		docBuilder = new JavaDocBuilder();
+		javaParser = new JavaParser();
 		filesTime = new HashMap<File, Long>();
 	}
 	public void close (){
-		docBuilder = null;
+		javaParser = null;
 		filesTime = null;
 	}
 	/**
@@ -165,12 +167,16 @@ public class HtmlCodeWriter {
 	 * @throws Exception
 	 */
 	public String getClassJavaDoc(String className) throws Exception {
-		processSource(className);
-		JavaClass cls = docBuilder.getClassByName(className);
-		if(cls == null){
+		CompilationUnit cu = processSource(className);
+		if(cu == null){
 			return null;
 		}
-		return cls.getComment();
+		Optional<ClassOrInterfaceDeclaration> classDecl = cu.findFirst(ClassOrInterfaceDeclaration.class, 
+			c -> c.getNameAsString().equals(getSimpleClassName(className)));
+		if(classDecl.isPresent() && classDecl.get().getJavadocComment().isPresent()){
+			return classDecl.get().getJavadocComment().get().getContent();
+		}
+		return null;
 	}
 
 	/**
@@ -181,16 +187,14 @@ public class HtmlCodeWriter {
 	 * @throws Exception
 	 */
 	public String getMethodJavaDoc(String className, String methodName) throws Exception {
-		processSource(className);
-		JavaClass cls = docBuilder.getClassByName(className);
-		if(cls == null){
+		CompilationUnit cu = processSource(className);
+		if(cu == null){
 			return null;
 		}
-		JavaMethod[] methods = cls.getMethods();
-		for(JavaMethod method: methods){
-			if(method.getName().equals(methodName)){
-				return method.getComment();
-			}
+		Optional<MethodDeclaration> methodDecl = cu.findFirst(MethodDeclaration.class, 
+			m -> m.getNameAsString().equals(methodName));
+		if(methodDecl.isPresent() && methodDecl.get().getJavadocComment().isPresent()){
+			return methodDecl.get().getJavadocComment().get().getContent();
 		}
 		return null;
 	}
@@ -203,23 +207,29 @@ public class HtmlCodeWriter {
 	 * @return the doclet if exist of null if not.
 	 */
 	public String getMethodAnnotation(String className, String methodName, String annotation){
-		processSource(className);
-		JavaClass cls = docBuilder.getClassByName(className);
-		if(cls == null){
+		CompilationUnit cu = processSource(className);
+		if(cu == null){
 			return null;
 		}
-		JavaMethod[] methods = cls.getMethods();
-		for(JavaMethod method: methods){
-			if(method.getName().equals(methodName)){
-				DocletTag tag = method.getTagByName(annotation);
-				if(tag == null){
-					return null;
+		Optional<MethodDeclaration> methodDecl = cu.findFirst(MethodDeclaration.class, 
+			m -> m.getNameAsString().equals(methodName));
+		if(methodDecl.isPresent() && methodDecl.get().getJavadocComment().isPresent()){
+			JavadocComment javadoc = methodDecl.get().getJavadocComment().get();
+			// Parse javadoc for specific annotation/tag
+			String content = javadoc.getContent();
+			String[] lines = content.split("\n");
+			for(String line : lines){
+				line = line.trim();
+				if(line.startsWith("@" + annotation)){
+					int spaceIndex = line.indexOf(' ');
+					if(spaceIndex > 0 && spaceIndex < line.length() - 1){
+						return line.substring(spaceIndex + 1).trim();
+					}
 				}
-				return tag.getValue();
 			}
 		}
 		
-		// method not found
+		// method not found, check superclass
 		Class<?> c;
 		try {
 			c = LoadersManager.getInstance().getLoader().loadClass(className);
@@ -230,35 +240,45 @@ public class HtmlCodeWriter {
 			return getMethodAnnotation(c.getSuperclass().getName(), methodName, annotation);
 		}
 		return null;
-		
 	}
 	/**
 	 * Process the class and reload it if it changed.
 	 * @param className
-	 * @throws Exception
+	 * @return CompilationUnit or null if not found
 	 */
-	private void processSource(String className){
+	private CompilationUnit processSource(String className){
 		File testSrc = new File(srcDir, className.replace('.', File.separatorChar) + ".java");
 		if(!testSrc.exists()){ // if the file doesn't exist return
 			//Added support for Groovy tests
 			testSrc = new File(srcDir, className.replace('.', File.separatorChar) + ".groovy");
 			if(!testSrc.exists()){
-				return;
+				return null;
 			}
 		}
 		/*
 		 * Check if the last modified time changed
-		 * if not return
+		 * if not return cached result
 		 */
 		Long time = filesTime.get(testSrc);
 		if(time == null || !time.equals(testSrc.lastModified())){ // not exist or changed
 			try {
-				docBuilder.addSource(preProcessCode(FileUtils.read(testSrc)));
+				String code = FileUtils.read(testSrc);
+				CompilationUnit cu = javaParser.parse(preProcessCode(code)).getResult().orElse(null);
+				filesTime.put(testSrc, testSrc.lastModified());
+				return cu;
 			} catch (Throwable e) {
 				// ignore process fail
 				log.debug("Fail to process file: " + testSrc.getAbsolutePath(), e);
+				return null;
 			}
-			filesTime.put(testSrc, testSrc.lastModified());
+		}
+		// Return cached result - for now we'll re-parse since we don't cache CompilationUnits
+		try {
+			String code = FileUtils.read(testSrc);
+			return javaParser.parse(preProcessCode(code)).getResult().orElse(null);
+		} catch (Throwable e) {
+			log.debug("Fail to process file: " + testSrc.getAbsolutePath(), e);
+			return null;
 		}
 		
 		
@@ -271,6 +291,16 @@ public class HtmlCodeWriter {
 	public static Reader preProcessCode(String code){
 		return new StringReader(code);
 		
+	}
+	
+	/**
+	 * Get simple class name from fully qualified class name
+	 * @param fullyQualifiedName the full class name
+	 * @return simple class name
+	 */
+	private String getSimpleClassName(String fullyQualifiedName) {
+		int lastDot = fullyQualifiedName.lastIndexOf('.');
+		return lastDot >= 0 ? fullyQualifiedName.substring(lastDot + 1) : fullyQualifiedName;
 	}
 
 }

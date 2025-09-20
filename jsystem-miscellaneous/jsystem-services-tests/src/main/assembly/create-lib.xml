@@ -37,7 +37,7 @@
 				<exclude>*:jython:*</exclude>
 				<exclude>*:logkit:*</exclude>
 				<exclude>*:mail:*</exclude>
-				<exclude>*:qdox:*</exclude>
+				<exclude>*:javaparser-core:*</exclude>
 				<exclude>*:serializer:*</exclude>
 				<exclude>*:servlet-api:*</exclude>
 				<exclude>*:spring:*</exclude>
