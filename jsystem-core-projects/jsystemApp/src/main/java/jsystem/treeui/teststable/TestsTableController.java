@@ -1297,13 +1297,6 @@ public class TestsTableController extends Observable implements TestStatusListen
 			code = code.replaceAll(rt.getMethodName(), "<b>" + rt.getMethodName() + "</b>");
 		} catch (FileNotFoundException e) {
 			log.warn("Fail to load test code because sorce file is missing. " + e.getMessage());
-		} catch (ClassNotFoundException e) {
-			JOptionPane
-					.showMessageDialog(
-							null,
-							"Can't display test code because java2html.jar is missing.\nIf you wish to view code, please install java2html.jar. For instructions go to http://trac.jsystemtest.org/wiki/DetailedOSProjectsList",
-							"View Test Code warning", JOptionPane.INFORMATION_MESSAGE);
-			log.warn("Fail to load test code because java2html jar is missing. " + e.getMessage());
 		} catch (Exception e) {
 			log.warn("Fail to load test code. " + e.getMessage());
 		}

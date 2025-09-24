@@ -884,12 +884,6 @@ public class RunnerListenersManager extends DefaultReporterImpl implements JSyst
 				reportHtml("test code", code, true);
 			} catch (FileNotFoundException e) {
 				log.warn("Fail to load test code because source file is missing. " + e.getMessage());
-			} catch (ClassNotFoundException e) {
-				reportHtml(
-						"Can't display test code because java2html.jar is missing.",
-						"If you wish to view code, please install java2html.jar. For instructions go to <a href=\"http://trac.jsystemtest.org/wiki/DetailedOSProjectsList\">JSystem Trac</a>",
-						true);
-				log.warn("Fail to load test code because java2html jar is missing. " + e.getMessage());
 			} catch (Exception e) {
 				log.warn("Fail to load test code. " + e.getMessage());
 			}

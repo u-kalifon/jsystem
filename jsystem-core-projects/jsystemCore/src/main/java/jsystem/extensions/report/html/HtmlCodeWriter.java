@@ -7,9 +7,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.Reader;
 import java.io.StringReader;
-import java.io.StringWriter;
-import java.io.Writer;
-import java.lang.reflect.Method;
 import java.util.HashMap;
 
 import org.slf4j.Logger;
@@ -112,52 +109,54 @@ public class HtmlCodeWriter {
 		filesTime = null;
 	}
 	/**
-	 * Get the test code formated as HTML.
+	 * Get the test code formatted as HTML using Highlight.js.
 	 * @param className the test class name.
-	 * @return an html with the code formated.
-	 * @throws Exception when java2html class is missing, the file is not found or other error occurs
+	 * @return an html with the code formatted using Highlight.js.
+	 * @throws Exception when the file is not found or other error occurs
 	 */
-	public String getCode(String className) throws FileNotFoundException, ClassNotFoundException, Exception {
+	public String getCode(String className) throws FileNotFoundException, Exception {
 		File srcFile = new File(srcDir.getPath(), className.replace('.', File.separatorChar) + ".java");
+		boolean isGroovy = false;
 		if (!srcFile.exists()) {
 			srcFile = new File(srcDir.getPath(), className.replace('.', File.separatorChar) + ".groovy");
 			if (!srcFile.exists()) {
 				throw new FileNotFoundException(srcFile.getPath());
 			}
+			isGroovy = true;
 		}
-		// Create a reader of the raw input text
-
-		// Parse the raw text to a JavaSource object
-
-		Class<?> sourceParserClass = LoadersManager.getInstance().getLoader().loadClass("de.java2html.javasource.JavaSourceParser");
-		Object sourceParser = sourceParserClass.newInstance();
-		Method parseMethod = sourceParserClass.getMethod("parse", File.class);
-		if (parseMethod == null) {
-			return "";
-		}
-		Object source = parseMethod.invoke(sourceParser, srcFile);
-		if (source == null) {
-			return "";
-		}
-		Class<?> converterClass = LoadersManager.getInstance().getLoader().loadClass("de.java2html.converter.JavaSource2HTMLConverter");
-		StringWriter writer = new StringWriter();
-		Object converter = converterClass.getConstructor(source.getClass()).newInstance(source);
-		converterClass.getMethod("convert", Writer.class).invoke(converter, writer);
 		
+		// Read the source file content
+		String sourceCode = FileUtils.read(srcFile);
 		
-//		JavaSource source = null;
-//		source = new JavaSourceParser().parse(srcFile);
-
-		// Create a converter and write the JavaSource object as Html
-//		JavaSource2HTMLConverter converter = new JavaSource2HTMLConverter(source);
-//		StringWriter writer = new StringWriter();
-//		converter.convert(writer);
-		String toReturn = "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\">\n" + "<html><head>\n" +
-		// "<title></title>\n" +
-				"</head>\n" + "<body>\n" + writer.toString() + "</body>\n" + "</html>\n";
+		// Escape HTML special characters
+		sourceCode = sourceCode.replace("&", "&amp;")
+							   .replace("<", "&lt;")
+							   .replace(">", "&gt;")
+							   .replace("\"", "&quot;")
+							   .replace("'", "&#39;");
+		
+		// Determine the language for Highlight.js
+		String language = isGroovy ? "groovy" : "java";
+		
+		// Create HTML with Highlight.js
+		String toReturn = "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\">\n" +
+				"<html><head>\n" +
+				"<link rel=\"stylesheet\" href=\"https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css\">\n" +
+				"<script src=\"https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js\"></script>\n" +
+				"<script src=\"https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/java.min.js\"></script>\n" +
+				"<script src=\"https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/groovy.min.js\"></script>\n" +
+				"<script>hljs.highlightAll();</script>\n" +
+				"<style>\n" +
+				"  .hljs { background: #f8f8f8; padding: 10px; border-radius: 5px; }\n" +
+				"  body { font-family: 'Courier New', monospace; margin: 0; padding: 10px; }\n" +
+				"</style>\n" +
+				"</head>\n" +
+				"<body>\n" +
+				"<pre><code class=\"language-" + language + "\">" + sourceCode + "</code></pre>\n" +
+				"</body>\n" +
+				"</html>\n";
 
 		return toReturn;
-
 	}
 	
 	/**
