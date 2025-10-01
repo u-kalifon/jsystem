@@ -110,16 +110,16 @@ public class JSystemMojo extends AbstractMojo {
 		}
 
 		getLog().info("--------------------------Jsystem Maven Plugin--------------------------");
-		getLog().info("About to execute scenarios " + scenario + " with sut files " + sut);
+		getLog().info("About to execute scenario(s) " + scenario + " with sut file(s) " + sut);
 		getLog().info("of project=" + mavenProject.getBasedir());
 		getLog().info("------------------------------------------------------------------------");
 
 		for (int i = 0; i < scenarioFilesArr.length; i++) {
 			if (!scenarioFilesArr[i].exists()) {
-				throw new MojoFailureException("Scenario file " + scenarioFilesArr[i] + " is not exist");
+				throw new MojoFailureException("Scenario file " + scenarioFilesArr[i] + " does not exist");
 			}
 			if (!sutFilesArr[i].exists()) {
-				throw new MojoFailureException("Sut file " + sutFilesArr[i] + " is not exist");
+				throw new MojoFailureException("Sut file " + sutFilesArr[i] + " does not exist");
 			}
 			String scenarioName = scenario.split(DELIMITER)[i];
 			if (!scenarioName.startsWith("scenarios/")) {
@@ -132,7 +132,7 @@ public class JSystemMojo extends AbstractMojo {
 			executeSingleScenario(scenarioFilesArr[i], p);
 		}
 		getLog().info("------------------------------------------------------------------------");
-		getLog().info("Execution of scenarios " + scenario + " ended ");
+		getLog().info("Execution of scenario(s) " + scenario + " ended ");
 		getLog().info("Reports can be found in " + mavenProject.getBasedir().getAbsolutePath() + File.separator + "log"
 				+ File.separator + "current");
 
