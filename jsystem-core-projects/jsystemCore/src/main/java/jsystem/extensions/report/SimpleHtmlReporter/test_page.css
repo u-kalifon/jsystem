@@ -1,5 +1,6 @@
 .timestamp{
-    padding-right: 10px;
+    display: inline-block;
+    width: 100px;
     color: gray;
 }
 
@@ -8,7 +9,52 @@
     display: none;
 }
 
-#detailsDiv .step {color: #4E6CA3 !important; font-weight: bold;}
+#detailsDiv .step {
+    color: #4E6CA3 !important;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.step.closed:after{
+    font-weight: normal;
+    font-size: x-small;
+    color: gray;
+    margin-left: 5px;
+    content: " [...]";
+}
+
+.step:not(closed):after{
+    font-weight: normal;
+    font-size: x-small;
+    color: gray;
+    margin-left: 5px;
+    content: " [ - ]";
+}
+
+.attrDiv{
+    font-size: x-small;
+    color: purple;
+}
+
+#detailsDiv div.attrDiv {
+    margin: 0; /* counter the rule [#detailsDiv div] */
+}
+
+.attr{
+    font-size: x-small;
+    display: inline-block;
+    width: 85px;
+    padding-right: 15px;
+}
+
+.attr:after{
+    font-size: x-small;
+    content: ":";
+}
+
+.attrValue{
+    font-size: x-small;
+}
 
 #detailsDiv div{
     word-wrap: break-word;
@@ -39,28 +85,6 @@ img {width: 100px}
 
 .emptyStartLevel,
 .startLevel:not(closed):after{
-    font-weight: normal;
-    font-size: x-small;
-    color: gray;
-    margin-left: 5px;
-    content: " [ - ]";
-}
-
-.keywordHeading {   
-    cursor: pointer;
-    font-weight: bold;
-}
-
-.keywordHeading.closed:after{
-    font-weight: normal;
-    font-size: x-small;
-    color: gray;
-    margin-left: 5px;
-    content: " [...]";
-}
-
-.emptyStartLevel,
-.keywordHeading:not(closed):after{
     font-weight: normal;
     font-size: x-small;
     color: gray;
