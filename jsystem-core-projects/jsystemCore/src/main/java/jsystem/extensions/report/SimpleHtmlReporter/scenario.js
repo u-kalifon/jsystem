@@ -13,21 +13,23 @@ var test = {
             "title": "Hello, world!",
             "message": null,
             "status": "success",
-            "type": "keywordHeading",
+            "type": "step",
             "time": "08:50:11"
         },
         {
-            "title": "Class: com.transporeon.testing.jsystem.keywords.TestKeyword.log",
+            "attr": "Class",
+            "value": "com.transporeon.testing.jsystem.keywords.TestKeyword.log",
             "message": null,
             "status": "success",
-            "type": "regular",
+            "type": "stepDetail",
             "time": "08:50:11"
         },
         {
-            "title": "Message: log line",
+            "attr": "Message",
+            "value": "log line",
             "message": null,
             "status": "success",
-            "type": "regular",
+            "type": "stepDetail",
             "time": "08:50:11"
         },
         {
@@ -48,28 +50,31 @@ var test = {
             "title": "TestKeyword.startLevel",
             "message": null,
             "status": "success",
-            "type": "keywordHeading",
+            "type": "step",
             "time": "08:50:11"
         },
         {
-            "title": "Class: com.transporeon.testing.jsystem.keywords.TestKeyword.startLevel",
+            "attr": "Class",
+            "value": "com.transporeon.testing.jsystem.keywords.TestKeyword.startLevel",
             "message": null,
             "status": "success",
-            "type": "regular",
+            "type": "stepDetail",
             "time": "08:50:11"
         },
         {
-            "title": "Title: log with level",
+            "attr": "Title",
+            "value": "log with level",
             "message": null,
             "status": "success",
-            "type": "regular",
+            "type": "stepDetail",
             "time": "08:50:11"
         },
         {
-            "title": "Message: detailed log...........",
+            "attr": "Message",
+            "value": "detailed log...........",
             "message": null,
             "status": "success",
-            "type": "regular",
+            "type": "stepDetail",
             "time": "08:50:11"
         },
         {
@@ -91,7 +96,7 @@ var test = {
             "message": null,
             "status": "success",
             "type": "regular",
-            "time": "08:50:11:"
+            "time": "08:50:11"
         },
         {
             "title": null,

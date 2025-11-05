@@ -70,12 +70,39 @@ function setRegularElement($container, element, isHtml) {
     appendElement($container, $div);
 }
 
-function setStartLevelElement($container, element) {
-    setCollapsableElement($container, element, 'startLevel');
+function setStepDetailElement($container, element) {
+    var $div = $("<div>").addClass('attrDiv');
+    var $timestamp = $("<span>").addClass('attr').text(element.attr);
+
+    if (isPropertyExist(element, "message")) {
+        var $content = $("<span>").addClass('innerToggle').text(element.title);
+        indent($content);
+        $div.append($timestamp).append($content);
+
+        // add inner div with the message
+        var $innerDiv = $("<div>").html(nl2br(element.message));
+        $innerDiv.css("margin-left", (depth+depthStep) + "px");
+        $div.append($innerDiv);
+    }
+    else{
+        var $content = $("<span>").text(element.value).addClass('attrValue');
+        indentAttr($timestamp);
+        $div.append($timestamp).append($content);
+    }
+
+    //addStatusAsClass($div, element);
+    appendElement($container, $div);
 }
 
-function setKeywordElement($container, element) {
-    setCollapsableElement($container, element, 'keywordHeading');
+function setStartLevelElement($container, element) {
+    setCollapsableElement($container, element, 'startLevel');
+
+    // increase depth (left margin)
+    depth += depthStep;
+}
+
+function setStepElement($container, element) {
+    setCollapsableElement($container, element, 'step');
 }
 
 function setCollapsableElement($container, element, className) {
@@ -89,9 +116,6 @@ function setCollapsableElement($container, element, className) {
 
     // push the div into the level stack
     levelsStack.push($div);
-
-    // increase depth (left margin)
-    depth += depthStep;
 }
 
 function setStopLevelElement(element) {
@@ -109,7 +133,7 @@ function setStopLevelElement(element) {
     }
 }
 
-function setStepElement($container, element) {
+function setStepElementNotttt($container, element) {
     var $timestamp = $("<span>").addClass('timestamp').text(element.time);
     var $content = $("<span>").text(element.title);
     var $div = $("<div>").append($timestamp).append($content);
@@ -173,6 +197,10 @@ function indent($element){
     $element.css("margin-left", depth + "px");
 }
 
+function indentAttr($element){
+    $element.css("margin-left", 100 + depth + "px");
+}
+
 function nl2br(str){
     const breakTag = "<br/>";
     return (str + '').replace(/([^>\r\n]?)(\r\n|\n\r|\r|\n)/g, '$1'+ breakTag +'$2');
@@ -185,9 +213,6 @@ function setReportElements($container, reportElements) {
             case "startLevel":
                 setStartLevelElement($container, this);
                 break;
-            case "keywordHeading":
-                setKeywordElement($container, this);
-                break;
             case "stopLevel":
                 setStopLevelElement(this);
                 break;
@@ -196,6 +221,9 @@ function setReportElements($container, reportElements) {
                 break;
             case "step":
                 setStepElement($container, this);
+                break;
+            case "stepDetail":
+                setStepDetailElement($container, this);
                 break;
             case "img":
                 setImageElement($container,this);
@@ -231,17 +259,17 @@ function prepareLevels($container) {
     });
 
     // register the 'click' on 'startLevel' and 'innerToggle' elements
-    $(".startLevel, .keywordHeading, .innerToggle").click(function(){
+    $(".startLevel, .step, .innerToggle").click(function(){
         $(this).toggleClass("closed").parent().children('div').toggle('fast');
     });
 
     // register the 'click' on ExpandAll and CollapseAll
     $("#detailsDivExpandAll").click(function(){
-        $(".startLevel, .keywordHeading, .innerToggle").removeClass('closed').parent().children('div').show('fast');
+        $(".startLevel, .step, .innerToggle").removeClass('closed').parent().children('div').show('fast');
 
     });
     $("#detailsDivCollapseAll").click(function(){
-        $(".startLevel, .keywordHeading, .innerToggle").addClass('closed').parent().children('div').hide('fast');
+        $(".startLevel, .step, .innerToggle").addClass('closed').parent().children('div').hide('fast');
     });
 
 }
