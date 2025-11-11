@@ -34,9 +34,9 @@ function isPropertyExist(element, property) {
     return (element.hasOwnProperty(property) && element[property] !== null && element[property] !== "");
 }
 
-function addStatusAsClass(elementToAppend, elementWithStatus) {
+function addStatusAsClass(elementToAppend, elementWithStatus, suffix) {
     if (isPropertyExist(elementWithStatus, "status")) {
-        elementToAppend.addClass("s_" + elementWithStatus.status +"_text");
+        elementToAppend.addClass("s_" + elementWithStatus.status + suffix);
     }
 }
 
@@ -56,7 +56,7 @@ function setRegularElement($container, element, isHtml) {
         $div.append($timestamp).append($content);
 
         // add inner div with the message
-        var $innerDiv = $("<div>").html(nl2br(element.message));
+        var $innerDiv = $("<div>").addClass('innerContent').html(nl2br(element.message));
         $innerDiv.css("margin-left", (depth+depthStep) + "px");
         $div.append($innerDiv);
     }
@@ -66,31 +66,7 @@ function setRegularElement($container, element, isHtml) {
         $div.append($timestamp).append($content);
     }
 
-    addStatusAsClass($div, element);
-    appendElement($container, $div);
-}
-
-function setStepDetailElement($container, element) {
-    var $div = $("<div>").addClass('attrDiv');
-    var $timestamp = $("<span>").addClass('attr').text(element.attr);
-
-    if (isPropertyExist(element, "message")) {
-        var $content = $("<span>").addClass('innerToggle').text(element.title);
-        indent($content);
-        $div.append($timestamp).append($content);
-
-        // add inner div with the message
-        var $innerDiv = $("<div>").html(nl2br(element.message));
-        $innerDiv.css("margin-left", (depth+depthStep) + "px");
-        $div.append($innerDiv);
-    }
-    else{
-        var $content = $("<span>").text(element.value).addClass('attrValue');
-        indentAttr($timestamp);
-        $div.append($timestamp).append($content);
-    }
-
-    //addStatusAsClass($div, element);
+    addStatusAsClass($div, element, "_text");
     appendElement($container, $div);
 }
 
@@ -115,12 +91,12 @@ function setStepElement($container, element) {
         addPropertiesToTbl(element.properties, $tbody);
 
         // add inner div with the table
-        var $innerDiv = $("<div>").append($table);
+        var $innerDiv = $("<div>").addClass('innerContent').append($table);
         $innerDiv.css("margin-left", (depth+depthStep) + "px");
         $div.append($innerDiv);
     }
 
-    addStatusAsClass($div, element);
+    addStatusAsClass($div, element, "_step");
     appendElement($container, $div);
 }
 
@@ -130,7 +106,7 @@ function setCollapsableElement($container, element, className) {
     var $div = $("<div>").append($timestamp).append($content);
     indent($content);
 
-    addStatusAsClass($div, element);
+    addStatusAsClass($div, element, "_text");
     appendElement($container, $div);
 
     // push the div into the level stack
@@ -162,7 +138,7 @@ function setImageElement($container, element){
     indent($a);
     $div.append($timestamp).append($a);
 
-    addStatusAsClass($div, element);
+    addStatusAsClass($div, element, "_text");
     appendElement($container, $div);
 }
 
@@ -180,7 +156,7 @@ function setLinkElement($container, element) {
 
     indent($content);
     $div.append($content);
-    addStatusAsClass($div, element);
+    addStatusAsClass($div, element, "_text");
     appendElement($container, $div);
 }
 
@@ -228,9 +204,6 @@ function setReportElements($container, reportElements) {
                 break;
             case "step":
                 setStepElement($container, this);
-                break;
-            case "stepDetail":
-                setStepDetailElement($container, this);
                 break;
             case "img":
                 setImageElement($container,this);

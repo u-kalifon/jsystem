@@ -11,7 +11,20 @@
 .s_failure_text { color: #DD0000 !important;  font-weight: bold;}
 .s_warning_text { color: #FFAA33 !important; font-weight: bold;}
 
+/* Used in the detailsDiv (scenario.html) */
+.s_success_step { color: #0000FF !important; font-weight: bold;}
+.s_error_step { color: #EE0000 !important; font-weight: bold;}
+.s_failure_step { color: #DD0000 !important;  font-weight: bold;}
+.s_warning_step { color: #FFAA33 !important; font-weight: bold;}
+
 /* Report Levels */
 .s_failure_text .startLevel { color: #EE0000 !important; font-weight: bold;}
 .s_warning_text .startLevel { color: #FFAA33 !important; font-weight: bold;}
 /* .s_success_text .startLevel { color: #0000EE !important; font-weight: bold;} */
+
+/* Inner content styling - prevents inheritance from status classes */
+.innerContent { 
+    font-weight: normal !important; 
+    color: #000000 !important; 
+    font-size: small !important;
+}
