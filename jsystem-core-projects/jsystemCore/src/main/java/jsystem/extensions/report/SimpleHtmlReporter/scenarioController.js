@@ -102,12 +102,31 @@ function setStartLevelElement($container, element) {
 }
 
 function setStepElement($container, element) {
-    setCollapsableElement($container, element, 'step');
+    var $timestamp = $("<span>").addClass('timestamp').text(element.time);
+    var $content = $("<span>").addClass('step').addClass("innerToggle").addClass("closed").text(element.title);
+    indent($content);
+    var $div = $("<div>").append($timestamp).append($content);
+
+    if (isPropertyExist(element, "properties")) {
+        // create a table with the properties
+        var $table = $("<table>").addClass('smallTbl');
+        var $tbody = $("<tbody>");
+        $table.append($tbody);
+        addPropertiesToTbl(element.properties, $tbody);
+
+        // add inner div with the table
+        var $innerDiv = $("<div>").append($table);
+        $innerDiv.css("margin-left", (depth+depthStep) + "px");
+        $div.append($innerDiv);
+    }
+
+    addStatusAsClass($div, element);
+    appendElement($container, $div);
 }
 
 function setCollapsableElement($container, element, className) {
     var $timestamp = $("<span>").addClass('timestamp').text(element.time);
-    var $content = $("<span>").addClass(className).addClass("closed").text(element.title);
+    var $content = $("<span>").addClass(className).addClass("innerToggle").addClass("closed").text(element.title);
     var $div = $("<div>").append($timestamp).append($content);
     indent($content);
 
@@ -131,18 +150,6 @@ function setStopLevelElement(element) {
     if (depth<0) {
         depth = 0;
     }
-}
-
-function setStepElementNotttt($container, element) {
-    var $timestamp = $("<span>").addClass('timestamp').text(element.time);
-    var $content = $("<span>").text(element.title);
-    var $div = $("<div>").append($timestamp).append($content);
-    indent($content);
-
-    $div.addClass("step");
-
-    addStatusAsClass($div, element);
-    appendElement($container, $div);
 }
 
 function setImageElement($container, element){

@@ -61,13 +61,27 @@
     margin: 5px 0 5px 0;
 }
 
-.smallTbl { padding: 0; border: 0; width: 70% ; font-size: small}
+.smallTbl { 
+    padding: 0; 
+    border: 0; 
+    width: 70%; 
+    font-size: small;
+    border-collapse: collapse;
+}
+
+.smallTbl td, .smallTbl th {
+    padding: 2px 5px;
+}
+
+#detailsDiv .smallTbl div {
+    margin: 0 !important;
+}
+
 h3 {color: gray ; font-size: small}
 img {width: 100px}
 
 .innerToggle {
     cursor: pointer;
-    text-decoration: underline;
 }
 
 .startLevel {   
