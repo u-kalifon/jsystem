@@ -4,7 +4,8 @@ public enum Status {
     SUCCESS("success"),
     WARNING("warning"),
     ERROR("error"),
-    FAILURE("failure");
+    FAILURE("failure"),
+    RUNNING("running");
 
     private final String value;
 
