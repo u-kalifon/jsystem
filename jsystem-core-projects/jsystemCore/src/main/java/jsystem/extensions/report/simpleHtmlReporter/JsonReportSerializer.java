@@ -3,6 +3,7 @@ package jsystem.extensions.report.simpleHtmlReporter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
+import jsystem.extensions.report.simpleHtmlReporter.dto.Execution;
 import jsystem.extensions.report.simpleHtmlReporter.dto.ReportElementDto;
 import jsystem.extensions.report.simpleHtmlReporter.dto.TestReportDto;
 
@@ -38,6 +39,21 @@ public class JsonReportSerializer {
      */
     public static TestReportDto fromJsonFile(File file) throws IOException {
         return objectMapper.readValue(file, TestReportDto.class);
+    }
+
+    public static String toJson(Execution report) throws IOException {
+        return objectMapper.writeValueAsString(report);
+    }
+
+    /**
+     * Deserializes a JSON string into an Execution object.
+     *
+     * @param json the JSON string to deserialize
+     * @return the Execution object
+     * @throws IOException if deserialization fails
+     */
+    public static Execution executionFromJson(String json) throws IOException {
+        return objectMapper.readValue(json, Execution.class);
     }
 
     /**

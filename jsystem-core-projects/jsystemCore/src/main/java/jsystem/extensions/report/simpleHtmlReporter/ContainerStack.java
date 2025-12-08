@@ -11,7 +11,7 @@ import jsystem.extensions.report.simpleHtmlReporter.dto.Status;
 import jsystem.extensions.report.simpleHtmlReporter.dto.TestReportDto;
 
 /**
- * Manages a stack of Container instances for hierarchical container tracking.
+ * Manages a stack of Container instances for hierarchical container and log level tracking.
  */
 class ContainerStack {
 	// this represents the scenario report (will be writen to scenario.js in the end of the run)
@@ -94,7 +94,12 @@ class ContainerStack {
 	 * @return the removed container, or null if the stack is empty
 	 */
 	public Container pop() {
-		return stack.poll();
+		Container popped = stack.poll();
+		if (popped != null && !stack.isEmpty()) {
+			// update the containing container's status to the popped container's status
+			stack.peek().setStatus(popped.getStatus());
+		}
+		return popped;
 	}
 
 	/**
@@ -102,7 +107,8 @@ class ContainerStack {
 	 */
 	static class Container {
 		private final String name;
-		private final Deque<String> logLevels;
+		private Status status;
+		private final Deque<LogLevel> logLevels;
 
 		/**
 		 * Creates a new Container with the given name and an empty log levels stack.
@@ -112,6 +118,7 @@ class ContainerStack {
 		public Container(String name) {
 			this.name = name;
 			this.logLevels = new ArrayDeque<>();
+			this.status = Status.RUNNING;
 		}
 
 		/**
@@ -121,11 +128,89 @@ class ContainerStack {
 			return name;
 		}
 
+		public void startLevel(String name) {
+			logLevels.push(new LogLevel(name));
+		}
+
+		public Status endLevel() {
+			if (logLevels.isEmpty()) {
+				return null;
+			}
+			Status status = logLevels.pop().getStatus();
+			// update the encompassing level's status to the popped level's status
+			if (!logLevels.isEmpty()) {
+				logLevels.peek().setStatus(status);
+			}
+			return status;
+		}
+
+		public String getCurrentLevelName() {
+			if (logLevels.isEmpty()) {
+				return null;
+			}
+			return logLevels.peek().getName();
+		}
+
+		public Status getStatus() {
+			return status;
+		}
+
 		/**
-		 * Returns the log levels stack for this container.
+		 * Sets the status of this container.
+		 * This also ensures that the status can only get more severe, and cannot be set lower
+		 * (e.g. FAILURE cannot be set to SUCCESS)
+		 * 
+		 * @param newStatus the new status
 		 */
-		public Deque<String> getLogLevels() {
-			return logLevels;
+		public void setStatus(Status newStatus) {
+			this.status = this.status.updateStatus(newStatus);
+			// update the current level's status to the new status
+			if (!logLevels.isEmpty()) {
+				logLevels.peek().setStatus(newStatus);
+			}
+		}
+	}
+
+	/**
+	 * Represents a log level with a name and status.
+	 */
+	static class LogLevel {
+		private final String name;
+		private Status status;
+
+		/**
+		 * Creates a new LogLevel with the given name and default status of SUCCESS.
+		 * 
+		 * @param name the name of the log level
+		 */
+		public LogLevel(String name) {
+			this.name = name;
+			this.status = Status.SUCCESS;
+		}
+
+		/**
+		 * Returns the name of this log level.
+		 */
+		public String getName() {
+			return name;
+		}
+
+		/**
+		 * Returns the status of this log level.
+		 */
+		public Status getStatus() {
+			return status;
+		}
+
+		/**
+		 * Sets the status of this log level.
+		 * This also ensures that the status can only get more severe, and cannot be set lower
+		 * (e.g. FAILURE cannot be set to SUCCESS)
+		 * 
+		 * @param newStatus the new status
+		 */
+		public void setStatus(Status newStatus) {
+			this.status = this.status.updateStatus(newStatus);
 		}
 	}
 }

@@ -40,7 +40,7 @@ public class ReportElementDto {
     public static ReportElementDto newStep(String timeStamp, String title, Map<String, String> properties) {
         ReportElementDto element = new ReportElementDto();
         element.setType("step");
-        element.setStatus(Status.SUCCESS);
+        element.setStatus(Status.UNKNOWN);
         element.setTime(timeStamp);
         element.setTitle(title);
         element.setProperties(properties);
@@ -64,21 +64,22 @@ public class ReportElementDto {
         return element;
     }
 
-    public static ReportElementDto newReportEntry(String timeStamp, String message, Status status) {
+    public static ReportElementDto newReportEntry(String timeStamp, String title, String message, Status status) {
         ReportElementDto element = new ReportElementDto();
         element.setType("regular");
         element.setStatus(status);
         element.setTime(timeStamp);
-        element.setTitle(message);      // TODO: use setMessage?
+        element.setTitle(title);
+        element.setMessage(message);
         return element;
     }
 
-    public static ReportElementDto newFailureReport(String timeStamp, String message) {
-        return newReportEntry(timeStamp, message, Status.FAILURE);
+    public static ReportElementDto newFailureReport(String timeStamp, String title, String message) {
+        return newReportEntry(timeStamp, title, message, Status.FAILURE);
     }
 
-    public static ReportElementDto newErrorReport(String timeStamp, String message) {
-        return newReportEntry(timeStamp, message, Status.ERROR);
+    public static ReportElementDto newErrorReport(String timeStamp, String title, String message) {
+        return newReportEntry(timeStamp, title, message, Status.ERROR);
     }
 
     public void addProperty(String key, String value) {
@@ -109,7 +110,11 @@ public class ReportElementDto {
     }
 
     public void setStatus(Status status) {
-        this.status = status;
+        if (this.status == null) {
+            this.status = status;
+        } else {
+            this.status = this.status.updateStatus(status);
+        }
     }
 
     public String getType() {

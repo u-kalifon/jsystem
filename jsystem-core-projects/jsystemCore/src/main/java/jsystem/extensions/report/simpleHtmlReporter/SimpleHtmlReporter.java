@@ -9,15 +9,18 @@ import java.nio.channels.OverlappingFileLockException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Deque;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import jsystem.extensions.report.html.ExtendLevelTestReporter;
+import jsystem.extensions.report.simpleHtmlReporter.ContainerStack.Container;
+import jsystem.extensions.report.simpleHtmlReporter.dto.Execution;
 import jsystem.extensions.report.simpleHtmlReporter.dto.ReportElementDto;
 import jsystem.extensions.report.simpleHtmlReporter.dto.Status;
 import jsystem.extensions.report.simpleHtmlReporter.dto.TestReportDto;
@@ -54,8 +57,8 @@ public class SimpleHtmlReporter implements ExtendLevelTestReporter, ExtendTestLi
 	private static final long LOCK_RETRY_INTERVAL_MS = 200; // 100ms between retries
 
 	private String reportDir;
-	private File logDirectory;
-	private ReportElementDto currentStep = null;	// FIXME: currentStep should be a property of the current level (container)
+	private File logDirectory = null;
+	private ReportElementDto currentStep = null;
 	private ContainerStack containerStack = new ContainerStack();
 	
 	private FileChannel lockChannel;
@@ -106,6 +109,22 @@ public class SimpleHtmlReporter implements ExtendLevelTestReporter, ExtendTestLi
 			copyTemplateDirectoryIfNotExists("controllers", logDirPath, CONTROLLER_FILES);
 			copyTemplateDirectoryIfNotExists("css", logDirPath, CSS_FILES);
 			copyTemplateDirectoryIfNotExists("js", logDirPath, JS_FILES);
+
+			// Create the execution DTO, with the local machine and an empty scenario array
+			Execution execution = new Execution();
+			execution.setMachines(new ArrayList<Execution.Machine>());
+			execution.getMachines().add(new Execution.Machine("machine", "local", new ArrayList<>()));
+
+			// Write the execution DTO to the execution.js file
+			File executionJsonFile = getExecutionJsonFile();
+			try {
+				String json = JsonReportSerializer.toJson(execution);
+				String jsContent = "var execution = " + json + ";";
+				Files.writeString(executionJsonFile.toPath(), jsContent);
+			} catch (IOException e) {
+				log.error("Failed to write execution to: " + executionJsonFile, e);
+				throw new RuntimeException("Failed to write execution to: " + executionJsonFile, e);
+			}
 		} finally {
 			unlockMutex();
 		}
@@ -325,6 +344,11 @@ public class SimpleHtmlReporter implements ExtendLevelTestReporter, ExtendTestLi
 		}
 	}
 	
+	private File getExecutionJsonFile() {
+		String logDir = getLogDir();
+		return new File(logDir + "/execution.js");
+	}
+
 	private Path getScenarioDir(String scenarioNameAndUid) {
 		String logDir = getLogDir();
 		return new File(logDir + "/scenarios/" + scenarioNameAndUid).toPath().toAbsolutePath();
@@ -332,7 +356,7 @@ public class SimpleHtmlReporter implements ExtendLevelTestReporter, ExtendTestLi
 
 	private File getScenarioJsFile(String scenarioNameAndUid) {
 		Path scenarioDir = getScenarioDir(containerStack.getNameAndUid());
-		return new File(scenarioDir.resolve("scenraio.js").toString());
+		return new File(scenarioDir.resolve("scenario.js").toString());
 	}
 
 	private void createScenarioDirectory(String scenarioNameAndUid) {
@@ -406,10 +430,10 @@ public class SimpleHtmlReporter implements ExtendLevelTestReporter, ExtendTestLi
 	@Override
 	public void startTest(TestInfo testInfo) {
 		log.info("### Recieved start test event -> " + testInfo.toString());
+		String stepName = sanitizeClassName(testInfo.className) + "." + testInfo.methodName;
 		currentStep = ReportElementDto.newStep(LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME), 
-			testInfo.meaningfulName, null);
-		String stepName = testInfo.className + "." + testInfo.methodName;
-		currentStep.addProperty("Class", stepName);
+			String.join(" ", stepName, testInfo.meaningfulName), null);
+		currentStep.addProperty("Class", testInfo.className);
 
 		if (testInfo.parameters != null && !testInfo.parameters.trim().isEmpty()) {
 			log.info("Adding parameters " + testInfo.parameters);
@@ -460,8 +484,7 @@ public class SimpleHtmlReporter implements ExtendLevelTestReporter, ExtendTestLi
 			return;
 		}
 
-		Path scenarioDir = getScenarioDir(containerStack.getNameAndUid());
-		Path scenarioJsPath = scenarioDir.resolve("scenraio.js");
+		File scenarioJsFile = getScenarioJsFile(containerStack.getNameAndUid());
 
 		try {
 			String json = JsonReportSerializer.toJson(element);
@@ -473,12 +496,12 @@ public class SimpleHtmlReporter implements ExtendLevelTestReporter, ExtendTestLi
 			jsCode.append(";\n");
 			jsCode.append("test.reportElements.push(newReportElement);\n");
 
-			Files.writeString(scenarioJsPath, jsCode.toString(), 
+			Files.writeString(scenarioJsFile.toPath(), jsCode.toString(), 
 					StandardOpenOption.APPEND, StandardOpenOption.CREATE);
 			
-			log.debug("Appended report element to: " + scenarioJsPath);
+			log.debug("Appended report element to: " + scenarioJsFile);
 		} catch (IOException e) {
-			log.error("Failed to append report element to: " + scenarioJsPath, e);
+			log.error("Failed to append report element to: " + scenarioJsFile, e);
 		}
 	}
 
@@ -490,25 +513,22 @@ public class SimpleHtmlReporter implements ExtendLevelTestReporter, ExtendTestLi
 	@Override
 	public void endTest(Test test) {
 		log.info("### Recieved end test event -> " + test.toString());
+		currentStep.setStatus(Status.SUCCESS);	// if it's already more severe (WARNING, ERROR...) there won't be an update
 		currentStep = null;
 	}
 
 	@Override
 	public void endRun() {
 		// ignore for now (assuming that everything is written to disk)
-		// TODO: we need to catch the end of a scenario run, and update the execution file
 		log.info("### Recieved end run event");
 	}
 
 	// TODO: implement the rest of the methods to log lines, levels, etc...
 
-	public void setLogDirectory(File logDirectory) {
-		// TODO: make sure this is used consistently (there is also getLogDir())
-		this.logDirectory = logDirectory;
-	}
-
 	public File getLogDirectory() {
-		// TODO: make sure this is used consistently (there is also getLogDir())
+		if (logDirectory == null) {
+			logDirectory = new File(getLogDir());
+		}
 		return logDirectory;
 	}
 
@@ -517,16 +537,51 @@ public class SimpleHtmlReporter implements ExtendLevelTestReporter, ExtendTestLi
 		return "SimpleHtmlReporter";
 	}
 
+	/**
+	 * Sanitizes a scenario name by:
+	 * 1. Removing the "scenarios/" prefix if present
+	 * 2. Replacing all remaining slashes with dots
+	 *
+	 * @param name the scenario name to sanitize
+	 * @return the sanitized scenario name
+	 */
+	private String sanitizeScenarioName(String name) {
+		if (name == null) {
+			return null;
+		}
+		if (name.startsWith("scenarios/")) {
+			name = name.substring("scenarios/".length());
+		}
+		return name.replace("/", ".");
+	}
+
+	/**
+	 * Sanitizes a class name by removing the fqdn and returning only the last token which is the class name.
+	 * Tokens are separated by ".".
+	 *
+	 * @param className the fully qualified class name
+	 * @return the last token which is the class name
+	 */
+	private String sanitizeClassName(String className) {
+		if (className == null) {
+			return null;
+		}
+		String[] tokens = className.split("\\.");
+		return tokens[tokens.length - 1];
+	}
+
 	@Override
 	public void startContainer(JTestContainer container) {
 		log.info(("Received start container event: " + container.toString()));
-		String scenarioName = container.getName();
+		currentStep = null;
+		String scenarioName = sanitizeScenarioName(container.getName());
 
 		// if this is the first container, start the scenario
 		if (containerStack.isEmpty()) {
 			TestReportDto initialDto = containerStack.initTestReportDto(scenarioName, container.getDocumentation());
 
 			// TODO: support scenario properties, maybe using container.getAllXmlFields() ?
+			// TODO: get the sut file !
 
 			// Create the directory for the scenario and write the testReportDto to it
 			createScenarioDirectory(containerStack.getNameAndUid());
@@ -539,27 +594,29 @@ public class SimpleHtmlReporter implements ExtendLevelTestReporter, ExtendTestLi
 				throw new RuntimeException("Failed to write initial test report to: " + scenarioJsFile, e);
 			}
 			
-			// TODO: add to the execution file
+			// Add the scenario to the execution file
+			// TODO: get the sut file !
+			addScenarioToExecutionFile(scenarioName, initialDto.getTimestamp(), "", initialDto.getUid());
 
 		} else {
 			// TODO: add a childScenario DTO (also support it in the html/css/js and make sure it starts a level)
 		}
 
 		containerStack.push(scenarioName);
-
-		// TODO: update the execution file!
 	}
 
 	@Override
 	public void endContainer(JTestContainer container) {
 		// this is the end of a scenario (or a child scenario)
 		log.info(("Received end container event: " + container.toString()));
+		currentStep = null;
 
 		closeAllLevels();
-		containerStack.pop();	// TODO: update the status (success, failure...) of the parent
+		Container oldContainer = containerStack.pop();		// will update the status of the containing container and log level
 
 		// when all containers are finished, re-serialize the scenario report and write it to disk
 		if (containerStack.isEmpty()) {
+			containerStack.getTestReportDto().setStatus(oldContainer.getStatus());	// overall scenario status
 			File scenarioJsFile = getScenarioJsFile(containerStack.getNameAndUid());
 			try {
 				dumpAsJsToFile(containerStack.getTestReportDto(), scenarioJsFile);
@@ -568,7 +625,20 @@ public class SimpleHtmlReporter implements ExtendLevelTestReporter, ExtendTestLi
 				log.error("Failed to write final test report to: " + scenarioJsFile, e);
 				throw new RuntimeException("Failed to write final test report to: " + scenarioJsFile, e);
 			}
+
+			String duration = composeDuration(containerStack.getTestReportDto().getTimestamp());
+			updateScenarioInExecutionFile(containerStack.getTestReportDto().getUid(), containerStack.getTestReportDto().getStatus(), duration);
 		}
+	}
+
+	private String composeDuration(String initialTimestamp) {
+		LocalDateTime initialDateTime = LocalDateTime.parse(initialTimestamp, DateTimeFormatter.ISO_DATE_TIME);
+		LocalDateTime now = LocalDateTime.now();
+		Duration duration = Duration.between(initialDateTime, now);
+		long hours = duration.toHours();
+		long minutes = duration.toMinutesPart();
+		long seconds = duration.toSecondsPart();
+		return String.format("%02dh%02dm%02ds", hours, minutes, seconds);
 	}
 
 	/**
@@ -585,16 +655,112 @@ public class SimpleHtmlReporter implements ExtendLevelTestReporter, ExtendTestLi
 		Files.writeString(file.toPath(), jsContent);
 	}
 
+	/**
+	 * Adds a new scenario to the execution file.
+	 * This method locks the mutex, reads the execution file, adds the scenario,
+	 * writes the updated execution file, and unlocks the mutex.
+	 *
+	 * @param scenarioName the name of the scenario to add
+	 * @param timestamp the timestamp when the scenario started
+	 */
+	private void addScenarioToExecutionFile(String scenarioName, String timestamp, String sutFile, String uid) {
+		if (!lockMutex()) {
+			log.error("Failed to acquire lock for adding scenario to execution file");
+			return;
+		}
+		
+		try {
+			File executionJsonFile = getExecutionJsonFile();
+			String content = Files.readString(executionJsonFile.toPath());
+			
+			// Parse the execution file (format: "var execution = {...};")
+			String jsonContent = content
+				.substring("var execution = ".length())
+				.replaceFirst(";\\s*$", "");
+			
+			Execution execution = JsonReportSerializer.executionFromJson(jsonContent);
+			
+			// Create a new ExecutionScenario and add it to the first machine
+			Execution.ExecutionScenario newScenario = new Execution.ExecutionScenario(scenarioName, sutFile, timestamp, uid);
+			if (!execution.getMachines().isEmpty()) {
+				execution.getMachines().get(0).getChildren().add(newScenario);
+			} else {
+				log.error("No machines found in execution file");
+				return;
+			}
+			
+			// Write the updated execution back to the file
+			String json = JsonReportSerializer.toJson(execution);
+			String jsContent = "var execution = " + json + ";";
+			Files.writeString(executionJsonFile.toPath(), jsContent);
+			
+			log.info("Added scenario to execution file: " + scenarioName);
+		} catch (IOException e) {
+			log.error("Failed to add scenario to execution file", e);
+		} finally {
+			unlockMutex();
+		}
+	}
+
+	private void updateScenarioInExecutionFile(String uid, Status status, String duration) {
+		if (!lockMutex()) {
+			log.error("Failed to acquire lock for adding scenario to execution file");
+			return;
+		}
+		
+		try {
+			File executionJsonFile = getExecutionJsonFile();
+			String content = Files.readString(executionJsonFile.toPath());
+			
+			// Parse the execution file (format: "var execution = {...};")
+			String jsonContent = content
+				.substring("var execution = ".length())
+				.replaceFirst(";\\s*$", "");
+			
+			Execution execution = JsonReportSerializer.executionFromJson(jsonContent);
+			
+			// Find the scenario by uid and update its status and duration
+			machineLoop:
+			for (Execution.Machine machine : execution.getMachines()) {
+				for (Execution.ExecutionScenario scenario : machine.getChildren()) {
+					if (scenario.getUid().equals(uid)) {
+						scenario.setStatus(status.name());
+						scenario.setDuration(duration);
+						break machineLoop;
+					}
+				}
+			}
+			
+			// Write the updated execution back to the file
+			String json = JsonReportSerializer.toJson(execution);
+			String jsContent = "var execution = " + json + ";";
+			Files.writeString(executionJsonFile.toPath(), jsContent);
+			
+			log.info("Updated scenario in execution file: " + uid);
+		} catch (IOException e) {
+			log.error("Failed to update scenario in execution file", e);
+		} finally {
+			unlockMutex();
+		}
+	}
+
 	@Override
-	public void startLevel(String level, jsystem.framework.report.Reporter.EnumReportLevel place) throws IOException {
+	public void startLevel(String levelName, jsystem.framework.report.Reporter.EnumReportLevel place) throws IOException {
+
 		// FIXME: levels should have a log line and not just a level name
-		log.info("Starting level: " + level + " at place: " + place);
+
+		// FIXME 2: avoid code duplication with the overloaded derivative with place = 0 (CurrentPlace) and place = 1 (MainFrame)
+
+		log.info("Starting level: " + levelName + " at place: " + place.name());	// place = CurrentPlace or MainFrame
 		if (containerStack.isEmpty()) {
 			log.error("Cannot start level: no container is active");
 			return;
 		}
-		containerStack.peek().getLogLevels().push(level);
-		// TODO: create the level node in the report structure
+		containerStack.peek().startLevel(levelName);
+		ReportElementDto levelStart = ReportElementDto.newLogLevelStart(LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME), 
+			levelName);		// FIXME: we want to report a line, not the level name
+		containerStack.getTestReportDto().getReportElements().add(levelStart);
+		appendReportElementToScenarioJs(levelStart);
 	}
 
 	@Override
@@ -604,10 +770,11 @@ public class SimpleHtmlReporter implements ExtendLevelTestReporter, ExtendTestLi
 			log.error("Cannot start level: no container is active");
 			return;
 		}
-		containerStack.peek().getLogLevels().push(levelName);
+		containerStack.peek().startLevel(levelName);
 		ReportElementDto levelStart = ReportElementDto.newLogLevelStart(LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME), 
 			levelName);		// FIXME: we want to report a line, not the level name
-		// TODO: create the level node in the report structure and write to disk
+		containerStack.getTestReportDto().getReportElements().add(levelStart);
+		appendReportElementToScenarioJs(levelStart);
 	}
 
 	@Override
@@ -616,13 +783,13 @@ public class SimpleHtmlReporter implements ExtendLevelTestReporter, ExtendTestLi
 			log.error("Attempted to stop level but no container is active");
 			return;
 		}
-		Deque<String> logLevels = containerStack.peek().getLogLevels();
-		if (!logLevels.isEmpty()) {
-			String level = logLevels.pop();
-			log.info("Stopping level: " + level);
+		String currentLevelName = containerStack.peek().getCurrentLevelName();
+		if (currentLevelName != null) {
+			log.info("Stopping level: " + currentLevelName);
 			ReportElementDto levelStop = ReportElementDto.newLogLevelStop(LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME));
-			// TODO: finalize the level node in the report structure and write to disk
-			// TODO: only a log level that was started by startLevel() should be stopped by stopLevel(), and if it was started by a container - don't stop it
+			containerStack.getTestReportDto().getReportElements().add(levelStop);
+			appendReportElementToScenarioJs(levelStop);
+			containerStack.peek().endLevel();
 		} else {
 			log.warn("Attempted to stop level but logLevels stack is empty");
 		}
@@ -634,11 +801,11 @@ public class SimpleHtmlReporter implements ExtendLevelTestReporter, ExtendTestLi
 			log.error("Cannot close levels: no container is active");
 			return;
 		}
-		Deque<String> logLevels = containerStack.peek().getLogLevels();
-		log.info("Closing all levels. Current depth: " + logLevels.size());
-		// TODO: only stop until the container level is reached
-		while (!logLevels.isEmpty()) {
+		String currentLevelName = containerStack.peek().getCurrentLevelName();
+		while (currentLevelName != null) {
+			log.info("Closing all levels. Current level name: " + currentLevelName);
 			stopLevel();
+			currentLevelName = containerStack.peek().getCurrentLevelName();
 		}
 	}
 
@@ -650,20 +817,21 @@ public class SimpleHtmlReporter implements ExtendLevelTestReporter, ExtendTestLi
 			log.error("Cannot close levels: no container is active");
 			return;
 		}
-		Deque<String> logLevels = containerStack.peek().getLogLevels();
 		
 		// Pop levels until we find the specified level or the stack is empty, or until the container level is reached
-		while (!logLevels.isEmpty()) {
-			String currentLevel = logLevels.peek();
-			
-			if (currentLevel.equals(levelName)) {
-				if (includeLevel) {
-					stopLevel();
-				}
-				return;
-			}
-			
+		String currentLevelName = containerStack.peek().getCurrentLevelName();
+		while (currentLevelName != null && !currentLevelName.equals(levelName)) {
+			log.info("Closing all levels up to: " + levelName + ". Current level name: " + currentLevelName);
 			stopLevel();
+			currentLevelName = containerStack.peek().getCurrentLevelName();
+		}
+
+		if (currentLevelName != null && currentLevelName.equals(levelName)) {
+			if (includeLevel) {
+				log.info("Closing all levels up to and including: " + levelName + ". Current level name: " + currentLevelName);
+				stopLevel();
+			}
+			return;
 		}
 		
 		// If we reach here, the level was not found
@@ -680,7 +848,7 @@ public class SimpleHtmlReporter implements ExtendLevelTestReporter, ExtendTestLi
 	@Override
 	public void endLoop(AntForLoop loop, int count) {
 		// TODO: ignore for now
-		// TODO: This should start a container.
+		// TODO: This should stop a container.
 		// TODO: Containers should be hierarchical so that when stopping a container, all its children are stopped too.
 	}
 
@@ -703,44 +871,54 @@ public class SimpleHtmlReporter implements ExtendLevelTestReporter, ExtendTestLi
 			case 1 -> Status.FAILURE;
 			case 2 -> Status.WARNING;
 			default -> Status.SUCCESS;
+			// FIXME: handle the ERROR status
 		};
 
 		// TODO: support bold (used to be a step), html and link
 
-		if (status != Status.SUCCESS && currentStep != null) {
-			currentStep.setStatus(Status.FAILURE);	// FIXME: status might be WARNING or ERROR
-			// TODO: update the container status
-		}
-		ReportElementDto reportEntry = ReportElementDto.newReportEntry(LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME), message, status);
-		// TODO: add the error report to the current container and write to disk
+		ReportElementDto reportEntry = ReportElementDto.newReportEntry(
+			LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME), title, message, status);
+		containerStack.getTestReportDto().getReportElements().add(reportEntry);
+		appendReportElementToScenarioJs(reportEntry);
+
+		// update the statuses of the current step, the current log level, and the current container
+		currentStep.setStatus(status);	// will only update if it's more severe
+		containerStack.peek().setStatus(status);	// will only update if it's more severe
 	}
 
 	@Override
 	public void addWarning(Test test) {
-		// TODO: Ignore this? This step should receive a message to log
-		if (currentStep != null) {
-			currentStep.setStatus(Status.WARNING);
-			// TODO: update the container status ?
-		}
+		// FIXME: get rid of this method
+		report("", "WARNING added by call to addWarning()", 2, false, false, false);
 	}
 
 	@Override
 	public void addFailure(Test test, AssertionFailedError error) {
+		// FIXME: understand how AssertionFailedError is used in the original JSystem, and get rid of this method
 		if (currentStep != null) {
 			currentStep.setStatus(Status.FAILURE);
-			ReportElementDto errorReport = ReportElementDto.newFailureReport(LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME), error.getMessage());
+			containerStack.peek().setStatus(Status.FAILURE);
+			ReportElementDto errorReport = ReportElementDto.newFailureReport(
+				LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME), error.getMessage(), "");
 			// TODO: make sure the stack is reported also
-			// TODO: add the error report to the current step and write to disk
-		}
+
+			containerStack.getTestReportDto().getReportElements().add(errorReport);
+			appendReportElementToScenarioJs(errorReport);
+			}
 	}
 
 	@Override
 	public void addError(Test test, Throwable error) {
+		// FIXME: understand the differences between addFailure() and this, and get rid of this method
 		if (currentStep != null) {
 			currentStep.setStatus(Status.ERROR);
-			ReportElementDto errorReport = ReportElementDto.newErrorReport(LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME), error.getMessage());
+			containerStack.peek().setStatus(Status.ERROR);
+			ReportElementDto errorReport = ReportElementDto.newErrorReport(
+				LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME), error.getMessage(), "");
 			// TODO: make sure the stack is reported also
-			// TODO: add the error report to the current step and write to disk
+
+			containerStack.getTestReportDto().getReportElements().add(errorReport);
+			appendReportElementToScenarioJs(errorReport);
 		}
 	}
 
@@ -757,8 +935,7 @@ public class SimpleHtmlReporter implements ExtendLevelTestReporter, ExtendTestLi
 
 	@Override
 	public void setContainerProperties(final int ancestorLevel, String key, String property) {
-		// TODO: find the parent containse (ignore ancestorLevel) and set the property
-		// scenario.addScenarioProperty(key, property);
+		// FIXME: we want to get rid of scenario properties
 	}
 
 	@Override

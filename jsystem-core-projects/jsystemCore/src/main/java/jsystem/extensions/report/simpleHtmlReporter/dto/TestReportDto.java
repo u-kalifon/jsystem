@@ -32,6 +32,7 @@ public class TestReportDto {
     private List<ReportElementDto> reportElements;
 
     public TestReportDto() {
+        this.status = Status.RUNNING;
     }
 
     public String getUid() {
@@ -79,7 +80,7 @@ public class TestReportDto {
     }
 
     public void setStatus(Status status) {
-        this.status = status;
+        this.status = this.status.updateStatus(status);
     }
 
     public List<ReportElementDto> getReportElements() {
