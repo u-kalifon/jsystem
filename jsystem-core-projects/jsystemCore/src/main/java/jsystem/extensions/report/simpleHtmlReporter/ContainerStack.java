@@ -1,60 +1,16 @@
 package jsystem.extensions.report.simpleHtmlReporter;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayDeque;
-import java.util.ArrayList;
 import java.util.Deque;
-import java.util.UUID;
 
 import jsystem.extensions.report.simpleHtmlReporter.dto.Status;
-import jsystem.extensions.report.simpleHtmlReporter.dto.TestReportDto;
 
 /**
  * Manages a stack of Container instances for hierarchical container and log level tracking.
  */
 class ContainerStack {
-	// this represents the scenario report (will be writen to scenario.js in the end of the run)
-	private TestReportDto testReportDto = null;
-	private String nameAndUid = null;
-
 	// this tracks the child scenarios, and the log levels within them
 	private final Deque<Container> stack = new ArrayDeque<>();
-
-	/**
-	 * Initializes the testReportDto with the given name.
-	 * 
-	 * @param scenarioName the name to set on the TestReportDto
-	 * @throws IllegalStateException if testReportDto is already initialized
-	 */
-	public TestReportDto initTestReportDto(String scenarioName, String scenarioDescription) {
-		if (testReportDto != null) {
-			throw new IllegalStateException("testReportDto is already initialized");
-		}
-		testReportDto = new TestReportDto();
-		testReportDto.setUid(UUID.randomUUID().toString());
-		testReportDto.setName(scenarioName);
-		testReportDto.setDescription(scenarioDescription);
-		testReportDto.setTimestamp(LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME));
-		testReportDto.setStatus(Status.RUNNING);
-		testReportDto.setReportElements(new ArrayList<>());
-		nameAndUid = scenarioName + "_" + testReportDto.getUid();
-		return testReportDto;
-	}
-
-	public TestReportDto getTestReportDto() {
-		if (testReportDto == null) {
-			throw new IllegalStateException("testReportDto is not initialized");
-		}
-		return testReportDto;
-	}
-
-	public String getNameAndUid() {
-		if (testReportDto == null) {
-			throw new IllegalStateException("testReportDto is not initialized, cannot get name and uid");
-		}
-		return nameAndUid;
-	}
 
 	/**
 	 * Returns the number of containers currently in the stack.

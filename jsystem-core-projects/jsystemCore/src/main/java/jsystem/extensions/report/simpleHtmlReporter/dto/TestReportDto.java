@@ -91,6 +91,10 @@ public class TestReportDto {
         this.reportElements = reportElements;
     }
 
+    public String getNameAndUid() {
+        return name + "_" + uid;
+    }
+
     @Override
     public String toString() {
         return "TestReportDto{" +

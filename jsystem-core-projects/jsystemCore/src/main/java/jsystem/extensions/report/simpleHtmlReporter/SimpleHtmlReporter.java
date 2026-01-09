@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Scanner;
+import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,6 +64,9 @@ public class SimpleHtmlReporter implements ExtendLevelTestReporter, ExtendTestLi
 	
 	private FileChannel lockChannel;
 	private FileLock fileLock;
+
+	// this represents the scenario report (will be writen to scenario.js in the end of the run)
+	private TestReportDto testReportDto = null;
 
 	@Override
 	public void initReporterManager() throws IOException {
@@ -355,7 +359,7 @@ public class SimpleHtmlReporter implements ExtendLevelTestReporter, ExtendTestLi
 	}
 
 	private File getScenarioJsFile(String scenarioNameAndUid) {
-		Path scenarioDir = getScenarioDir(containerStack.getNameAndUid());
+		Path scenarioDir = getScenarioDir(testReportDto.getNameAndUid());
 		return new File(scenarioDir.resolve("scenario.js").toString());
 	}
 
@@ -457,7 +461,7 @@ public class SimpleHtmlReporter implements ExtendLevelTestReporter, ExtendTestLi
 		}
 
 		// add the step to the scenario report (adds an item to the log) and write to disk
-		containerStack.getTestReportDto().getReportElements().add(currentStep);
+		testReportDto.getReportElements().add(currentStep);
 		appendReportElementToScenarioJs(currentStep);
 
 		// TODO: understand what testInfo.comment is
@@ -484,7 +488,7 @@ public class SimpleHtmlReporter implements ExtendLevelTestReporter, ExtendTestLi
 			return;
 		}
 
-		File scenarioJsFile = getScenarioJsFile(containerStack.getNameAndUid());
+		File scenarioJsFile = getScenarioJsFile(testReportDto.getNameAndUid());
 
 		try {
 			String json = JsonReportSerializer.toJson(element);
@@ -578,16 +582,16 @@ public class SimpleHtmlReporter implements ExtendLevelTestReporter, ExtendTestLi
 
 		// if this is the first container, start the scenario
 		if (containerStack.isEmpty()) {
-			TestReportDto initialDto = containerStack.initTestReportDto(scenarioName, container.getDocumentation());
+			initTestReportDto(scenarioName, container.getDocumentation());
 
 			// TODO: support scenario properties, maybe using container.getAllXmlFields() ?
 			// TODO: get the sut file !
 
 			// Create the directory for the scenario and write the testReportDto to it
-			createScenarioDirectory(containerStack.getNameAndUid());
-			File scenarioJsFile = getScenarioJsFile(containerStack.getNameAndUid());
+			createScenarioDirectory(testReportDto.getNameAndUid());
+			File scenarioJsFile = getScenarioJsFile(testReportDto.getNameAndUid());
 			try {
-				dumpAsJsToFile(initialDto, scenarioJsFile);
+				dumpAsJsToFile(testReportDto, scenarioJsFile);
 				log.info("Wrote initial test report to: " + scenarioJsFile);
 			} catch (IOException e) {
 				log.error("Failed to write initial test report to: " + scenarioJsFile, e);
@@ -596,8 +600,7 @@ public class SimpleHtmlReporter implements ExtendLevelTestReporter, ExtendTestLi
 			
 			// Add the scenario to the execution file
 			// TODO: get the sut file !
-			addScenarioToExecutionFile(scenarioName, initialDto.getTimestamp(), "", initialDto.getUid());
-
+			addScenarioToExecutionFile(scenarioName, testReportDto.getTimestamp(), "", testReportDto.getUid());
 		} else {
 			// TODO: add a childScenario DTO (also support it in the html/css/js and make sure it starts a level)
 		}
@@ -616,19 +619,39 @@ public class SimpleHtmlReporter implements ExtendLevelTestReporter, ExtendTestLi
 
 		// when all containers are finished, re-serialize the scenario report and write it to disk
 		if (containerStack.isEmpty()) {
-			containerStack.getTestReportDto().setStatus(oldContainer.getStatus());	// overall scenario status
-			File scenarioJsFile = getScenarioJsFile(containerStack.getNameAndUid());
+			testReportDto.setStatus(oldContainer.getStatus());	// overall scenario status
+			File scenarioJsFile = getScenarioJsFile(testReportDto.getNameAndUid());
 			try {
-				dumpAsJsToFile(containerStack.getTestReportDto(), scenarioJsFile);
+				dumpAsJsToFile(testReportDto, scenarioJsFile);
 				log.info("Wrote final test report to: " + scenarioJsFile);
 			} catch (IOException e) {
 				log.error("Failed to write final test report to: " + scenarioJsFile, e);
 				throw new RuntimeException("Failed to write final test report to: " + scenarioJsFile, e);
 			}
 
-			String duration = composeDuration(containerStack.getTestReportDto().getTimestamp());
-			updateScenarioInExecutionFile(containerStack.getTestReportDto().getUid(), containerStack.getTestReportDto().getStatus(), duration);
+			String duration = composeDuration(testReportDto.getTimestamp());
+			updateScenarioInExecutionFile(testReportDto.getUid(), testReportDto.getStatus(), duration);
+			testReportDto = null;
 		}
+	}
+
+	/**
+	 * Initializes the testReportDto with the given name.
+	 * 
+	 * @param scenarioName the name to set on the TestReportDto
+	 * @throws IllegalStateException if testReportDto is already initialized
+	 */
+	private void initTestReportDto(String scenarioName, String scenarioDescription) {
+		if (testReportDto != null) {
+			throw new IllegalStateException("testReportDto is already initialized");
+		}
+		testReportDto = new TestReportDto();
+		testReportDto.setUid(UUID.randomUUID().toString());
+		testReportDto.setName(scenarioName);
+		testReportDto.setDescription(scenarioDescription);
+		testReportDto.setTimestamp(LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME));
+		testReportDto.setStatus(Status.RUNNING);
+		testReportDto.setReportElements(new ArrayList<>());
 	}
 
 	private String composeDuration(String initialTimestamp) {
@@ -759,7 +782,7 @@ public class SimpleHtmlReporter implements ExtendLevelTestReporter, ExtendTestLi
 		containerStack.peek().startLevel(levelName);
 		ReportElementDto levelStart = ReportElementDto.newLogLevelStart(LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME), 
 			levelName);		// FIXME: we want to report a line, not the level name
-		containerStack.getTestReportDto().getReportElements().add(levelStart);
+		testReportDto.getReportElements().add(levelStart);
 		appendReportElementToScenarioJs(levelStart);
 	}
 
@@ -773,7 +796,7 @@ public class SimpleHtmlReporter implements ExtendLevelTestReporter, ExtendTestLi
 		containerStack.peek().startLevel(levelName);
 		ReportElementDto levelStart = ReportElementDto.newLogLevelStart(LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME), 
 			levelName);		// FIXME: we want to report a line, not the level name
-		containerStack.getTestReportDto().getReportElements().add(levelStart);
+		testReportDto.getReportElements().add(levelStart);
 		appendReportElementToScenarioJs(levelStart);
 	}
 
@@ -787,7 +810,7 @@ public class SimpleHtmlReporter implements ExtendLevelTestReporter, ExtendTestLi
 		if (currentLevelName != null) {
 			log.info("Stopping level: " + currentLevelName);
 			ReportElementDto levelStop = ReportElementDto.newLogLevelStop(LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME));
-			containerStack.getTestReportDto().getReportElements().add(levelStop);
+			testReportDto.getReportElements().add(levelStop);
 			appendReportElementToScenarioJs(levelStop);
 			containerStack.peek().endLevel();
 		} else {
@@ -878,7 +901,7 @@ public class SimpleHtmlReporter implements ExtendLevelTestReporter, ExtendTestLi
 
 		ReportElementDto reportEntry = ReportElementDto.newReportEntry(
 			LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME), title, message, status);
-		containerStack.getTestReportDto().getReportElements().add(reportEntry);
+		testReportDto.getReportElements().add(reportEntry);
 		appendReportElementToScenarioJs(reportEntry);
 
 		// update the statuses of the current step, the current log level, and the current container
@@ -902,7 +925,7 @@ public class SimpleHtmlReporter implements ExtendLevelTestReporter, ExtendTestLi
 				LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME), error.getMessage(), "");
 			// TODO: make sure the stack is reported also
 
-			containerStack.getTestReportDto().getReportElements().add(errorReport);
+			testReportDto.getReportElements().add(errorReport);
 			appendReportElementToScenarioJs(errorReport);
 			}
 	}
@@ -917,7 +940,7 @@ public class SimpleHtmlReporter implements ExtendLevelTestReporter, ExtendTestLi
 				LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME), error.getMessage(), "");
 			// TODO: make sure the stack is reported also
 
-			containerStack.getTestReportDto().getReportElements().add(errorReport);
+			testReportDto.getReportElements().add(errorReport);
 			appendReportElementToScenarioJs(errorReport);
 		}
 	}
