@@ -59,7 +59,7 @@ public class PerformanceUtil {
 		}
 		double diff = now-time;
 		
-		log.info(toPrint + " Took " + (double)diff/1000 + " seconds.");
+		log.debug(toPrint + " Took " + (double)diff/1000 + " seconds.");
 		times.remove(index);
 	}
 	

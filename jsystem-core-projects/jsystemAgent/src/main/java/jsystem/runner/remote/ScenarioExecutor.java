@@ -143,7 +143,7 @@ public class ScenarioExecutor implements ExecutionListener {
 
 		scenarioFile = ScenariosManager.getInstance().getCurrentScenario().getScenarioFile().getAbsolutePath();
 
-		log.info("Execute count: " + ScenariosManager.getInstance().getCurrentScenario().countTestCases());
+		log.debug("Execute count: " + ScenariosManager.getInstance().getCurrentScenario().countTestCases());
 
 		setRepeatLeftNumber(getRepeatNumber());
 		
@@ -497,8 +497,8 @@ public class ScenarioExecutor implements ExecutionListener {
 			}
 		}
 
-		log.info("Execute mode: ");
-		log.info(executeMode.toString());
+		log.debug("Execute mode: ");
+		log.debug(executeMode.toString());
 	}
 
 	public void startTest(Test test) {

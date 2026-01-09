@@ -433,14 +433,16 @@ public class SimpleHtmlReporter implements ExtendLevelTestReporter, ExtendTestLi
 
 	@Override
 	public void startTest(TestInfo testInfo) {
-		log.info("### Recieved start test event -> " + testInfo.toString());
+		log.debug("### Recieved start test event -> " + testInfo.toString());
 		String stepName = sanitizeClassName(testInfo.className) + "." + testInfo.methodName;
 		currentStep = ReportElementDto.newStep(LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME), 
 			String.join(" ", stepName, testInfo.meaningfulName), null);
 		currentStep.addProperty("Class", testInfo.className);
+		currentStep.addProperty("Method", testInfo.methodName);
+		// TODO: get the userDoc (it's null in the testInfo)
 
 		if (testInfo.parameters != null && !testInfo.parameters.trim().isEmpty()) {
-			log.info("Adding parameters " + testInfo.parameters);
+			log.debug("Adding parameters " + testInfo.parameters);
 			try (Scanner scanner = new Scanner(testInfo.parameters)) {
 				while (scanner.hasNextLine()) {
 					final String parameter = scanner.nextLine();
@@ -516,7 +518,7 @@ public class SimpleHtmlReporter implements ExtendLevelTestReporter, ExtendTestLi
 
 	@Override
 	public void endTest(Test test) {
-		log.info("### Recieved end test event -> " + test.toString());
+		log.debug("### Recieved end test event -> " + test.toString());
 		currentStep.setStatus(Status.SUCCESS);	// if it's already more severe (WARNING, ERROR...) there won't be an update
 		currentStep = null;
 	}
@@ -524,7 +526,7 @@ public class SimpleHtmlReporter implements ExtendLevelTestReporter, ExtendTestLi
 	@Override
 	public void endRun() {
 		// ignore for now (assuming that everything is written to disk)
-		log.info("### Recieved end run event");
+		log.debug("### Recieved end run event");
 	}
 
 	// TODO: implement the rest of the methods to log lines, levels, etc...
@@ -576,7 +578,7 @@ public class SimpleHtmlReporter implements ExtendLevelTestReporter, ExtendTestLi
 
 	@Override
 	public void startContainer(JTestContainer container) {
-		log.info(("Received start container event: " + container.toString()));
+		log.debug(("Received start container event: " + container.toString()));
 		currentStep = null;
 		String scenarioName = sanitizeScenarioName(container.getName());
 
@@ -584,7 +586,6 @@ public class SimpleHtmlReporter implements ExtendLevelTestReporter, ExtendTestLi
 		if (containerStack.isEmpty()) {
 			initTestReportDto(scenarioName, container.getDocumentation());
 
-			// TODO: support scenario properties, maybe using container.getAllXmlFields() ?
 			// TODO: get the sut file !
 
 			// Create the directory for the scenario and write the testReportDto to it
@@ -592,7 +593,7 @@ public class SimpleHtmlReporter implements ExtendLevelTestReporter, ExtendTestLi
 			File scenarioJsFile = getScenarioJsFile(testReportDto.getNameAndUid());
 			try {
 				dumpAsJsToFile(testReportDto, scenarioJsFile);
-				log.info("Wrote initial test report to: " + scenarioJsFile);
+				log.debug("Wrote initial test report to: " + scenarioJsFile);
 			} catch (IOException e) {
 				log.error("Failed to write initial test report to: " + scenarioJsFile, e);
 				throw new RuntimeException("Failed to write initial test report to: " + scenarioJsFile, e);
@@ -611,7 +612,7 @@ public class SimpleHtmlReporter implements ExtendLevelTestReporter, ExtendTestLi
 	@Override
 	public void endContainer(JTestContainer container) {
 		// this is the end of a scenario (or a child scenario)
-		log.info(("Received end container event: " + container.toString()));
+		log.debug(("Received end container event: " + container.toString()));
 		currentStep = null;
 
 		closeAllLevels();
@@ -623,7 +624,7 @@ public class SimpleHtmlReporter implements ExtendLevelTestReporter, ExtendTestLi
 			File scenarioJsFile = getScenarioJsFile(testReportDto.getNameAndUid());
 			try {
 				dumpAsJsToFile(testReportDto, scenarioJsFile);
-				log.info("Wrote final test report to: " + scenarioJsFile);
+				log.debug("Wrote final test report to: " + scenarioJsFile);
 			} catch (IOException e) {
 				log.error("Failed to write final test report to: " + scenarioJsFile, e);
 				throw new RuntimeException("Failed to write final test report to: " + scenarioJsFile, e);
@@ -717,7 +718,7 @@ public class SimpleHtmlReporter implements ExtendLevelTestReporter, ExtendTestLi
 			String jsContent = "var execution = " + json + ";";
 			Files.writeString(executionJsonFile.toPath(), jsContent);
 			
-			log.info("Added scenario to execution file: " + scenarioName);
+			log.debug("Added scenario to execution file: " + scenarioName);
 		} catch (IOException e) {
 			log.error("Failed to add scenario to execution file", e);
 		} finally {
@@ -759,7 +760,7 @@ public class SimpleHtmlReporter implements ExtendLevelTestReporter, ExtendTestLi
 			String jsContent = "var execution = " + json + ";";
 			Files.writeString(executionJsonFile.toPath(), jsContent);
 			
-			log.info("Updated scenario in execution file: " + uid);
+			log.debug("Updated scenario in execution file: " + uid);
 		} catch (IOException e) {
 			log.error("Failed to update scenario in execution file", e);
 		} finally {
@@ -774,7 +775,7 @@ public class SimpleHtmlReporter implements ExtendLevelTestReporter, ExtendTestLi
 
 		// FIXME 2: avoid code duplication with the overloaded derivative with place = 0 (CurrentPlace) and place = 1 (MainFrame)
 
-		log.info("Starting level: " + levelName + " at place: " + place.name());	// place = CurrentPlace or MainFrame
+		log.debug("Starting level: " + levelName + " at place: " + place.name());	// place = CurrentPlace or MainFrame
 		if (containerStack.isEmpty()) {
 			log.error("Cannot start level: no container is active");
 			return;
@@ -788,7 +789,7 @@ public class SimpleHtmlReporter implements ExtendLevelTestReporter, ExtendTestLi
 
 	@Override
 	public void startLevel(String levelName, int place) throws IOException {
-		log.info("Starting level: " + levelName + " at place: " + place);
+		log.debug("Starting level: " + levelName + " at place: " + place);
 		if (containerStack.isEmpty()) {
 			log.error("Cannot start level: no container is active");
 			return;
@@ -808,7 +809,7 @@ public class SimpleHtmlReporter implements ExtendLevelTestReporter, ExtendTestLi
 		}
 		String currentLevelName = containerStack.peek().getCurrentLevelName();
 		if (currentLevelName != null) {
-			log.info("Stopping level: " + currentLevelName);
+			log.debug("Stopping level: " + currentLevelName);
 			ReportElementDto levelStop = ReportElementDto.newLogLevelStop(LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME));
 			testReportDto.getReportElements().add(levelStop);
 			appendReportElementToScenarioJs(levelStop);
@@ -826,7 +827,7 @@ public class SimpleHtmlReporter implements ExtendLevelTestReporter, ExtendTestLi
 		}
 		String currentLevelName = containerStack.peek().getCurrentLevelName();
 		while (currentLevelName != null) {
-			log.info("Closing all levels. Current level name: " + currentLevelName);
+			log.debug("Closing all levels. Current level name: " + currentLevelName);
 			stopLevel();
 			currentLevelName = containerStack.peek().getCurrentLevelName();
 		}
@@ -834,7 +835,7 @@ public class SimpleHtmlReporter implements ExtendLevelTestReporter, ExtendTestLi
 
 	@Override
 	public void closeLevelsUpTo(String levelName, boolean includeLevel) {
-		log.info("Closing levels up to: " + levelName + " (include: " + includeLevel + ")");
+		log.debug("Closing levels up to: " + levelName + " (include: " + includeLevel + ")");
 		
 		if (containerStack.isEmpty()) {
 			log.error("Cannot close levels: no container is active");
@@ -844,14 +845,14 @@ public class SimpleHtmlReporter implements ExtendLevelTestReporter, ExtendTestLi
 		// Pop levels until we find the specified level or the stack is empty, or until the container level is reached
 		String currentLevelName = containerStack.peek().getCurrentLevelName();
 		while (currentLevelName != null && !currentLevelName.equals(levelName)) {
-			log.info("Closing all levels up to: " + levelName + ". Current level name: " + currentLevelName);
+			log.debug("Closing all levels up to: " + levelName + ". Current level name: " + currentLevelName);
 			stopLevel();
 			currentLevelName = containerStack.peek().getCurrentLevelName();
 		}
 
 		if (currentLevelName != null && currentLevelName.equals(levelName)) {
 			if (includeLevel) {
-				log.info("Closing all levels up to and including: " + levelName + ". Current level name: " + currentLevelName);
+				log.debug("Closing all levels up to and including: " + levelName + ". Current level name: " + currentLevelName);
 				stopLevel();
 			}
 			return;

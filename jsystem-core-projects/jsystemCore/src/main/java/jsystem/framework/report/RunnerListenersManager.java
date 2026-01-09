@@ -775,7 +775,6 @@ public class RunnerListenersManager extends DefaultReporterImpl implements JSyst
 		}
 		boolean disableCode = "false".equals(JSystemProperties.getInstance().getPreference(
 				FrameworkOptions.TEST_CODE_ENABLE));
-		addTestInfo(tname, meaningfulName, test, disableCode, null, null, rt);
 		testClassName = test.getClass().getName();
 
 		inTest = true;
@@ -810,159 +809,6 @@ public class RunnerListenersManager extends DefaultReporterImpl implements JSyst
 				}
 			}
 		}
-	}
-
-	/**
-	 * right Split - top rectangle data , documentations, parameters
-	 * 
-	 * @param tname
-	 *            name tab
-	 * @param test
-	 *            the junit test
-	 * @param disableCode
-	 * @param cDoc
-	 *            class doc
-	 * @param tDoc
-	 *            test doc
-	 */
-	private void addTestInfo(TName tname, String meaningfulName, Test test, boolean disableCode, String cDoc,
-			String tDoc, JTest testPresentationInRunner) {
-		boolean addTimeStampOld = addTimeStamp;
-		addTimeStamp = false;
-		report(CssType.TEST_INFO_TABLE.getCssStart(), ReportAttribute.HTML);
-		startSection();
-		String name = tname.getBasicName();
-		report("Test: " + name);
-		if (meaningfulName != null) {
-			name = meaningfulName;
-		}
-		report("(" + testsCount + ")Steps in test: " + name + " :");
-		String params = tname.getParamsString();
-		report(CssType.PARAMETERS.getCssStart(), ReportAttribute.HTML);
-		if (params != null) {
-			if ("true".equals(JSystemProperties.getInstance().getPreference(FrameworkOptions.HTML_LOG_PARAMS_IN_LEVEL))) {
-				try {
-					startLevel("Test paremeters", 0);
-				} catch (Exception e) {
-				}
-				;
-			}
-			report(PARAMETERS_START, null, true, true);
-			try {
-				/*
-				 * separating parameters to array and printing each in a new
-				 * line
-				 */
-				String[] seperatedParams = ParameterUtils.stringToPropertiesArray(params);
-				for (int i = 0; i < seperatedParams.length; i++) {
-					report(seperatedParams[i]);
-				}
-			} catch (Exception e) {
-				report("Failed parsing test parameters. " + e.getMessage());
-			} finally {
-				if ("true".equals(JSystemProperties.getInstance().getPreference(
-						FrameworkOptions.HTML_LOG_PARAMS_IN_LEVEL))) {
-					try {
-						stopLevel();
-					} catch (Exception e) {
-					}
-					;
-				}
-				report(PARAMETERS_END, null, true, true);
-				report(CssType.getCssClosingTag(), ReportAttribute.HTML);
-			}
-		}
-		// Inner JSystem tests should not display source code in HTML
-		if (!disableCode && !JSystemInnerTests.isInnerTest(tname.getClassName(), tname.getMethodName())) {
-			/*
-			 * Add the test code to the report
-			 */
-			String code;
-			try {
-				code = HtmlCodeWriter.getInstance().getCode(tname.getClassName());
-				code = code.replaceAll(tname.getMethodName(), "<b>" + tname.getMethodName() + "</b>");
-				reportHtml("test code", code, true);
-			} catch (FileNotFoundException e) {
-				log.warn("Fail to load test code because source file is missing. " + e.getMessage());
-			} catch (Exception e) {
-				log.warn("Fail to load test code. " + e.getMessage());
-			}
-		}
-
-		/*
-		 * Add a link to the setup if exists
-		 */
-		String link = SutFactory.getInstance().getSutInstance().getSetupLink();
-
-		if (link != null) {
-			addLink("sut: " + SutFactory.getInstance().getSutInstance().getSetupName(), link);
-		}
-		String classDoc = null;
-		String testDoc = null;
-		if (cDoc != null) {
-			classDoc = cDoc;
-		} else {
-			try {
-				classDoc = HtmlCodeWriter.getInstance().getClassJavaDoc(tname.getClassName());
-			} catch (Exception e) {
-				log.warn("Fail to process document", e);
-			}
-		}
-		if (tDoc != null) {
-			testDoc = tDoc;
-		} else {
-			try {
-				testDoc = HtmlCodeWriter.getInstance().getMethodJavaDoc(tname.getClassName(), tname.getMethodName());
-			} catch (Exception e) {
-				log.warn("Fail to process document", e);
-			}
-		}
-		if (classDoc != null && (!classDoc.equals(""))) {
-			String[] lines = classDoc.split("[\\r\\n]+");
-			report(CssType.CLASS_DOCUMENTATION.getCssStart(), ReportAttribute.HTML);
-			report("Class documentation", null, true, true);
-			for (int i = 0; i < lines.length; i++) {
-				report(lines[i]);
-			}
-			report(CssType.getCssClosingTag(), ReportAttribute.HTML);
-		}
-		if (testDoc != null && (!testDoc.equals(""))) {
-			String[] lines = testDoc.split("[\\r\\n]+");
-			report(CssType.TEST_DOCUMENTATION.getCssStart(), ReportAttribute.HTML);
-			report("Test documentation", null, true, true);
-			for (int i = 0; i < lines.length; i++) {
-				report(lines[i]);
-			}
-			report(CssType.getCssClosingTag(), ReportAttribute.HTML);
-			// set the test javadoc into the test object
-			if (test != null && test instanceof SystemTest) {
-				((SystemTest) test).setTestDocumentation(testDoc);
-			}
-
-		}
-
-		tname = TestNameServer.getInstance().getTestName(test);
-		String userDoc = tname.getUserDocumentation();
-		if (userDoc != null) {
-			String[] lines = userDoc.split("[\\r\\n]+");
-			report(CssType.USER_DOCUMENTATION.getCssStart(), ReportAttribute.HTML);
-			report("User documentation", null, true, true);
-			for (int i = 0; i < lines.length; i++) {
-				report(lines[i]);
-			}
-			report(CssType.getCssClosingTag(), ReportAttribute.HTML);
-		}
-
-		if (testPresentationInRunner != null) {
-			report(CssType.BREAD_CRUMBS.getCssStart(), ReportAttribute.HTML);
-			report(ScenarioHelpers.getTestHierarchyInPresentableFormat(testPresentationInRunner)
-					+ CssType.getCssClosingTag(), ReportAttribute.HTML);
-		}
-
-		endSection();
-		report(CssType.getCssClosingTag(), ReportAttribute.HTML);
-		addTimeStamp = addTimeStampOld;
-
 	}
 
 	public synchronized void aboutToChangeTo(Fixture fixture) {
@@ -1223,7 +1069,6 @@ public class RunnerListenersManager extends DefaultReporterImpl implements JSyst
 			}
 		}
 
-		addTestInfo(tname, null, stc, true, classDoc, testDoc, null);
 		inTest = true;
 		startTime = System.currentTimeMillis();
 
