@@ -31,6 +31,7 @@ import jsystem.framework.report.ExtendTestListener;
 import jsystem.framework.report.TestInfo;
 import jsystem.framework.scenario.JTestContainer;
 import jsystem.framework.scenario.flow_control.AntForLoop;
+import jsystem.framework.sut.SutFactory;
 import jsystem.utils.BrowserLauncher;
 import junit.framework.AssertionFailedError;
 import junit.framework.Test;
@@ -598,12 +599,24 @@ public class SimpleHtmlReporter implements ExtendLevelTestReporter, ExtendTestLi
 				log.error("Failed to write initial test report to: " + scenarioJsFile, e);
 				throw new RuntimeException("Failed to write initial test report to: " + scenarioJsFile, e);
 			}
-			
+
+			// Get the SUT file path relative to the classes directory
+			Path sutFilePath = SutFactory.getInstance().getSutFile().toPath().toAbsolutePath();
+			String classesPath = JSystemProperties.getInstance().getPreference(FrameworkOptions.TESTS_CLASS_FOLDER);
+			Path classesDir = new File(classesPath).toPath().toAbsolutePath();
+			String relativeSutFile = classesDir.relativize(sutFilePath).toString();
+			testReportDto.addProperty("sutFile", relativeSutFile);
+
 			// Add the scenario to the execution file
-			// TODO: get the sut file !
-			addScenarioToExecutionFile(scenarioName, testReportDto.getTimestamp(), "", testReportDto.getUid());
+			addScenarioToExecutionFile(scenarioName, testReportDto.getTimestamp(), relativeSutFile, testReportDto.getUid());
 		} else {
-			// TODO: add a childScenario DTO (also support it in the html/css/js and make sure it starts a level)
+			// FIXME: for loops are also containers, and need to be supported differently
+
+			ReportElementDto childScenarioStart = ReportElementDto.newChildScenarioStart(LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME), container.getName(), container.getDocumentation());
+			testReportDto.getReportElements().add(childScenarioStart);
+			appendReportElementToScenarioJs(childScenarioStart);
+
+			// TODO: support the childScenario DTO in the html/css/js and make sure it starts a level
 		}
 
 		containerStack.push(scenarioName);
@@ -633,6 +646,12 @@ public class SimpleHtmlReporter implements ExtendLevelTestReporter, ExtendTestLi
 			String duration = composeDuration(testReportDto.getTimestamp());
 			updateScenarioInExecutionFile(testReportDto.getUid(), testReportDto.getStatus(), duration);
 			testReportDto = null;
+		} else {
+			// FIXME: for loops are also containers, and need to be supported differently
+
+			ReportElementDto childScenarioEnd = ReportElementDto.newChildScenarioEnd(LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME));
+			testReportDto.getReportElements().add(childScenarioEnd);
+			appendReportElementToScenarioJs(childScenarioEnd);
 		}
 	}
 

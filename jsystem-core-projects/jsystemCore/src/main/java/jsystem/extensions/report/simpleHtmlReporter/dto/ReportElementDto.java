@@ -82,6 +82,24 @@ public class ReportElementDto {
         return newReportEntry(timeStamp, title, message, Status.ERROR);
     }
 
+    public static ReportElementDto newChildScenarioStart(String timeStamp, String title, String userDoc) {
+        ReportElementDto element = new ReportElementDto();
+        element.setType("startScenario");
+        element.setStatus(Status.RUNNING);
+        element.setTime(timeStamp);
+        element.setTitle(title);
+        element.setUserDoc(userDoc);
+        return element;
+    }
+
+    public static ReportElementDto newChildScenarioEnd(String timeStamp) {
+        ReportElementDto element = new ReportElementDto();
+        element.setType("endScenario");
+        element.setStatus(Status.UNKNOWN);
+        element.setTime(timeStamp);
+        return element;
+    }
+
     public void addProperty(String key, String value) {
         if (properties == null) {
             properties = new HashMap<>();

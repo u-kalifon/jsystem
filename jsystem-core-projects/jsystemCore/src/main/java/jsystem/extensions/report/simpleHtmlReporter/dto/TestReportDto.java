@@ -75,6 +75,13 @@ public class TestReportDto {
         this.scenarioProperties = scenarioProperties;
     }
 
+    public void addProperty(String key, String value) {
+        if (this.scenarioProperties == null) {
+            this.scenarioProperties = new java.util.HashMap<>();
+        }
+        this.scenarioProperties.put(key, value);
+    }
+
     public Status getStatus() {
         return status;
     }
