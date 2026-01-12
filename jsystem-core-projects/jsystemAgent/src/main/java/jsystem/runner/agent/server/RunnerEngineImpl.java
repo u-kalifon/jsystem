@@ -347,7 +347,7 @@ public class RunnerEngineImpl implements RunnerEngine {
 	 */
 	public URL getLogUrl() throws Exception {
 		String logDir = JSystemProperties.getInstance().getPreference(FrameworkOptions.LOG_FOLDER);
-		File f = new File(logDir, "current/index.html");
+		File f = new File(logDir, "index.html");
 		String uri = f.toURI().toString().replace("\\", "/");
 		return new URL(uri);
 	}

@@ -34,7 +34,6 @@
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav navbar-right">
                     <li><a href="index.html">Dashboard</a></li>
-                    <li><a href="tree.html">Execution Tree</a></li>
                     <li><a href="#">Execution Table</a></li>
                 </ul>
             </div>
@@ -49,7 +48,6 @@
 
                 <thead>
                     <tr>
-                        <th>Index</th>
                         <th>Time Stamp</th>
                         <th>Scenario</th>
                         <th>Sut File</th>
@@ -59,7 +57,6 @@
                 </thead>
                 <tfoot>
                     <tr>
-                        <th>Index</th>
                         <th>Time Stamp</th>
                         <th>Scenario</th>
                         <th>Sut File</th>
@@ -102,12 +99,11 @@
                 "sPaginationType" : "full_numbers",
                 "iDisplayLength" : 25,
                 "columnDefs": [
-                    { width: '5%', targets: 0 },
-                    { width: '10%', targets: 1 },
-                    { width: '50%', targets: 2 },
-                    { width: '20%', targets: 3 },
-                    { width: '5%', targets: 4 },
-                    { width: '10%', targets: 5 }
+                    { width: '10%', targets: 0 },
+                    { width: '50%', targets: 1 },
+                    { width: '20%', targets: 2 },
+                    { width: '10%', targets: 3 },
+                    { width: '10%', targets: 4 }
         ],
         fixedColumns: true
             });

@@ -36,19 +36,6 @@ function collectTestsFromScenario(children,tests){
 }
 
 
-function collectAllScenarioProperties() {
-    var properties = {};
-    $(execution.machines).each(function () {
-        for (i = 0; i < this.children.length; i++) {
-            for (var key in this.children[i].scenarioProperties) {
-                properties[key] = this.children[i].scenarioProperties[key];
-            };
-        }
-    });
-    return properties;
-
-}
-
 function getTestWithUid(uid) {
     var tests = collectAllTests();
     for (i = 0 ; tests.length; i++){

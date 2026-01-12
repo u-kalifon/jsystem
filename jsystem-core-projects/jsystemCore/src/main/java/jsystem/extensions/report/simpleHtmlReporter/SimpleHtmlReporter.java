@@ -57,6 +57,7 @@ public class SimpleHtmlReporter implements ExtendLevelTestReporter, ExtendTestLi
 	private static final String LOCK_FILE_NAME = ".reporter.lock";
 	private static final long DEFAULT_LOCK_TIMEOUT_MS = 2 * 60 * 1000; // 2 minutes
 	private static final long LOCK_RETRY_INTERVAL_MS = 200; // 100ms between retries
+	private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
 
 	private String reportDir;
 	private File logDirectory = null;
@@ -110,6 +111,12 @@ public class SimpleHtmlReporter implements ExtendLevelTestReporter, ExtendTestLi
 				copyTemplateFile("table.html", tablePath);
 			}
 
+			// Copy properties.js from template if it doesn't exist
+			Path propertiesPath = logDirPath.resolve("properties.js");
+			if (!Files.exists(propertiesPath)) {
+				copyTemplateFile("properties.js", propertiesPath);
+			}
+
 			// Copy resource directories if they don't exist
 			copyTemplateDirectoryIfNotExists("controllers", logDirPath, CONTROLLER_FILES);
 			copyTemplateDirectoryIfNotExists("css", logDirPath, CSS_FILES);
@@ -118,7 +125,7 @@ public class SimpleHtmlReporter implements ExtendLevelTestReporter, ExtendTestLi
 			// Create the execution DTO, with the local machine and an empty scenario array
 			Execution execution = new Execution();
 			execution.setMachines(new ArrayList<Execution.Machine>());
-			execution.getMachines().add(new Execution.Machine("machine", "local", new ArrayList<>()));
+			execution.getMachines().add(new Execution.Machine("local", new ArrayList<>()));
 
 			// Write the execution DTO to the execution.js file
 			File executionJsonFile = getExecutionJsonFile();
@@ -436,7 +443,7 @@ public class SimpleHtmlReporter implements ExtendLevelTestReporter, ExtendTestLi
 	public void startTest(TestInfo testInfo) {
 		log.debug("### Recieved start test event -> " + testInfo.toString());
 		String stepName = sanitizeClassName(testInfo.className) + "." + testInfo.methodName;
-		currentStep = ReportElementDto.newStep(LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME), 
+		currentStep = ReportElementDto.newStep(LocalDateTime.now().format(DATE_TIME_FORMATTER), 
 			String.join(" ", stepName, testInfo.meaningfulName), null);
 		currentStep.addProperty("Class", testInfo.className);
 		currentStep.addProperty("Method", testInfo.methodName);
@@ -563,6 +570,22 @@ public class SimpleHtmlReporter implements ExtendLevelTestReporter, ExtendTestLi
 	}
 
 	/**
+	 * Sanitizes a sut file name by removing the "sut\" prefix if present
+	 *
+	 * @param name the sut file name to sanitize
+	 * @return the sanitized sut file name
+	 */
+	private String sanitizeSutFileName(String name) {
+		if (name == null) {
+			return null;
+		}
+		if (name.startsWith("sut\\")) {
+			name = name.substring("sut\\".length());
+		}
+		return name;
+	}
+
+	/**
 	 * Sanitizes a class name by removing the fqdn and returning only the last token which is the class name.
 	 * Tokens are separated by ".".
 	 *
@@ -587,8 +610,6 @@ public class SimpleHtmlReporter implements ExtendLevelTestReporter, ExtendTestLi
 		if (containerStack.isEmpty()) {
 			initTestReportDto(scenarioName, container.getDocumentation());
 
-			// TODO: get the sut file !
-
 			// Create the directory for the scenario and write the testReportDto to it
 			createScenarioDirectory(testReportDto.getNameAndUid());
 			File scenarioJsFile = getScenarioJsFile(testReportDto.getNameAndUid());
@@ -605,14 +626,16 @@ public class SimpleHtmlReporter implements ExtendLevelTestReporter, ExtendTestLi
 			String classesPath = JSystemProperties.getInstance().getPreference(FrameworkOptions.TESTS_CLASS_FOLDER);
 			Path classesDir = new File(classesPath).toPath().toAbsolutePath();
 			String relativeSutFile = classesDir.relativize(sutFilePath).toString();
-			testReportDto.addProperty("sutFile", relativeSutFile);
+			String sanitizedSutFile = sanitizeSutFileName(relativeSutFile);
+			testReportDto.addProperty("sutFile", sanitizedSutFile);
+			testReportDto.addProperty("Timestamp", testReportDto.getTimestamp());
 
 			// Add the scenario to the execution file
-			addScenarioToExecutionFile(scenarioName, testReportDto.getTimestamp(), relativeSutFile, testReportDto.getUid());
+			addScenarioToExecutionFile(scenarioName, testReportDto.getTimestamp(), sanitizedSutFile, testReportDto.getUid());
 		} else {
 			// FIXME: for loops are also containers, and need to be supported differently
 
-			ReportElementDto childScenarioStart = ReportElementDto.newChildScenarioStart(LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME), container.getName(), container.getDocumentation());
+			ReportElementDto childScenarioStart = ReportElementDto.newChildScenarioStart(LocalDateTime.now().format(DATE_TIME_FORMATTER), container.getName(), container.getDocumentation());
 			testReportDto.getReportElements().add(childScenarioStart);
 			appendReportElementToScenarioJs(childScenarioStart);
 
@@ -649,7 +672,7 @@ public class SimpleHtmlReporter implements ExtendLevelTestReporter, ExtendTestLi
 		} else {
 			// FIXME: for loops are also containers, and need to be supported differently
 
-			ReportElementDto childScenarioEnd = ReportElementDto.newChildScenarioEnd(LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME));
+			ReportElementDto childScenarioEnd = ReportElementDto.newChildScenarioEnd(LocalDateTime.now().format(DATE_TIME_FORMATTER));
 			testReportDto.getReportElements().add(childScenarioEnd);
 			appendReportElementToScenarioJs(childScenarioEnd);
 		}
@@ -669,19 +692,19 @@ public class SimpleHtmlReporter implements ExtendLevelTestReporter, ExtendTestLi
 		testReportDto.setUid(UUID.randomUUID().toString());
 		testReportDto.setName(scenarioName);
 		testReportDto.setDescription(scenarioDescription);
-		testReportDto.setTimestamp(LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME));
+		testReportDto.setTimestamp(LocalDateTime.now().format(DATE_TIME_FORMATTER));
 		testReportDto.setStatus(Status.RUNNING);
 		testReportDto.setReportElements(new ArrayList<>());
 	}
 
 	private String composeDuration(String initialTimestamp) {
-		LocalDateTime initialDateTime = LocalDateTime.parse(initialTimestamp, DateTimeFormatter.ISO_DATE_TIME);
+		LocalDateTime initialDateTime = LocalDateTime.parse(initialTimestamp, DATE_TIME_FORMATTER);
 		LocalDateTime now = LocalDateTime.now();
 		Duration duration = Duration.between(initialDateTime, now);
 		long hours = duration.toHours();
 		long minutes = duration.toMinutesPart();
 		long seconds = duration.toSecondsPart();
-		return String.format("%02dh%02dm%02ds", hours, minutes, seconds);
+		return String.format("%dh%dm%ds", hours, minutes, seconds);
 	}
 
 	/**
@@ -761,19 +784,10 @@ public class SimpleHtmlReporter implements ExtendLevelTestReporter, ExtendTestLi
 				.replaceFirst(";\\s*$", "");
 			
 			Execution execution = JsonReportSerializer.executionFromJson(jsonContent);
-			
-			// Find the scenario by uid and update its status and duration
-			machineLoop:
-			for (Execution.Machine machine : execution.getMachines()) {
-				for (Execution.ExecutionScenario scenario : machine.getChildren()) {
-					if (scenario.getUid().equals(uid)) {
-						scenario.setStatus(status.name());
-						scenario.setDuration(duration);
-						break machineLoop;
-					}
-				}
-			}
-			
+			Execution.ExecutionScenario scenario = execution.getScenarioByUid(uid);
+			scenario.setStatus(status.name());
+			scenario.setDuration(duration);
+
 			// Write the updated execution back to the file
 			String json = JsonReportSerializer.toJson(execution);
 			String jsContent = "var execution = " + json + ";";
@@ -800,7 +814,7 @@ public class SimpleHtmlReporter implements ExtendLevelTestReporter, ExtendTestLi
 			return;
 		}
 		containerStack.peek().startLevel(levelName);
-		ReportElementDto levelStart = ReportElementDto.newLogLevelStart(LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME), 
+		ReportElementDto levelStart = ReportElementDto.newLogLevelStart(LocalDateTime.now().format(DATE_TIME_FORMATTER), 
 			levelName);		// FIXME: we want to report a line, not the level name
 		testReportDto.getReportElements().add(levelStart);
 		appendReportElementToScenarioJs(levelStart);
@@ -814,7 +828,7 @@ public class SimpleHtmlReporter implements ExtendLevelTestReporter, ExtendTestLi
 			return;
 		}
 		containerStack.peek().startLevel(levelName);
-		ReportElementDto levelStart = ReportElementDto.newLogLevelStart(LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME), 
+		ReportElementDto levelStart = ReportElementDto.newLogLevelStart(LocalDateTime.now().format(DATE_TIME_FORMATTER), 
 			levelName);		// FIXME: we want to report a line, not the level name
 		testReportDto.getReportElements().add(levelStart);
 		appendReportElementToScenarioJs(levelStart);
@@ -829,7 +843,7 @@ public class SimpleHtmlReporter implements ExtendLevelTestReporter, ExtendTestLi
 		String currentLevelName = containerStack.peek().getCurrentLevelName();
 		if (currentLevelName != null) {
 			log.debug("Stopping level: " + currentLevelName);
-			ReportElementDto levelStop = ReportElementDto.newLogLevelStop(LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME));
+			ReportElementDto levelStop = ReportElementDto.newLogLevelStop(LocalDateTime.now().format(DATE_TIME_FORMATTER));
 			testReportDto.getReportElements().add(levelStop);
 			appendReportElementToScenarioJs(levelStop);
 			containerStack.peek().endLevel();
@@ -920,7 +934,7 @@ public class SimpleHtmlReporter implements ExtendLevelTestReporter, ExtendTestLi
 		// TODO: support bold (used to be a step), html and link
 
 		ReportElementDto reportEntry = ReportElementDto.newReportEntry(
-			LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME), title, message, status);
+			LocalDateTime.now().format(DATE_TIME_FORMATTER), title, message, status);
 		testReportDto.getReportElements().add(reportEntry);
 		appendReportElementToScenarioJs(reportEntry);
 
@@ -942,7 +956,7 @@ public class SimpleHtmlReporter implements ExtendLevelTestReporter, ExtendTestLi
 			currentStep.setStatus(Status.FAILURE);
 			containerStack.peek().setStatus(Status.FAILURE);
 			ReportElementDto errorReport = ReportElementDto.newFailureReport(
-				LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME), error.getMessage(), "");
+				LocalDateTime.now().format(DATE_TIME_FORMATTER), error.getMessage(), "");
 			// TODO: make sure the stack is reported also
 
 			testReportDto.getReportElements().add(errorReport);
@@ -957,7 +971,7 @@ public class SimpleHtmlReporter implements ExtendLevelTestReporter, ExtendTestLi
 			currentStep.setStatus(Status.ERROR);
 			containerStack.peek().setStatus(Status.ERROR);
 			ReportElementDto errorReport = ReportElementDto.newErrorReport(
-				LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME), error.getMessage(), "");
+				LocalDateTime.now().format(DATE_TIME_FORMATTER), error.getMessage(), "");
 			// TODO: make sure the stack is reported also
 
 			testReportDto.getReportElements().add(errorReport);

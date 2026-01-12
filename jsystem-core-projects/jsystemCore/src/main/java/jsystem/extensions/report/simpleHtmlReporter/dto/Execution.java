@@ -5,7 +5,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 public class Execution {
 
@@ -15,10 +14,18 @@ public class Execution {
     public List<Machine> getMachines() { return machines; }
     public void setMachines(List<Machine> machines) { this.machines = machines; }
 
-    public static class Machine {
-        @JsonProperty("type")
-        private String type;
+    public ExecutionScenario getScenarioByUid(String uid) {
+        for (Machine machine : machines) {
+            for (ExecutionScenario scenario : machine.getChildren()) {
+                if (scenario.getUid().equals(uid)) {
+                    return scenario;
+                }
+            }
+        }
+        return null;
+    }
 
+    public static class Machine {
         @JsonProperty("name")
         private String name;
 
@@ -27,16 +34,12 @@ public class Execution {
 
         public Machine() {};  // for Jackson
 
-        public Machine(String type, String name, List<ExecutionScenario> children) {
-            this.type = type;
+        public Machine(String name, List<ExecutionScenario> children) {
             this.name = name;
             this.children = children;
         }
 
         // Getters and setters
-        public String getType() { return type; }
-        public void setType(String type) { this.type = type; }
-
         public String getName() { return name; }
         public void setName(String name) { this.name = name; }
 
@@ -45,9 +48,6 @@ public class Execution {
     }
 
     public static class ExecutionScenario {
-        @JsonProperty("type")       // FIXME: remove the use of this field
-        private String type;
-
         @JsonProperty("scenarioProperties")     // FIXME: replace this with just 1 field: sutFile
         private Map<String, String> scenarioProperties;
     
@@ -79,9 +79,6 @@ public class Execution {
         }
 
         // Getters and setters
-        public String getType() { return type; }
-        public void setType(String type) { this.type = type; }
-
         public Map<String, String> getScenarioProperties() { return scenarioProperties; }
         public void setScenarioProperties(Map<String, String> scenarioProperties) { this.scenarioProperties = scenarioProperties; }
 
@@ -99,17 +96,5 @@ public class Execution {
 
         public String getUid() { return uid; }
         public void setUid(String uid) { this.uid = uid; }
-    }
-
-    // Method to find scenario by name and timestamp
-    public Optional<ExecutionScenario> getScenarioByNameAndTimestamp(String name, String timestamp) {
-        for (Machine machine : machines) {
-            for (ExecutionScenario scenario : machine.getChildren()) {
-                if (scenario.getName().equals(name) && scenario.getTimestamp().equals(timestamp)) {
-                    return Optional.of(scenario);
-                }
-            }
-        }
-        return Optional.empty();
     }
 }

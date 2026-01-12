@@ -7,9 +7,7 @@ function collectAllScenarios() {
     $(execution.machines).each(function() {
         if (this.children) {
             $(this.children).each(function() {
-                if (this.type === 'scenario') {
-                    scenarios.push(this);
-                }
+                scenarios.push(this);
             });
         }
     });
@@ -28,16 +26,14 @@ function statusBarsController(bars){
     
     $(scenarios).each(function() {
         switch (this.status) {
-            case "success":
+            case "SUCCESS":
                 success++;
                 break;
-            case "error":
+            case "FAILURE":
+            case "ERROR":
                 failure++;
                 break;
-            case "failure":
-                failure++;
-                break;
-            case "warning":
+            case "WARNING":
                 warning++;
                 break;
         }

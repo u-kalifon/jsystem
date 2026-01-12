@@ -4,18 +4,16 @@
  * and open the template in the editor.
  */
 
-function collectAllScenarios() {
+function collectScenariosForSumTable() {
     var scenarios = [];
     if (typeof execution === 'undefined' || !execution.machines) {
         return scenarios;
     }
     
-    $(execution.machines).each(function() {
-        if (this.children) {
-            $(this.children).each(function() {
-                if (this.type === 'scenario') {
-                    scenarios.push(this);
-                }
+    $.each(execution.machines, function(index, machine) {
+        if (machine.children) {
+            $.each(machine.children, function(index, child) {
+                scenarios.push(child);
             });
         }
     });
@@ -24,51 +22,50 @@ function collectAllScenarios() {
 }
 
 function appendScenariosToSumTable(scenarios, table) {
-    $(scenarios).each(function() {
+    $.each(scenarios, function(index, scenario) {
         var tr = $('<tr>');
         
         // Timestamp column
-        tr.append($('<td>').text(this.timestamp || ''));
+        tr.append($('<td>').text(scenario.timestamp || ''));
         
         // Scenario name column (with link to tree view)
-        var a = $("<a>").text(this.name).attr("href", "tree.html?node=" + this.name);
+        var a = $("<a>").text(scenario.name).attr("href", "scenarios/" + scenario.name + "_" + scenario.uid + "/scenario.html").attr("target", "_blank");
         tr.append($('<td>').addClass('scenario-column').append(a));
         
         // Sut File column
         var sutFile = '';
-        if (this.scenarioProperties && this.scenarioProperties.sutFile) {
-            sutFile = this.scenarioProperties.sutFile;
+        if (scenario.scenarioProperties && scenario.scenarioProperties.sutFile) {
+            sutFile = scenario.scenarioProperties.sutFile;
         }
         tr.append($('<td>').text(sutFile));
         
         // Status column (in uppercase with color)
-        var status = this.status || '';
-        var statusUpper = status.toUpperCase();
+        var status = scenario.status || '';
         var statusClass = '';
         switch (status) {
-            case "success":
+            case "SUCCESS":
                 statusClass = "s_success_back";
                 break;
-            case "error":
+            case "ERROR":
                 statusClass = "s_error_back";
                 break;
-            case "failure":
+            case "FAILURE":
                 statusClass = "s_failure_back";
                 break;
-            case "warning":
+            case "WARNING":
                 statusClass = "s_warning_back";
                 break;
         }
-        tr.append($('<td>').text(statusUpper).addClass(statusClass));
+        tr.append($('<td>').text(status).addClass(statusClass));
         
         // Duration column
-        tr.append($('<td>').text(this.duration || ''));
+        tr.append($('<td>').text(scenario.duration || ''));
         
-        $(table).append(tr);
+        $(table).find('tbody').append(tr);
     });
 }
 
 function sumTableController(element) {
-    var scenarios = collectAllScenarios();
+    var scenarios = collectScenariosForSumTable();
     appendScenariosToSumTable(scenarios, element);
 }

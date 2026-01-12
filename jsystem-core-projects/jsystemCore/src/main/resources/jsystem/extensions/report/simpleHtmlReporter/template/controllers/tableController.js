@@ -9,10 +9,7 @@ function collectAllScenarios(){
     var index = 1;
     $(execution.machines).each(function(){
         $(this.children).each(function() {
-            if (this.type === "scenario") {
-                this.index = index++;
-                scenarios.push(this);
-            }
+            scenarios.push(this);
         });
     });
     return scenarios;
@@ -21,11 +18,11 @@ function collectAllScenarios(){
 function appendScenariosToTable(scenarios, table){
     $(scenarios).each(function(){
        var tr = $('<tr>');
-       tr.append($('<td>').text(this.index));
        tr.append($('<td>').text(this.timestamp));
-       tr.append($('<td>').text(this.name));
+       var a = $("<a>").text(this.name).attr("href", "scenarios/" + this.name + "_" + this.uid + "/scenario.html").attr("target", "_blank");
+       tr.append($('<td>').append(a));
        tr.append($('<td>').text(this.scenarioProperties ? this.scenarioProperties.sutFile : ''));
-       tr.append($('<td>').text(this.status).addClass('s_' + this.status + "_back"));
+       tr.append($('<td>').text(this.status).addClass('s_' + this.status.toLowerCase() + "_back"));
        tr.append($('<td>').text(this.duration));
        $(table).append(tr);
     });

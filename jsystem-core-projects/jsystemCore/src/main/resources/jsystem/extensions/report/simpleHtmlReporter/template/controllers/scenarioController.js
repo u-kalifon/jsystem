@@ -42,13 +42,13 @@ function addStatusAsClass(elementToAppend, elementWithStatus, suffix) {
 
 function addStatusBackgroundClass(elementToAppend, elementWithStatus) {
     if (isPropertyExist(elementWithStatus, "status")) {
-        elementToAppend.addClass("s_" + elementWithStatus.status +"_back");
+        elementToAppend.addClass("s_" + elementWithStatus.status.toLowerCase() +"_back");
     }
 }
 
 function setRegularElement($container, element, isHtml) {
     var $div = $("<div>");
-    var $timestamp = $("<span>").addClass('timestamp').text(element.time);
+    var $timestamp = $("<span>").addClass('timestamp').text(element.time ? element.time.split(' ')[1] : '');
 
     if (isPropertyExist(element, "message")) {
         var $content = $("<span>").addClass('innerToggle').text(element.title);
@@ -78,7 +78,7 @@ function setStartLevelElement($container, element) {
 }
 
 function setStepElement($container, element) {
-    var $timestamp = $("<span>").addClass('timestamp').text(element.time);
+    var $timestamp = $("<span>").addClass('timestamp').text(element.time ? element.time.split(' ')[1] : '');
     var $content = $("<span>").addClass('step').addClass("innerToggle").addClass("closed").text(element.title);
     indent($content);
     var $div = $("<div>").append($timestamp).append($content);
@@ -101,7 +101,7 @@ function setStepElement($container, element) {
 }
 
 function setCollapsableElement($container, element, className) {
-    var $timestamp = $("<span>").addClass('timestamp').text(element.time);
+    var $timestamp = $("<span>").addClass('timestamp').text(element.time ? element.time.split(' ')[1] : '');
     var $content = $("<span>").addClass(className).addClass("innerToggle").addClass("closed").text(element.title);
     var $div = $("<div>").append($timestamp).append($content);
     indent($content);
@@ -129,7 +129,7 @@ function setStopLevelElement(element) {
 }
 
 function setImageElement($container, element){
-    var $timestamp = $("<span>").addClass('timestamp').text(element.time);
+    var $timestamp = $("<span>").addClass('timestamp').text(element.time ? element.time.split(' ')[1] : '');
     var $div = $("<div>");
 
     var $img = $("<img>").attr("src",element.message).addClass("example-image").attr("alt",element.title);
@@ -143,7 +143,7 @@ function setImageElement($container, element){
 }
 
 function setLinkElement($container, element) {
-    var $timestamp = $("<span>").addClass('timestamp').text(element.time);
+    var $timestamp = $("<span>").addClass('timestamp').text(element.time ? element.time.split(' ')[1] : '');
     var $div = $("<div>").append($timestamp);
     var $content;
 
@@ -224,7 +224,7 @@ function setReportElements($container, reportElements) {
 }
 
 function testController(element) {
-    setFixedProperties(test,element);
+    setFixedProperties(test, element);
     setReportElements($(element).find("#detailsDiv"), test.reportElements);
 }
 
