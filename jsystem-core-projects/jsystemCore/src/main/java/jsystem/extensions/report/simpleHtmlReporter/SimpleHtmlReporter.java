@@ -633,13 +633,9 @@ public class SimpleHtmlReporter implements ExtendLevelTestReporter, ExtendTestLi
 			// Add the scenario to the execution file
 			addScenarioToExecutionFile(scenarioName, testReportDto.getTimestamp(), sanitizedSutFile, testReportDto.getUid());
 		} else {
-			// FIXME: for loops are also containers, and need to be supported differently
-
 			ReportElementDto childScenarioStart = ReportElementDto.newChildScenarioStart(LocalDateTime.now().format(DATE_TIME_FORMATTER), container.getName(), container.getDocumentation());
 			testReportDto.getReportElements().add(childScenarioStart);
 			appendReportElementToScenarioJs(childScenarioStart);
-
-			// TODO: support the childScenario DTO in the html/css/js and make sure it starts a level
 		}
 
 		containerStack.push(scenarioName);
@@ -670,8 +666,6 @@ public class SimpleHtmlReporter implements ExtendLevelTestReporter, ExtendTestLi
 			updateScenarioInExecutionFile(testReportDto.getUid(), testReportDto.getStatus(), duration);
 			testReportDto = null;
 		} else {
-			// FIXME: for loops are also containers, and need to be supported differently
-
 			ReportElementDto childScenarioEnd = ReportElementDto.newChildScenarioEnd(LocalDateTime.now().format(DATE_TIME_FORMATTER));
 			testReportDto.getReportElements().add(childScenarioEnd);
 			appendReportElementToScenarioJs(childScenarioEnd);

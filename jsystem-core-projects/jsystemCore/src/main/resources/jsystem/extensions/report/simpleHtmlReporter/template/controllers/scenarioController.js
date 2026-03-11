@@ -1,4 +1,4 @@
-var depth = 0, depthStep = 20;
+var depthStep = 20;
 var levelsStack = [];
 
 Array.prototype.top = function(){
@@ -57,7 +57,7 @@ function setRegularElement($container, element, isHtml) {
 
         // add inner div with the message
         var $innerDiv = $("<div>").addClass('innerContent').html(nl2br(element.message));
-        $innerDiv.css("margin-left", (depth+depthStep) + "px");
+        $innerDiv.css("margin-left", (levelsStack.length + 1) * depthStep + "px");
         $div.append($innerDiv);
     }
     else{
@@ -71,10 +71,11 @@ function setRegularElement($container, element, isHtml) {
 }
 
 function setStartLevelElement($container, element) {
-    setCollapsableElement($container, element, 'startLevel');
+    setCollapsableElement($container, element, 'startLevel');   // will push the div into the level stack
+}
 
-    // increase depth (left margin)
-    depth += depthStep;
+function setStartScenarioElement($container, element) {
+    setCollapsableElement($container, element, 'startScenario', true);
 }
 
 function setStepElement($container, element) {
@@ -92,7 +93,7 @@ function setStepElement($container, element) {
 
         // add inner div with the table
         var $innerDiv = $("<div>").addClass('innerContent').append($table);
-        $innerDiv.css("margin-left", (depth+depthStep) + "px");
+        $innerDiv.css("margin-left", (levelsStack.length + 1) * depthStep + "px");
         $div.append($innerDiv);
     }
 
@@ -100,9 +101,12 @@ function setStepElement($container, element) {
     appendElement($container, $div);
 }
 
-function setCollapsableElement($container, element, className) {
+function setCollapsableElement($container, element, className, startExpanded) {
     var $timestamp = $("<span>").addClass('timestamp').text(element.time ? element.time.split(' ')[1] : '');
-    var $content = $("<span>").addClass(className).addClass("innerToggle").addClass("closed").text(element.title);
+    var $content = $("<span>").addClass(className).addClass("innerToggle").text(element.title);
+    if (!startExpanded) {
+        $content.addClass("closed");
+    }
     var $div = $("<div>").append($timestamp).append($content);
     indent($content);
 
@@ -117,14 +121,11 @@ function setStopLevelElement(element) {
     if(!$.isEmptyObject(levelsStack)){
         levelsStack.pop();
     }
+}
 
-    // decrease depth as level closed
-    depth -= depthStep;
-
-    //make sure we don't slide left more
-    //than needed... Thanks Alik.
-    if (depth<0) {
-        depth = 0;
+function setStopScenarioElement(element) {
+    if(!$.isEmptyObject(levelsStack)){
+        levelsStack.pop();
     }
 }
 
@@ -177,11 +178,11 @@ function appendElement($table, $element){
 }
 
 function indent($element){
-    $element.css("margin-left", depth + "px");
+    $element.css("margin-left", levelsStack.length * depthStep + "px");
 }
 
 function indentAttr($element){
-    $element.css("margin-left", 100 + depth + "px");
+    $element.css("margin-left", 100 + levelsStack.length * depthStep + "px");
 }
 
 function nl2br(str){
@@ -198,6 +199,12 @@ function setReportElements($container, reportElements) {
                 break;
             case "stopLevel":
                 setStopLevelElement(this);
+                break;
+            case "startScenario":
+                setStartScenarioElement($container, this);
+                break;
+            case "endScenario":
+                setStopScenarioElement(this);
                 break;
             case "lnk":
                 setLinkElement($container, this);
@@ -238,18 +245,28 @@ function prepareLevels($container) {
         }
     });
 
-    // register the 'click' on 'startLevel' and 'innerToggle' elements
-    $(".startLevel, .step, .innerToggle").click(function(){
+    // Same for startScenario - empty scenario has no div siblings between startScenario and endScenario
+    $(".startScenario").each(function(i,e){
+        if($(e).siblings('div').length == 0){
+            $(e).removeClass('startScenario').addClass('emptyStartScenario');
+        }
+    });
+
+    // Scenarios are expanded by default - show their content (sibling divs of the header span)
+    $(".startScenario").siblings('div').show();
+
+    // register the 'click' on 'startLevel', 'startScenario', 'step' and 'innerToggle' elements
+    $(".startLevel, .startScenario, .step, .innerToggle").click(function(){
         $(this).toggleClass("closed").parent().children('div').toggle('fast');
     });
 
     // register the 'click' on ExpandAll and CollapseAll
     $("#detailsDivExpandAll").click(function(){
-        $(".startLevel, .step, .innerToggle").removeClass('closed').parent().children('div').show('fast');
+        $(".startLevel, .startScenario, .step, .innerToggle").removeClass('closed').parent().children('div').show('fast');
 
     });
     $("#detailsDivCollapseAll").click(function(){
-        $(".startLevel, .step, .innerToggle").addClass('closed').parent().children('div').hide('fast');
+        $(".startLevel, .startScenario, .step, .innerToggle").addClass('closed').parent().children('div').hide('fast');
     });
 
 }

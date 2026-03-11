@@ -106,6 +106,29 @@ img {width: 100px}
     content: " [ - ]";
 }
 
+.startScenario {
+    color: black !important;
+    font-weight: bold !important;
+    cursor: pointer;
+}
+
+.startScenario.closed:after{
+    font-weight: normal;
+    font-size: x-small;
+    color: gray;
+    margin-left: 5px;
+    content: " [...]";
+}
+
+.emptyStartScenario,
+.startScenario:not(closed):after{
+    font-weight: normal;
+    font-size: x-small;
+    color: gray;
+    margin-left: 5px;
+    content: " [ - ]";
+}
+
 .pointer{
     cursor: pointer;
 }
