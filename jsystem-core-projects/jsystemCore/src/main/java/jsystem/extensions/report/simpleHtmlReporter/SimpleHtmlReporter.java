@@ -443,8 +443,10 @@ public class SimpleHtmlReporter implements ExtendLevelTestReporter, ExtendTestLi
 	public void startTest(TestInfo testInfo) {
 		log.debug("### Recieved start test event -> " + testInfo.toString());
 		String stepName = sanitizeClassName(testInfo.className) + "." + testInfo.methodName;
-		currentStep = ReportElementDto.newStep(LocalDateTime.now().format(DATE_TIME_FORMATTER), 
-			String.join(" ", stepName, testInfo.meaningfulName), null);
+		String stepTitle = (testInfo.meaningfulName != null && !testInfo.meaningfulName.trim().isEmpty())
+			? String.join(" ", stepName, testInfo.meaningfulName)
+			: stepName;
+		currentStep = ReportElementDto.newStep(LocalDateTime.now().format(DATE_TIME_FORMATTER), stepTitle, null);
 		currentStep.addProperty("Class", testInfo.className);
 		currentStep.addProperty("Method", testInfo.methodName);
 		currentStep.setUserDoc(testInfo.userDoc);
