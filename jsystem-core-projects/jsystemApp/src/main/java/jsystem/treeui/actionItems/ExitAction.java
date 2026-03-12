@@ -48,21 +48,15 @@ public class ExitAction extends IgnisAction {
 
 	public void exit() {
 		int save_Ans = 0;
-		int ans =0;
-		
-		ans = DialogWithCheckBox.showConfirmDialogWithCheckBox("Exit Confirmation","Are you sure that you want to exit ?","Auto Save on exit",FrameworkOptions.AUTO_SAVE_NO_CONFIRMATION);
-				 
-		if (ans == JOptionPane.YES_OPTION) {
-			try {
-				//TODO: check if the scenario have been change before exit
-				save_Ans = SaveScenarioAction.getInstance().saveCurrentScenarioWithConfirmation();
-			} catch (Exception e1) {
-				Log.error(e1.getMessage());
-			}
-			if(save_Ans != JOptionPane.CANCEL_OPTION){
-				TestRunner.treeView.dispose();
-				TestRunner.treeView.getRunner().exit();
-			}
+		try {
+			// check if the scenario have been change before exit
+			save_Ans = SaveScenarioAction.getInstance().saveCurrentScenarioWithConfirmation();
+		} catch (Exception e1) {
+			Log.error(e1.getMessage());
+		}
+		if(save_Ans != JOptionPane.CANCEL_OPTION){
+			TestRunner.treeView.dispose();
+			TestRunner.treeView.getRunner().exit();
 		}
 	}
 }
