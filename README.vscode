@@ -1,0 +1,27 @@
+If you are using vscode or one of its derivatives (like Cursor)
+and you want to launch the tool from the debugger - add this to
+the "configurations" array in you .vscode/launch.json:
+
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Launcher2",
+            "request": "launch",
+            "mainClass": "jsystem.framework.launcher.Launcher2",
+            "projectName": "jsystem-launcher",
+            "vmArgs": [
+                "-Djsystem.main=jsystem.treeui.TestRunner",
+                "-DentityExpansionLimit=1280000"
+            ],
+            "cwd": "C:\\CodeProjects\\jsystem\\jsystem-assembly\\jsystem-runner\\target\\runner\\runner",
+            "args": [
+                "-splash:splash.jpg"
+            ]
+        },
+        ...
+    ]
+
+NOTES:
+======
+* You can then run the tool from jsystem.framework.launcher.Launcher2.java.
+* Of course, make sure to adapt "cwd" to your environment.
