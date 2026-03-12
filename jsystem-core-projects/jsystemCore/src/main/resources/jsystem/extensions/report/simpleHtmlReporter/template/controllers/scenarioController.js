@@ -84,6 +84,12 @@ function setStepElement($container, element) {
     indent($content);
     var $div = $("<div>").append($timestamp).append($content);
 
+    if (isPropertyExist(element, "userDoc")) {
+        var $userDocDiv = $("<div>").addClass('innerContent userDocContent').html(nl2br(element.userDoc));
+        $userDocDiv.css("margin-left", (levelsStack.length + 1) * depthStep + "px");
+        $div.append($userDocDiv);
+    }
+
     if (isPropertyExist(element, "properties")) {
         // create a table with the properties
         var $table = $("<table>").addClass('smallTbl');
@@ -257,7 +263,7 @@ function prepareLevels($container) {
 
     // register the 'click' on 'startLevel', 'startScenario', 'step' and 'innerToggle' elements
     $(".startLevel, .startScenario, .step, .innerToggle").click(function(){
-        $(this).toggleClass("closed").parent().children('div').toggle('fast');
+        $(this).toggleClass("closed").parent().children('div').not('.userDocContent').toggle('fast');
     });
 
     // register the 'click' on ExpandAll and CollapseAll
@@ -266,7 +272,7 @@ function prepareLevels($container) {
 
     });
     $("#detailsDivCollapseAll").click(function(){
-        $(".startLevel, .startScenario, .step, .innerToggle").addClass('closed').parent().children('div').hide('fast');
+        $(".startLevel, .startScenario, .step, .innerToggle").addClass('closed').parent().children('div').not('.userDocContent').hide('fast');
     });
 
 }

@@ -6,7 +6,6 @@ package jsystem.framework.report;
 import java.io.Externalizable;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -23,9 +22,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import jsystem.extensions.report.difido.HtmlReporter;
-import jsystem.extensions.report.html.CssUtils.CssType;
 import jsystem.extensions.report.html.ExtendLevelTestReporter;
-import jsystem.extensions.report.html.HtmlCodeWriter;
 import jsystem.extensions.report.html.HtmlTestReporter;
 import jsystem.extensions.report.html.LevelHtmlTestReporter;
 import jsystem.extensions.report.html.RepeatTestIndex;
@@ -36,13 +33,10 @@ import jsystem.framework.JSystemProperties;
 import jsystem.framework.RunnerStatePersistencyManager;
 import jsystem.framework.analyzer.AnalyzerException;
 import jsystem.framework.common.CommonResources;
-import jsystem.framework.common.JSystemInnerTests;
 import jsystem.framework.fixture.Fixture;
 import jsystem.framework.fixture.FixtureListener;
-import jsystem.framework.scenario.JTest;
 import jsystem.framework.scenario.JTestContainer;
 import jsystem.framework.scenario.Parameter;
-import jsystem.framework.scenario.ParameterUtils;
 import jsystem.framework.scenario.RunnerTest;
 import jsystem.framework.scenario.RunningProperties;
 import jsystem.framework.scenario.Scenario;
@@ -53,7 +47,6 @@ import jsystem.framework.scenario.ScenarioListener;
 import jsystem.framework.scenario.ScenariosManager;
 import jsystem.framework.scenario.UpgradeAndBackwardCompatibility;
 import jsystem.framework.scenario.flow_control.AntForLoop;
-import jsystem.framework.sut.SutFactory;
 import jsystem.framework.sut.SutListener;
 import jsystem.framework.system.SystemObjectImpl;
 import jsystem.framework.system.TName;
@@ -148,8 +141,6 @@ public class RunnerListenersManager extends DefaultReporterImpl implements JSyst
 	 * issue, without affecting Reporter signatures
 	 */
 	private boolean isError = false;
-
-	private boolean showMemory = false;
 
 	public void addListener(Object listener) {
 		removeListener(listener);
@@ -500,50 +491,11 @@ public class RunnerListenersManager extends DefaultReporterImpl implements JSyst
 
 	}
 
-	/**
-	 * Right split - under top rectangle adding the starting and ending time of
-	 * the test
-	 */
-	private void addEndTestInfo() {
-		addEndTestInfo(0);
-	}
-
-	/**
-	 * Right split - under top rectangle adding the starting and ending time of
-	 * the test
-	 */
-	private void addEndTestInfo(long endTime) {
-		if (endTime <= 0) {
-			endTime = System.currentTimeMillis();
-		}
-		boolean addTimeStampOld = addTimeStamp;
-		addTimeStamp = false;
-		report("Start time: " + DateUtils.getDate(startTime));
-		report("End time  : " + DateUtils.getDate(endTime));
-		long runningTime = (endTime - startTime);
-		if (runningTime == 0) {
-			runningTime = 1;
-		}
-		report("Test running time: " + (runningTime / 1000) + " sec.");
-
-		if (showMemory) {
-			report("Total Memory: " + Runtime.getRuntime().totalMemory());
-			report("Max Memory:   " + Runtime.getRuntime().maxMemory());
-			report("Free Memory:  " + Runtime.getRuntime().freeMemory());
-		}
-
-		addTimeStamp = addTimeStampOld;
-
-	}
-
 	public synchronized void endTest(Test test) {
 		if (test == null) {
 			test = currentTest;
 		}
 		runningTests.removeElement(test);
-		if (!(currentTest instanceof InternalTest) && !blockReporters && !inScenarioAsTest) {
-			addEndTestInfo();
-		}
 		
 		if (inScenarioAsTest) {
 			try {
@@ -748,6 +700,7 @@ public class RunnerListenersManager extends DefaultReporterImpl implements JSyst
 		ti.meaningfulName = meaningfulName;
 		ti.comment = tname.getComment();
 		ti.parameters = tname.getParamsString();
+		ti.userDoc = tname.getUserDocumentation();
 		ti.count = count;
 		ti.fullUuid = uuid;
 		if (rt != null) {
@@ -773,8 +726,6 @@ public class RunnerListenersManager extends DefaultReporterImpl implements JSyst
 				startTime = System.currentTimeMillis();
 			}
 		}
-		boolean disableCode = "false".equals(JSystemProperties.getInstance().getPreference(
-				FrameworkOptions.TEST_CODE_ENABLE));
 		testClassName = test.getClass().getName();
 
 		inTest = true;
@@ -1078,7 +1029,6 @@ public class RunnerListenersManager extends DefaultReporterImpl implements JSyst
 		if (isSilent()) {
 			return;
 		}
-		addEndTestInfo();
 		if (steps != null) {
 			((SystemTest) currentTest).addExecutedSteps(steps);
 		}
@@ -1549,7 +1499,6 @@ public class RunnerListenersManager extends DefaultReporterImpl implements JSyst
 		if (container instanceof Scenario && ((Scenario) container).isScenarioAsTest()) {
 			inScenarioAsTest = false;
 			lastTestLevelName = null;
-			addEndTestInfo(endTime);
 			fireEndTest(currentTest, blockReporters);
 			inTest = false;
 			updateCurrentTest(null);

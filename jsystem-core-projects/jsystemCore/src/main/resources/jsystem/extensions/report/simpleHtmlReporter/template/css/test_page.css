@@ -9,6 +9,13 @@
     display: none;
 }
 
+/* user doc is always visible and not collapsed by the step toggle */
+#detailsDiv .userDocContent {
+    display: block !important;
+    width: fit-content;
+    background-color: #fffde7;
+}
+
 #detailsDiv .step {
     color: #4E6CA3 !important;
     font-weight: bold;

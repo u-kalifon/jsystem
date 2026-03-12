@@ -447,7 +447,7 @@ public class SimpleHtmlReporter implements ExtendLevelTestReporter, ExtendTestLi
 			String.join(" ", stepName, testInfo.meaningfulName), null);
 		currentStep.addProperty("Class", testInfo.className);
 		currentStep.addProperty("Method", testInfo.methodName);
-		// TODO: get the userDoc (it's null in the testInfo)
+		currentStep.setUserDoc(testInfo.userDoc);
 
 		if (testInfo.parameters != null && !testInfo.parameters.trim().isEmpty()) {
 			log.debug("Adding parameters " + testInfo.parameters);
