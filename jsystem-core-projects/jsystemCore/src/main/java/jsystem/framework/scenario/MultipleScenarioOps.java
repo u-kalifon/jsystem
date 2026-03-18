@@ -316,9 +316,6 @@ public class MultipleScenarioOps {
 				cloneTest = testToAdd.cloneTest();
 				cloneTest.setUUID(uuid);
 				
-				//Following will be set for Test or Scenario only
-				cloneWithInternalFlags(testToAdd, cloneTest);
-				
 				if(testToAdd instanceof JTestContainer){//Clone all contained tests/containers also
 					cloneContainersTestRecursivly((JTestContainer) cloneTest, (JTestContainer) testToAdd, (testToAdd instanceof Scenario));
 				}
@@ -389,9 +386,6 @@ public class MultipleScenarioOps {
 			//Get all parameters from original test/container
 			Parameter[] p = rootTest.getParameters();
 			
-			//Following will be set for Test or Scenario only
-			cloneWithInternalFlags(rootTest, cloneTest);
-			
 			if(rootTest instanceof JTestContainer){//Clone the contained tests/containers of the current node also
 				cloneContainersTestRecursivly((JTestContainer)cloneTest, (JTestContainer)rootTest, ((rootTest instanceof Scenario) || (containedInSubScenario)));
 			}
@@ -421,21 +415,6 @@ public class MultipleScenarioOps {
 				param.signalToSave(); // for file saving
 			}
 		}
-	}
-	
-	/**
-	 * Set all internal flags not copied by the JTest.clone
-	 * 
-	 * @param src The source test to copy from
-	 * @param dest	The cloned test to set parameter for
-	 */
-	private static void cloneWithInternalFlags(JTest src, JTest dest){
-		//Following will be set for Test or Scenario only
-		if((!(src instanceof JTestContainer)) || (src instanceof Scenario)){
-			if(dest instanceof Scenario){
-				((Scenario)dest).setScenarioAsTest(((Scenario)src).isScenarioAsTest());
-			}
-		}	
 	}
 	
 	public static void updateTest(JTest test, Parameter[] params, boolean updateRecursively) throws Exception {

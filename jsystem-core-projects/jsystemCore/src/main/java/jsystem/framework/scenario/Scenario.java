@@ -175,7 +175,7 @@ public class Scenario extends JTestContainer {
 		// documentation dirty flag to true.
 		super.setDocumentation(loadUserDoc(getRootElement(), this));
 		documentationDirty = false;
-		setScenarioAsTest(loadScenarioAsTest(this));
+		setScenarioAsTest(false);	// for backwards compatibility with the old test files
 
 		// APPLIED - set the edit local only after reading the value from the
 		// properties file
@@ -186,9 +186,6 @@ public class Scenario extends JTestContainer {
 		setExternalId(loadExternalId(this));
 		setProjectName(loadProjectName(this));
 
-		if (isScenarioAsTest()) {
-			setDisable(loadDisable(this));
-		}
 		/*
 		 * Find the execute scenario target
 		 */
@@ -480,10 +477,6 @@ public class Scenario extends JTestContainer {
 		return (value != null && value.toLowerCase().equals("true"));		
 	}
 	
-	private static boolean loadScenarioAsTest(Scenario s) throws Exception {
-		return getPropertyUpTo(s, RunningProperties.SCENARIO_AS_TEST_TAG);
-	}
-
 	private static boolean loadMarkedAsKnownIssue(Scenario s) throws Exception {
 		return getPropertyUpTo(s, RunningProperties.MARKED_AS_KNOWN_ISSUE);
 	}
@@ -1136,26 +1129,19 @@ public class Scenario extends JTestContainer {
 	}
 
 	public void setDisable(boolean disable) {
-		if (isScenarioAsTest() && !isRoot()) {
-			isDisable = disable;
-		} else {
-			super.setDisable(disable);
-		}
+		super.setDisable(disable);
 	}
 
 	public boolean isDisable() {
-		if (isScenarioAsTest()) {
-			return isDisable;
-		}
-		return false;
+		return super.isDisable();
 	}
 
 	public boolean isMarkedAsKnownIssue() {
-		return super.markedAsKnownIssue && isScenarioAsTest();
+		return super.markedAsKnownIssue;
 	}
 
 	public boolean isMarkedAsNegativeTest() {
-		return super.markedAsNegativeTest && isScenarioAsTest();
+		return super.markedAsNegativeTest;
 	}
 
 	public String getExternalId() {

@@ -562,15 +562,6 @@ public enum FrameworkOptions {
 	/**
 	 * see description in GUIFrameworkOptions
 	 */
-	SCENARIO_AS_TEST(
-			"enable.mark.scenario.as.test", 
-			"Enable marking scenario as test", 
-			DataType.BOOLEAN,
-			true,
-			false),
-	/**
-	 * see description in GUIFrameworkOptions
-	 */
 	RESTORE_DEFAULTS(
 			"enable.restore.parameters.defaults", 
 			"Enables the restore to default menu item", 
@@ -842,14 +833,6 @@ public enum FrameworkOptions {
 			"",
 			DataType.TEXT,
 			"",
-			false
-			),
-			
-	SCEANRIO_AS_TEST_TERMINATE_ON_FAIL (
-			"scenario.as.test.fail.terminate",
-			"Terminate Scenario as Test if any test fails",
-			DataType.BOOLEAN,
-			true,
 			false
 			),
 	

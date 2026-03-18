@@ -48,11 +48,8 @@ public class JSystemAntTask extends Ant {
 		}
 		
 		boolean scenarioDisabled = ScenarioHelpers.isTestDisabled(subScenarioUUID, System.getProperty(RunningProperties.CURRENT_SCENARIO_NAME));
-		boolean isScenarioAsTest = "true".equals(ScenarioHelpers.getTestProperty(subScenarioUUID,System.getProperty(RunningProperties.CURRENT_SCENARIO_NAME),RunningProperties.SCENARIO_AS_TEST_TAG));
-		// This flag indicated whether the current scenario raised the flag or not for later flag removal
-		boolean wasScenarioAsTestFlagUpdated = false;
 
-		if(scenarioDisabled && isScenarioAsTest){
+		if(scenarioDisabled){
     		log("Scenario execution disabled by jsystem");
     		return;
 		} 
@@ -64,30 +61,12 @@ public class JSystemAntTask extends Ant {
     		return;		
 		}
 
-		if (ScenarioHelpers.shouldTestBeSkipped()){
-			/**
-			 * If scenario is executed as part of a scenario as test context test and one of the steps(tests) failed,
-			 * execution of scenario as test should not continue, thus we are skipping execution 
-			 * of tests.
-			 * If this is the first sub-scenario in a new "scenarioAsTest" scenario should be executed even 
-			 * if last test failed, that is why I have added the scenarioAsTestStart (solves bug 248)
-			 */
-
-			String message = "One of the Parent scenarios is executed as a test and One of the previous steps (internal tests or scenarios) failed. Skipping scenario execution. "; 
-			log(message);
-			ListenerstManager.getInstance().report(message);
-			return;
-		}
-		
-		
 		try {
-			wasScenarioAsTestFlagUpdated = ScenarioHelpers.signalScenarioAsTestStart(isScenarioAsTest, subScenarioUUID);
-
 			if (!DistributedExecutionHelper.doRemoteExecution(subScenarioUUID)){
 				try{
 					super.execute();
 				}finally{
-					executeEndScenarioOperations(wasScenarioAsTestFlagUpdated, subScenarioUUID);
+					executeEndScenarioOperations(subScenarioUUID);
 				}
 				
 				return;
@@ -95,7 +74,7 @@ public class JSystemAntTask extends Ant {
 			try{
 				executeRemote(subScenarioUUID);
 			}finally{
-				executeEndScenarioOperations(wasScenarioAsTestFlagUpdated, subScenarioUUID);
+				executeEndScenarioOperations(subScenarioUUID);
 			}
 		}catch (Throwable e){
 			ListenerstManager.getInstance().report("Failed in remote execution. " + e.getMessage(), e);
@@ -103,10 +82,7 @@ public class JSystemAntTask extends Ant {
 		}
 	}
 	
-	private void executeEndScenarioOperations(boolean wasScenarioAsTestFlagUpdated, String subScenarioUuid){
-		if (wasScenarioAsTestFlagUpdated){
-			ScenarioHelpers.removeScenarioAsTestFlag();
-		}
+	private void executeEndScenarioOperations(String subScenarioUuid){
 		ScenarioHelpers.setScenarioAbortFlag(subScenarioUuid, false);
 	}
 	

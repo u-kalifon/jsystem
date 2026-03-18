@@ -24,7 +24,6 @@ import org.slf4j.LoggerFactory;
 import jsystem.extensions.report.difido.HtmlReporter;
 import jsystem.extensions.report.html.ExtendLevelTestReporter;
 import jsystem.extensions.report.html.HtmlTestReporter;
-import jsystem.extensions.report.html.LevelHtmlTestReporter;
 import jsystem.extensions.report.html.RepeatTestIndex;
 import jsystem.extensions.report.junit.JUnitReporter;
 import jsystem.extensions.report.xml.XmlReporter;
@@ -40,7 +39,6 @@ import jsystem.framework.scenario.Parameter;
 import jsystem.framework.scenario.RunnerTest;
 import jsystem.framework.scenario.RunningProperties;
 import jsystem.framework.scenario.Scenario;
-import jsystem.framework.scenario.ScenarioAsTest;
 import jsystem.framework.scenario.ScenarioChangeType;
 import jsystem.framework.scenario.ScenarioHelpers;
 import jsystem.framework.scenario.ScenarioListener;
@@ -85,8 +83,6 @@ public class RunnerListenersManager extends DefaultReporterImpl implements JSyst
 
 	boolean silent = false;
 
-	int inLoop = 0;
-
 	boolean propertiesTimeStampFlag;
 
 	long startTime = 0;
@@ -120,19 +116,11 @@ public class RunnerListenersManager extends DefaultReporterImpl implements JSyst
 
 	private EventParser parser;
 
-	private boolean inScenarioAsTest = false;
-
-	private String lastTestLevelName = null;
-
-	private Test lastTest = null;
-
 	private long lastGC = System.currentTimeMillis();
 
 	private boolean testMarkedAsKnownIssue = false;
-	private boolean scenarioMarkedAsKnownIssue = false;
 
 	private boolean testMarkedNegativeTest = false;
-	private boolean scenarioMarkedAsNegativeTest = false;
 
 	private long lastFlashReportTime = 0;
 
@@ -381,13 +369,7 @@ public class RunnerListenersManager extends DefaultReporterImpl implements JSyst
 	}
 
 	public synchronized void addFailure(Test test, AssertionFailedError t) {
-		boolean negativeState = false;
-		if(inScenarioAsTest){
-			negativeState = inNegativeTestState();
-		}
-		else{
-			negativeState = testMarkedNegativeTest;
-		}
+		boolean negativeState = testMarkedNegativeTest;
 		setLastTestFail(!inKnownIssueState() && !negativeState);
 		setFailToPass(false);
 		setFailToWarning(false);
@@ -424,13 +406,7 @@ public class RunnerListenersManager extends DefaultReporterImpl implements JSyst
 	}
 
 	public synchronized void addFailure(Test test, String message, String stack, boolean analyzerException) {
-		boolean negativeState = false;
-		if(inScenarioAsTest){
-			negativeState = inNegativeTestState();
-		}
-		else{
-			negativeState = testMarkedNegativeTest;
-		}
+		boolean negativeState = testMarkedNegativeTest;
 		setLastTestFail(!inKnownIssueState() && !negativeState);
 		setFailToPass(false);
 		setFailToWarning(false);
@@ -496,23 +472,12 @@ public class RunnerListenersManager extends DefaultReporterImpl implements JSyst
 			test = currentTest;
 		}
 		runningTests.removeElement(test);
-		
-		if (inScenarioAsTest) {
-			try {
-				stopLevel();
-				updateNegativeTest(test);
-				fireStatusManager(null, currentTest, false);
-			} catch (IOException e) {
-				log.error("Fail to stopLevel", e);
-			}
-		} else {
-			fireEndTest(test, blockReporters);
-			updateCurrentTest(null);
-			inTest = false;
-			if (System.currentTimeMillis() - lastGC > 60000) {
-				System.gc();
-				lastGC = System.currentTimeMillis();
-			}
+		fireEndTest(test, blockReporters);
+		updateCurrentTest(null);
+		inTest = false;
+		if (System.currentTimeMillis() - lastGC > 60000) {
+			System.gc();
+			lastGC = System.currentTimeMillis();
 		}
 		if (!blockReporters) {
 			endTime = System.currentTimeMillis();
@@ -528,27 +493,6 @@ public class RunnerListenersManager extends DefaultReporterImpl implements JSyst
 			}
 		}
 
-	}
-
-	private void fireStatusManager(TestInfo ti, Test test, boolean start) {
-		for (int i = 0; i < listeners.size(); i++) {
-			Object currentObject = listeners.get(i);
-			if (currentObject instanceof TestStatusListener) {
-				try {
-					if (start) {
-						if (currentObject instanceof ExtendTestListener) {
-							((ExtendTestListener) currentObject).startTest(ti);
-						} else {
-							((TestListener) currentObject).startTest(test);
-						}
-					} else {
-						((TestListener) currentObject).endTest(test);
-					}
-				} catch (Throwable ex) {
-					log.error("Fail to signal status manager", ex);
-				}
-			}
-		}
 	}
 
 	/**
@@ -626,7 +570,7 @@ public class RunnerListenersManager extends DefaultReporterImpl implements JSyst
 		stopBufferingReports();
 		clearReportsBuffer();
 
-		if (inTest && !inScenarioAsTest) {
+		if (inTest) {
 			endTest(currentTest);
 		}
 		if (test instanceof SystemTest) {
@@ -656,10 +600,7 @@ public class RunnerListenersManager extends DefaultReporterImpl implements JSyst
 		setLastTestFail(false);
 		TName tname = TestNameServer.getInstance().getTestName(test);
 		int count = testIndex.getTestIndex(tname.getFullName());
-		lastTest = test;
-		if (!inScenarioAsTest) {
-			updateCurrentTest(test);
-		}
+		updateCurrentTest(test);
 		RunnerTest rt = null;
 		/*
 		 * Init the meaningful name from the RunnerTest will be done only when
@@ -706,25 +647,9 @@ public class RunnerListenersManager extends DefaultReporterImpl implements JSyst
 		if (rt != null) {
 			ti.isHiddenInHTML = rt.isHiddenInHTML();
 		}
-		if (inScenarioAsTest) {
-			try {
-				String name = tname.getClassName() + "-" + tname.getMethodName();
-				if (!StringUtils.isEmpty(ti.meaningfulName)) {
-					name = ti.meaningfulName;
-				}
-				startLevel(name, Reporter.MainFrame);
-				lastTestLevelName = name;
-
-				((ScenarioAsTest) currentTest).setCurrentRunnerTest(test);
-				fireStatusManager(ti, currentTest, true);
-			} catch (IOException e) {
-				log.error("Fail to startLevel", e);
-			}
-		} else {
-			fireTestStart(ti, test, false);
-			if (!blockReporters) {
-				startTime = System.currentTimeMillis();
-			}
+		fireTestStart(ti, test, false);
+		if (!blockReporters) {
+			startTime = System.currentTimeMillis();
 		}
 		testClassName = test.getClass().getName();
 
@@ -1087,29 +1012,13 @@ public class RunnerListenersManager extends DefaultReporterImpl implements JSyst
 			reportsBuffer.add(re);
 			return;
 		}
-		if (inScenarioAsTest && place == Reporter.MainFrame) {
-			for (int i = 0; i < listeners.size(); i++) {
-				Object currentObject = listeners.get(i);
-				if (currentObject instanceof ExtendLevelTestReporter) {
-					try {
-						if(inLoop==0){
-							((ExtendLevelTestReporter) currentObject).closeLevelsUpTo(lastTestLevelName, false);
-						}
-						((ExtendLevelTestReporter) currentObject).startLevel(level, Reporter.CurrentPlace);
-					} catch (Throwable ex) {
-						log.error("Fail to report", ex);
-					}
-				}
-			}
-		} else {
-			for (int i = 0; i < listeners.size(); i++) {
-				Object currentObject = listeners.get(i);
-				if (currentObject instanceof ExtendLevelTestReporter) {
-					try {
-						((ExtendLevelTestReporter) currentObject).startLevel(level, place);
-					} catch (Throwable ex) {
-						log.error("Fail to report", ex);
-					}
+		for (int i = 0; i < listeners.size(); i++) {
+			Object currentObject = listeners.get(i);
+			if (currentObject instanceof ExtendLevelTestReporter) {
+				try {
+					((ExtendLevelTestReporter) currentObject).startLevel(level, place);
+				} catch (Throwable ex) {
+					log.error("Fail to report", ex);
 				}
 			}
 		}
@@ -1176,24 +1085,12 @@ public class RunnerListenersManager extends DefaultReporterImpl implements JSyst
 			status = Reporter.WARNING;
 		}
 
-		if(inScenarioAsTest){
-			if (inNegativeTestState() && !title.equals(CommonResources.NEGATIVE_TEST_STRING) && status == Reporter.FAIL) {
-				if (currentTest != null) {
-					ScenarioHelpers.getRunnerTest(currentTest).setFailureOccurred(true);
-				}
-				if (!isError) {
-					status = Reporter.PASS;
-				}
+		if (testMarkedNegativeTest && !title.equals(CommonResources.NEGATIVE_TEST_STRING) && status == Reporter.FAIL) {
+			if (currentTest != null) {
+				ScenarioHelpers.getRunnerTest(currentTest).setFailureOccurred(true);
 			}
-		}
-		else{
-			if (testMarkedNegativeTest && !title.equals(CommonResources.NEGATIVE_TEST_STRING) && status == Reporter.FAIL) {
-				if (currentTest != null) {
-					ScenarioHelpers.getRunnerTest(currentTest).setFailureOccurred(true);
-				}
-				if (!isError) {
-					status = Reporter.PASS;
-				}
+			if (!isError) {
+				status = Reporter.PASS;
 			}
 		}
 
@@ -1411,84 +1308,19 @@ public class RunnerListenersManager extends DefaultReporterImpl implements JSyst
 	}
 
 	private boolean inKnownIssueState() {
-		return (inScenarioAsTest && scenarioMarkedAsKnownIssue) || (!inScenarioAsTest && testMarkedAsKnownIssue);
-	}
-
-//	private boolean inNegativeTestState() {
-//		return (inScenarioAsTest && scenarioMarkedAsNegativeTest) || (!inScenarioAsTest && testMarkedNegativeTest);
-//	}
-	
-	private boolean inNegativeTestState() {
-		return (scenarioMarkedAsNegativeTest) || (testMarkedNegativeTest);
+		return testMarkedAsKnownIssue;
 	}
 
 	@Override
 	public void startContainer(JTestContainer container) {
-		if (container instanceof Scenario && ScenarioHelpers.isScenarioAsTestAndNotRoot(container)) {
-			inScenarioAsTest = true;
-			// The following code should be enabled if saving all default
-			// scenarios flags in all father scenarios will be stopped as needed
-			// Scenario scenario = (Scenario)
-			// ScenariosManager.getInstance().getCurrentScenario().getTestByFullId(container.getFullUUID());
-			// Properties properties =
-			// ScenarioHelpers.getAllTestPropertiesUpTo(scenario, null, false);
-			// String scenarioMarkedAsKnownIssueStr =
-			// properties.getProperty(RunningProperties.MARKED_AS_KNOWN_ISSUE);
-			// String scenarioMarkedAsNegativeTestStr =
-			// properties.getProperty(RunningProperties.MARKED_AS_NEGATIVE_TEST);
-			//
-			// if(scenarioMarkedAsKnownIssueStr != null){
-			// scenarioMarkedAsKnownIssue =
-			// Boolean.parseBoolean(scenarioMarkedAsKnownIssueStr);
-			// }
-			//
-			// if(scenarioMarkedAsNegativeTestStr != null){
-			// scenarioMarkedAsNegativeTest =
-			// Boolean.parseBoolean(scenarioMarkedAsNegativeTestStr);
-			// }
-
-			scenarioMarkedAsKnownIssue = ScenarioHelpers.isMarkedAsKnownIssue(container.getFullUUID(), ScenariosManager
-					.getInstance().getCurrentScenario().getName());
-			scenarioMarkedAsNegativeTest = ScenarioHelpers.isMarkedAsNegativeTest(container.getFullUUID(),
-					ScenariosManager.getInstance().getCurrentScenario().getName());
-
-			String scenarioAsClassName = container.getName().replace('/', '.').replace('\\', '.');
-			TestInfo ti = new TestInfo();
-			ti.className = scenarioAsClassName;
-			ti.basicName = StringUtils.getClassName(scenarioAsClassName);
-			ti.methodName = null;
-			ti.meaningfulName = null;
-			ti.comment = container.getComment();
-			ti.classDoc = container.getDocumentation();
-			ti.fullUuid = container.getFullUUID();
-			ti.count = testIndex.getTestIndex(scenarioAsClassName);
-			ti.isHiddenInHTML = container.isHiddenInHTML();
-
-			Test currentRunnerTest = lastTest;
-			
-
-			updateCurrentTest(new ScenarioAsTest());
-			((SystemTest) currentTest).setName(scenarioAsClassName);
-			((ScenarioAsTest) currentTest).setCurrentRunnerTest(currentRunnerTest);
-
-			fireTestStart(ti, currentTest, blockReporters);
-			boolean addTimeStampOld = addTimeStamp;
-			addTimeStamp = false;
-			report("Execute scenario test: " + scenarioAsClassName);
-			addTimeStamp = addTimeStampOld;
-
-			startTime = System.currentTimeMillis();
-
-		} else if (!inScenarioAsTest) {
-			for (int i = 0; i < listeners.size(); i++) {
-				Object currentObject = listeners.get(i);
-				if (currentObject instanceof ExtendTestListener) {
-					ExtendTestListener tl = (ExtendTestListener) currentObject;
-					try {
-						tl.startContainer(container);
-					} catch (Throwable ex) {
-						log.error("Fail to send startContainer notification to testlistener", ex);
-					}
+		for (int i = 0; i < listeners.size(); i++) {
+			Object currentObject = listeners.get(i);
+			if (currentObject instanceof ExtendTestListener) {
+				ExtendTestListener tl = (ExtendTestListener) currentObject;
+				try {
+					tl.startContainer(container);
+				} catch (Throwable ex) {
+					log.error("Fail to send startContainer notification to testlistener", ex);
 				}
 			}
 		}
@@ -1496,49 +1328,22 @@ public class RunnerListenersManager extends DefaultReporterImpl implements JSyst
 
 	@Override
 	public void endContainer(JTestContainer container) {
-		if (container instanceof Scenario && ((Scenario) container).isScenarioAsTest()) {
-			inScenarioAsTest = false;
-			lastTestLevelName = null;
-			fireEndTest(currentTest, blockReporters);
-			inTest = false;
-			updateCurrentTest(null);
-			if (System.currentTimeMillis() - lastGC > 60000) {
-				System.gc();
-				lastGC = System.currentTimeMillis();
-			}
-		} else if (!inScenarioAsTest) {
-			for (int i = 0; i < listeners.size(); i++) {
-				Object currentObject = listeners.get(i);
-				if (currentObject instanceof ExtendTestListener) {
-					ExtendTestListener tl = (ExtendTestListener) currentObject;
-					try {
-						tl.endContainer(container);
-					} catch (Throwable ex) {
-						log.error("Fail to send endContainer notification to testlistener", ex);
-					}
+		for (int i = 0; i < listeners.size(); i++) {
+			Object currentObject = listeners.get(i);
+			if (currentObject instanceof ExtendTestListener) {
+				ExtendTestListener tl = (ExtendTestListener) currentObject;
+				try {
+					tl.endContainer(container);
+				} catch (Throwable ex) {
+					log.error("Fail to send endContainer notification to testlistener", ex);
 				}
 			}
 		}
-
 		setLastTestFail(false);
 	}
 
 	@Override
 	public void startLoop(AntForLoop loop, int count) {
-		if(inScenarioAsTest) {
-			inLoop++;
-			for (int i = 0; i < listeners.size(); i++) {
-				Object currentObject = listeners.get(i);
-				if (currentObject instanceof LevelHtmlTestReporter) {
-					try {
-						((ExtendLevelTestReporter) currentObject).startLevel("Loop Number: " + count + ", " + loop.getLoopParamName() +"="+ loop.getLoopValue(count), Reporter.CurrentPlace);
-					} catch (Throwable ex) {
-						log.error("Fail to report", ex);
-					}
-				}
-			}
-			return;
-		}
 		for (int i = 0; i < listeners.size(); i++) {
 			Object currentObject = listeners.get(i);
 			if (currentObject instanceof ExtendTestListener) {
@@ -1554,20 +1359,6 @@ public class RunnerListenersManager extends DefaultReporterImpl implements JSyst
 
 	@Override
 	public void endLoop(AntForLoop loop, int count) {
-		if(inScenarioAsTest) {
-			inLoop--;
-			for (int i = 0; i < listeners.size(); i++) {
-				Object currentObject = listeners.get(i);
-				if (currentObject instanceof LevelHtmlTestReporter) {
-					try {
-						((ExtendLevelTestReporter) currentObject).stopLevel();
-					} catch (Throwable ex) {
-						log.error("Fail to report", ex);
-					}
-				}
-			}
-			return;
-		}
 		for (int i = 0; i < listeners.size(); i++) {
 			Object currentObject = listeners.get(i);
 			if (currentObject instanceof ExtendTestListener) {
@@ -1587,11 +1378,7 @@ public class RunnerListenersManager extends DefaultReporterImpl implements JSyst
 			Object currentObject = listeners.get(i);
 			if (currentObject instanceof ExtendLevelTestReporter) {
 				try {
-					if (lastTestLevelName == null && inLoop==0) {
-						((ExtendLevelTestReporter) currentObject).closeAllLevels();
-					} else if(inLoop==0){
-						((ExtendLevelTestReporter) currentObject).closeLevelsUpTo(lastTestLevelName, false);
-					}
+					((ExtendLevelTestReporter) currentObject).closeAllLevels();
 				} catch (Throwable ex) {
 					log.error("Fail to close all levels", ex);
 				}

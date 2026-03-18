@@ -36,7 +36,7 @@ public class ScenarioTreeNode implements TreeNode {
 	}
 
 	public int getChildCount() {
-		if (isJTestContainer() && !ScenarioHelpers.isScenarioAsTestAndNotRoot(getTest())) {
+		if (isJTestContainer()) {
 			return ((JTestContainer) getTest()).getRootTests().size();
 		}
 		return 0;
@@ -85,7 +85,7 @@ public class ScenarioTreeNode implements TreeNode {
 	}
 
 	public boolean isLeaf() {
-		return (!isJTestContainer() || ScenarioHelpers.isScenarioAsTestAndNotRoot(getTest()));
+		return !isJTestContainer();
 	}
 
 	public Enumeration<? extends TreeNode> children() {

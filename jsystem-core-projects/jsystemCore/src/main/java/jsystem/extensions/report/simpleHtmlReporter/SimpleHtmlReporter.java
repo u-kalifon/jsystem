@@ -893,16 +893,12 @@ public class SimpleHtmlReporter implements ExtendLevelTestReporter, ExtendTestLi
 
 	@Override
 	public void startLoop(AntForLoop loop, int count) {
-		// TODO: ignore for now
-		// TODO: This should start a container.
-		// TODO: Containers should be hierarchical so that when stopping a container, all its children are stopped too.
+		// No need to support this because startContainer() already does what we need
 	}
 
 	@Override
 	public void endLoop(AntForLoop loop, int count) {
-		// TODO: ignore for now
-		// TODO: This should stop a container.
-		// TODO: Containers should be hierarchical so that when stopping a container, all its children are stopped too.
+		// No need to support this because endContainer() already does what we need
 	}
 
 	@Override

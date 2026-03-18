@@ -858,13 +858,6 @@ public class JSystemTask extends Task {
 				ListenerstManager.getInstance().report(message);
 	    		return;		
 			}
-			
-			if (ScenarioHelpers.shouldTestBeSkipped()){
-				String message = String.format("%s - One of the Parent scenarios is executed as a test and One of the previous steps (internal tests or scenarios) failed. Skipping test execution. ", testName); 
-				log(message);
-				ListenerstManager.getInstance().report(message);
-	    		return;				
-			}
 			if (DistributedExecutionHelper.doRemoteExecution(uuid)){
 				DistributedRunExecutor executor = DistributedExecutionHelper.getPopulatedExecutor(uuid);
 				executor.execute();
@@ -930,8 +923,6 @@ public class JSystemTask extends Task {
     	if (ScenarioHelpers.wasCurrentScenarioSignaledToAbort()){
     		ScenarioHelpers.setScenarioAbortFlag(getParentUUID(), true);
     	}
-    	
-    	ScenarioHelpers.updateFailFlag();
     }
 
     /**

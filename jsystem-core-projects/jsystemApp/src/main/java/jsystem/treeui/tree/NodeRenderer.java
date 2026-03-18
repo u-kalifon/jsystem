@@ -82,9 +82,6 @@ public class NodeRenderer implements TreeCellRenderer {
 		} else if (value instanceof TestNode) {
 			panel.check.setVisible(true);
 			panel.label.setIcon(ImageCenter.getInstance().getImage(ImageCenter.ICON_TEST));
-		} else if (value instanceof ScenarioAsATestNode) {
-			panel.check.setVisible(true);
-			panel.label.setIcon(ImageCenter.getInstance().getImage(ImageCenter.ICON_SCENARIO_AS_TEST));
 		} else if (value instanceof ScenarioNode) {
 			panel.check.setVisible(true);
 			panel.label.setIcon(ImageCenter.getInstance().getImage(ImageCenter.ICON_SCENARIO));
