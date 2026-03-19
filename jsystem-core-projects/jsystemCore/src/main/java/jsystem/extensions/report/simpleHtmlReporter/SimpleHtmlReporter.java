@@ -111,6 +111,12 @@ public class SimpleHtmlReporter implements ExtendLevelTestReporter, ExtendTestLi
 				copyTemplateFile("table.html", tablePath);
 			}
 
+			// Copy table.html from template if it doesn't exist
+			Path chartsPath = logDirPath.resolve("charts.html");
+			if (!Files.exists(chartsPath)) {
+				copyTemplateFile("charts.html", chartsPath);
+			}
+
 			// Copy properties.js from template if it doesn't exist
 			Path propertiesPath = logDirPath.resolve("properties.js");
 			if (!Files.exists(propertiesPath)) {
@@ -650,6 +656,7 @@ public class SimpleHtmlReporter implements ExtendLevelTestReporter, ExtendTestLi
 		currentStep = null;
 
 		closeAllLevels();
+		containerStack.peek().setStatus(Status.SUCCESS);	// Will update RUNNING -> SUCCESS status if there was no update during the run (if noone logged anything else)
 		Container oldContainer = containerStack.pop();		// will update the status of the containing container and log level
 
 		// when all containers are finished, re-serialize the scenario report and write it to disk
@@ -745,7 +752,7 @@ public class SimpleHtmlReporter implements ExtendLevelTestReporter, ExtendTestLi
 			// Create a new ExecutionScenario and add it to the first machine
 			Execution.ExecutionScenario newScenario = new Execution.ExecutionScenario(scenarioName, sutFile, timestamp, uid);
 			if (!execution.getMachines().isEmpty()) {
-				execution.getMachines().get(0).getChildren().add(newScenario);
+				execution.getMachines().get(0).getChildren().add(newScenario);	// FIXME: we should add the scenario in the beginning of the list
 			} else {
 				log.error("No machines found in execution file");
 				return;
@@ -931,7 +938,8 @@ public class SimpleHtmlReporter implements ExtendLevelTestReporter, ExtendTestLi
 		appendReportElementToScenarioJs(reportEntry);
 
 		// update the statuses of the current step, the current log level, and the current container
-		currentStep.setStatus(status);	// will only update if it's more severe
+		if (currentStep != null)
+			currentStep.setStatus(status);	// will only update if it's more severe
 		containerStack.peek().setStatus(status);	// will only update if it's more severe
 	}
 

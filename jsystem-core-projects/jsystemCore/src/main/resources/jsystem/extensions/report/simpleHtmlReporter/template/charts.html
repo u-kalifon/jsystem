@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="Itai Agmon">
+
+    <title>Under Construction - Charts</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="css/status_colors.css" rel="stylesheet">
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="css/dashboard.css" rel="stylesheet">
+
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <style>
+        .charts-content {
+            text-align: center;
+            padding: 3rem 2rem;
+        }
+        .charts-content h1 {
+            font-size: 2rem;
+            font-weight: 300;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            margin-bottom: 1.5rem;
+            color: #e94560;
+        }
+        .charts-content .message {
+            font-size: 1.5rem;
+            font-weight: 200;
+            letter-spacing: 0.15em;
+            opacity: 0.9;
+        }
+        .charts-content .divider {
+            width: 80px;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #e94560, transparent);
+            margin: 1.5rem auto;
+        }
+        .charts-row {
+            display: flex;
+            gap: 2rem;
+            justify-content: center;
+            align-items: flex-end;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+        .chart-icon {
+            width: 100px;
+            height: 80px;
+            opacity: 0.85;
+            transition: transform 0.2s ease;
+        }
+        .chart-icon:hover {
+            transform: scale(1.05);
+            opacity: 1;
+        }
+        .chart-icon line, .chart-icon rect, .chart-icon path {
+            stroke: #e94560;
+            fill: none;
+            stroke-width: 2;
+        }
+        .chart-icon .fill {
+            fill: #e94560;
+            fill-opacity: 0.3;
+            stroke: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- START NAVIGATION BLOCK -->
+    <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="index.html">Test Execution Report</a>
+            </div>
+            <div class="vertical-line"></div>
+            <div class="navbar-collapse collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li><a href="index.html">Dashboard</a></li>
+                    <li><a href="table.html">Execution Table</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!-- END NAVIGATION BLOCK -->
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-3 col-md-2 sidebar">
+                <ul class="nav nav-sidebar">
+                    <li><a href="index.html">Overview</a></li>
+                    <li class="active"><a href="charts.html">Charts</a></li>
+                </ul>
+            </div>
+            <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+                <h1 class="page-header">Charts</h1>
+                <div class="charts-content">
+                    <div class="charts-row" aria-hidden="true">
+                        <!-- Bar chart -->
+                        <svg class="chart-icon" viewBox="0 0 80 60" xmlns="http://www.w3.org/2000/svg">
+                            <rect x="10" y="35" width="12" height="20" class="fill"/>
+                            <rect x="10" y="35" width="12" height="20" fill="none" stroke="#e94560" stroke-width="2"/>
+                            <rect x="26" y="25" width="12" height="30" class="fill"/>
+                            <rect x="26" y="25" width="12" height="30" fill="none" stroke="#e94560" stroke-width="2"/>
+                            <rect x="42" y="15" width="12" height="40" class="fill"/>
+                            <rect x="42" y="15" width="12" height="40" fill="none" stroke="#e94560" stroke-width="2"/>
+                            <rect x="58" y="30" width="12" height="25" class="fill"/>
+                            <rect x="58" y="30" width="12" height="25" fill="none" stroke="#e94560" stroke-width="2"/>
+                            <line x1="8" y1="55" x2="72" y2="55" stroke="#e94560" stroke-width="1.5"/>
+                        </svg>
+                        <!-- Line chart -->
+                        <svg class="chart-icon" viewBox="0 0 80 60" xmlns="http://www.w3.org/2000/svg">
+                            <polyline points="10,45 22,38 34,42 46,22 58,28 70,15" fill="none" stroke="#e94560" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <polygon points="10,45 22,38 34,42 46,22 58,28 70,15 70,60 10,60" class="fill"/>
+                            <line x1="10" y1="55" x2="70" y2="55" stroke="#e94560" stroke-width="1.5"/>
+                            <line x1="10" y1="10" x2="10" y2="55" stroke="#e94560" stroke-width="1.5"/>
+                        </svg>
+                        <!-- Pie chart -->
+                        <svg class="chart-icon" viewBox="0 0 80 60" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M40,15 L40,40 A25,25 0 0 1 18,32 Z" class="fill"/>
+                            <path d="M40,15 L40,40 A25,25 0 0 1 18,32 Z" fill="none" stroke="#e94560" stroke-width="2"/>
+                            <path d="M40,40 L18,32 A25,25 0 0 1 40,15 Z" fill="none" stroke="#e94560" stroke-width="2"/>
+                            <path d="M40,40 L40,15 A25,25 0 0 0 62,32 Z" fill="none" stroke="#e94560" stroke-width="2"/>
+                            <circle cx="40" cy="32" r="25" fill="none" stroke="#e94560" stroke-width="2"/>
+                        </svg>
+                    </div>
+                    <h1>Under Construction</h1>
+                    <div class="divider"></div>
+                    <p class="message">Coming soon...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap core JavaScript -->
+    <script src="js/jquery.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/docs.min.js"></script>
+</body>
+</html>
