@@ -7,9 +7,9 @@
 /* Used in the 'execution tree' ,'test details' */
 .totalExecuted { color:  #FFFFFF  !important; font-weight: normal;}
 .s_success_text { color: #000000 !important; font-weight: normal;}
-.s_error_text { color: #EE0000 !important; font-weight: bold;}
-.s_failure_text { color: #DD0000 !important;  font-weight: bold;}
-.s_warning_text { color: #FFAA33 !important; font-weight: bold;}
+.s_error_text { color: #EE0000 !important; font-weight: normal;}
+.s_failure_text { color: #DD0000 !important;  font-weight: normal;}
+.s_warning_text { color: #FFAA33 !important; font-weight: normal;}
 
 /* Used in the detailsDiv (scenario.html) */
 .s_success_step { color: #0000FF !important; font-weight: bold;}
@@ -25,6 +25,6 @@
 /* Inner content styling - prevents inheritance from status classes */
 .innerContent { 
     font-weight: normal !important; 
-    color: #000000 !important; 
+    /* color: #000000 !important;  */
     font-size: small !important;
 }

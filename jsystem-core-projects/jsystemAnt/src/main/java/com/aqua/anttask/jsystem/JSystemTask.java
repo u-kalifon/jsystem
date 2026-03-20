@@ -1878,8 +1878,7 @@ public class JSystemTask extends Task {
                     + (result.timedOut ? " (timeout)" : "")
                     + (result.crashed ? " (crashed)" : ""), getLocation());
             } else {
-                ListenerstManager.getInstance().report("Failure in "+name,false);
-            	log(name + " FAILED"
+                log(name + " FAILED"
                     + (result.timedOut ? " (timeout)" : "")
                     + (result.crashed ? " (crashed)" : ""), Project.MSG_ERR);
                 if (errorOccurredHere && test.getErrorProperty() != null) {

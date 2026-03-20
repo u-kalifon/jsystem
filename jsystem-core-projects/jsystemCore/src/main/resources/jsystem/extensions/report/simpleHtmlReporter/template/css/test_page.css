@@ -1,3 +1,48 @@
+/* Fixed top banner height; general_page #page sets padding:0 on body */
+:root {
+	--scenario-top-banner-height: 50px;
+}
+
+#page {
+	padding-top: 50px;
+	padding-top: var(--scenario-top-banner-height);
+}
+
+.scenario-top-banner {
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	height: 50px;
+	height: var(--scenario-top-banner-height);
+	z-index: 1000;
+	box-sizing: border-box;
+	background-color: #222;
+	border-bottom: 1px solid #080808;
+}
+
+.scenario-top-banner-inner {
+	height: 100%;
+	padding: 0 15px;
+	display: flex;
+	align-items: center;
+}
+
+.scenario-top-banner-brand {
+	color: #fff;
+	font-size: 18px;
+	line-height: 1;
+	text-decoration: none;
+	font-weight: normal;
+}
+
+.scenario-top-banner-brand:hover,
+.scenario-top-banner-brand:focus {
+	color: #fff;
+	text-decoration: none;
+	opacity: 0.9;
+}
+
 .timestamp{
     display: inline-block;
     width: 100px;
@@ -17,7 +62,9 @@
 }
 
 #detailsDiv .step {
-    color: #4E6CA3 !important;
+    display: inline-block;
+    margin-top: 0.33em; /* fallback where lh is unsupported */
+    margin-top: 0.33lh;
     font-weight: bold;
     cursor: pointer;
 }
@@ -74,10 +121,6 @@
     width: 70%; 
     font-size: small;
     border-collapse: collapse;
-}
-
-.smallTbl td, .smallTbl th {
-    padding: 2px 5px;
 }
 
 #detailsDiv .smallTbl div {
