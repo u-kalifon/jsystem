@@ -1,3 +1,3 @@
 var properties = {
-  "JSystem version": "6.1.13-SNAPSHOT"
+  "JSystem version": "6.2.0-SNAPSHOT"
 };
