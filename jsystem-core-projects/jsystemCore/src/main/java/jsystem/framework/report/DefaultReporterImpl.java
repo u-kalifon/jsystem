@@ -102,10 +102,6 @@ public abstract class DefaultReporterImpl implements Reporter {
 	public void report(String title, String message, int status, boolean bold) {
 		report(title, message, status, bold, false, false, false);
 	}
-
-	public void report(String title, String message, int status, boolean bold, boolean html, boolean step, boolean link) {
-		report(title, message, status, bold, html, step, link, System.currentTimeMillis());
-	}
 	
 	public void report(String title, ReportAttribute attribute){
 		report(title,null, Reporter.PASS, attribute);
@@ -250,7 +246,7 @@ public abstract class DefaultReporterImpl implements Reporter {
 			}
 		} else {
 			report(report.getTitle(), report.getMessage(), report.getStatus(), report.isBold(), report.isHtml(), report
-					.isStep(), report.isLink(), report.getTime());
+					.isStep(), report.isLink());
 		}		
 	}
 	

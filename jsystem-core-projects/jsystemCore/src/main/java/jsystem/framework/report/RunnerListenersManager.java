@@ -12,7 +12,6 @@ import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Properties;
 import java.util.StringTokenizer;
@@ -23,7 +22,6 @@ import org.slf4j.LoggerFactory;
 
 import jsystem.extensions.report.difido.HtmlReporter;
 import jsystem.extensions.report.html.ExtendLevelTestReporter;
-import jsystem.extensions.report.html.HtmlTestReporter;
 import jsystem.extensions.report.html.RepeatTestIndex;
 import jsystem.extensions.report.junit.JUnitReporter;
 import jsystem.extensions.report.xml.XmlReporter;
@@ -51,7 +49,6 @@ import jsystem.framework.system.TName;
 import jsystem.framework.system.TestNameServer;
 import jsystem.runner.ErrorLevel;
 import jsystem.runner.loader.LoadersManager;
-import jsystem.utils.DateUtils;
 import jsystem.utils.StackTraceUtil;
 import jsystem.utils.StringUtils;
 import junit.framework.AssertionFailedError;
@@ -83,8 +80,6 @@ public class RunnerListenersManager extends DefaultReporterImpl implements JSyst
 
 	boolean silent = false;
 
-	boolean propertiesTimeStampFlag;
-
 	long startTime = 0;
 
 	long endTime = 0;
@@ -99,8 +94,6 @@ public class RunnerListenersManager extends DefaultReporterImpl implements JSyst
 	
 	//Will be set to true if in some point one test had warning.
 	public static boolean hadWarning = false;
-
-	boolean addTimeStamp = true;
 
 	long testsCount = 0;
 
@@ -178,8 +171,6 @@ public class RunnerListenersManager extends DefaultReporterImpl implements JSyst
 
 	private RunnerListenersManager() {
 		testIndex = new RepeatTestIndex();
-		String addTimeStampStatus = JSystemProperties.getInstance().getPreference(FrameworkOptions.HTML_ADD_TIME);
-		propertiesTimeStampFlag = addTimeStampStatus == null || addTimeStampStatus.toLowerCase().equals("true");
 		String reporters = JSystemProperties.getInstance().getPreference(FrameworkOptions.REPORTERS_CLASSES);
 		if (reporters == null) {
 			reporters = HtmlReporter.class.getName() + ";" + SystemOutTestReporter.class.getName() + ";"
@@ -238,7 +229,6 @@ public class RunnerListenersManager extends DefaultReporterImpl implements JSyst
 		objectStream.writeObject(isSilent());
 		objectStream.writeObject(startTime);
 		objectStream.writeObject(lastTestFail);
-		objectStream.writeObject(addTimeStamp);
 		objectStream.writeObject(testIndex);
 		objectStream.writeObject(testClassName);
 		objectStream.writeObject(blockReporters);
@@ -266,7 +256,6 @@ public class RunnerListenersManager extends DefaultReporterImpl implements JSyst
 		setSilent((Boolean) objectStream.readObject());
 		startTime = (Long) objectStream.readObject();
 		lastTestFail = (Boolean) objectStream.readObject();
-		addTimeStamp = (Boolean) objectStream.readObject();
 		testIndex = (RepeatTestIndex) objectStream.readObject();
 		testClassName = (String) objectStream.readObject();
 		inTest = false;
@@ -596,7 +585,6 @@ public class RunnerListenersManager extends DefaultReporterImpl implements JSyst
 		runningTests.addElement(test);
 		testsCount++;
 		setSilent(false);
-		addTimeStamp = propertiesTimeStampFlag;
 		setLastTestFail(false);
 		TName tname = TestNameServer.getInstance().getTestName(test);
 		int count = testIndex.getTestIndex(tname.getFullName());
@@ -774,10 +762,6 @@ public class RunnerListenersManager extends DefaultReporterImpl implements JSyst
 
 	public boolean isSilent() {
 		return silent;
-	}
-
-	public void setTimeStamp(boolean enable) {
-		addTimeStamp = enable;
 	}
 
 	/*
@@ -1052,8 +1036,9 @@ public class RunnerListenersManager extends DefaultReporterImpl implements JSyst
 		}
 	}
 
+	@Override
 	public synchronized void report(String title, String message, int status, boolean bold, boolean html, boolean step,
-			boolean link, long time) {
+			boolean link) {
 		if (isSilent()) {
 			return;
 		}
@@ -1071,7 +1056,7 @@ public class RunnerListenersManager extends DefaultReporterImpl implements JSyst
 			newReportElementInstance.setStep(step);
 			newReportElementInstance.setLink(link);
 			newReportElementInstance.setOriginator(Thread.currentThread().getName());
-			newReportElementInstance.setTime(time);
+			newReportElementInstance.setTime(System.currentTimeMillis());
 			reportsBuffer.add(newReportElementInstance);
 			if (!printBufferdReportsInRunTime) {
 				return;
@@ -1139,33 +1124,14 @@ public class RunnerListenersManager extends DefaultReporterImpl implements JSyst
 				}
 			}
 		} else if (step) {
-			report(title, null, Reporter.PASS, true, false, false, false, time);
+			report(title, null, Reporter.PASS, true, false, false, false);
 			if (currentTest != null && currentTest instanceof SystemTest) {
 				((SystemTest) currentTest).addExecutedSteps(title);
 			}
 		} else {
-			String timeStamp = "";
-			if (addTimeStamp) {
-				if (date != null) {
-					timeStamp = date + ": ";
-				} else if (time > 0) {
-					SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
-					timeStamp = DateUtils.getDate(time, sdf) + ": ";
-				}
-				title = timeStamp + title;
-
-			}
 			for (int i = 0; i < listeners.size(); i++) {
 				Object currentObject = listeners.get(i);
 				if (currentObject instanceof ExtendTestReporter) {
-					if (currentObject instanceof HtmlTestReporter) { // added to
-																		// support
-																		// CSS
-																		// on
-																		// time
-																		// stamps
-						((HtmlTestReporter) currentObject).setTimeStampToReplace(timeStamp);
-					}
 					try {
 						((ExtendTestReporter) currentObject).report(title, message, status, bold, false, false);
 					} catch (Throwable ex) {

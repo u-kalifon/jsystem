@@ -199,16 +199,6 @@ public enum FrameworkOptions {
 			new String[] { "java.lang.Thread" }),
 
 	/**
-	 * Add time stamp to html report
-	 */
-	HTML_ADD_TIME(
-			"reporter.addtime",
-			"Add time stamp to the html report",
-			DataType.BOOLEAN,
-			true,
-			true),
-
-	/**
 	 * List of the reporters classes
 	 */
 	REPORTERS_CLASSES(

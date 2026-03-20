@@ -32,7 +32,6 @@ import jsystem.framework.report.TestInfo;
 import jsystem.framework.scenario.JTestContainer;
 import jsystem.framework.scenario.flow_control.AntForLoop;
 import jsystem.framework.sut.SutFactory;
-import jsystem.utils.BrowserLauncher;
 import junit.framework.AssertionFailedError;
 import junit.framework.Test;
 
@@ -69,15 +68,6 @@ public class SimpleHtmlReporter implements ExtendLevelTestReporter, ExtendTestLi
 
 	// this represents the scenario report (will be writen to scenario.js in the end of the run)
 	private TestReportDto testReportDto = null;
-
-	@Override
-	public void initReporterManager() throws IOException {
-		BrowserLauncher.openURL(getIndexFile().getAbsolutePath());
-	}
-
-	private File getIndexFile() {
-		return new File(getLogDirectory(), "index.html");
-	}
 
 	public SimpleHtmlReporter() {
 		init();
@@ -752,7 +742,7 @@ public class SimpleHtmlReporter implements ExtendLevelTestReporter, ExtendTestLi
 			// Create a new ExecutionScenario and add it to the first machine
 			Execution.ExecutionScenario newScenario = new Execution.ExecutionScenario(scenarioName, sutFile, timestamp, uid);
 			if (!execution.getMachines().isEmpty()) {
-				execution.getMachines().get(0).getChildren().add(newScenario);	// FIXME: we should add the scenario in the beginning of the list
+				execution.getMachines().get(0).getChildren().add(0, newScenario);
 			} else {
 				log.error("No machines found in execution file");
 				return;
@@ -809,8 +799,6 @@ public class SimpleHtmlReporter implements ExtendLevelTestReporter, ExtendTestLi
 
 		// FIXME: levels should have a log line and not just a level name
 
-		// FIXME 2: avoid code duplication with the overloaded derivative with place = 0 (CurrentPlace) and place = 1 (MainFrame)
-
 		log.debug("Starting level: " + levelName + " at place: " + place.name());	// place = CurrentPlace or MainFrame
 		if (containerStack.isEmpty()) {
 			log.error("Cannot start level: no container is active");
@@ -825,16 +813,14 @@ public class SimpleHtmlReporter implements ExtendLevelTestReporter, ExtendTestLi
 
 	@Override
 	public void startLevel(String levelName, int place) throws IOException {
-		log.debug("Starting level: " + levelName + " at place: " + place);
-		if (containerStack.isEmpty()) {
-			log.error("Cannot start level: no container is active");
-			return;
+		jsystem.framework.report.Reporter.EnumReportLevel level = jsystem.framework.report.Reporter.EnumReportLevel.CurrentPlace;
+		for (var e : jsystem.framework.report.Reporter.EnumReportLevel.values()) {
+			if (e.value() == place) {
+				level = e;
+				break;
+			}
 		}
-		containerStack.peek().startLevel(levelName);
-		ReportElementDto levelStart = ReportElementDto.newLogLevelStart(LocalDateTime.now().format(DATE_TIME_FORMATTER), 
-			levelName);		// FIXME: we want to report a line, not the level name
-		testReportDto.getReportElements().add(levelStart);
-		appendReportElementToScenarioJs(levelStart);
+		startLevel(levelName, level);
 	}
 
 	@Override
@@ -945,43 +931,17 @@ public class SimpleHtmlReporter implements ExtendLevelTestReporter, ExtendTestLi
 
 	@Override
 	public void addWarning(Test test) {
-		// FIXME: get rid of this method
-		report("", "WARNING added by call to addWarning()", 2, false, false, false);
+		// JSystem adds this to the TestListener (JUnit API) interface, but we should instead use the report() method
 	}
 
 	@Override
 	public void addFailure(Test test, AssertionFailedError error) {
-		// FIXME: understand how AssertionFailedError is used in the original JSystem, and get rid of this method
-		if (currentStep != null) {
-			currentStep.setStatus(Status.FAILURE);
-			containerStack.peek().setStatus(Status.FAILURE);
-			ReportElementDto errorReport = ReportElementDto.newFailureReport(
-				LocalDateTime.now().format(DATE_TIME_FORMATTER), error.getMessage(), "");
-			// TODO: make sure the stack is reported also
-
-			testReportDto.getReportElements().add(errorReport);
-			appendReportElementToScenarioJs(errorReport);
-			}
+		// This is coming from TestListener (the JUnit API interface) but we should instead use the report() method
 	}
 
 	@Override
 	public void addError(Test test, Throwable error) {
-		// FIXME: understand the differences between addFailure() and this, and get rid of this method
-		if (currentStep != null) {
-			currentStep.setStatus(Status.ERROR);
-			containerStack.peek().setStatus(Status.ERROR);
-			ReportElementDto errorReport = ReportElementDto.newErrorReport(
-				LocalDateTime.now().format(DATE_TIME_FORMATTER), error.getMessage(), "");
-			// TODO: make sure the stack is reported also
-
-			testReportDto.getReportElements().add(errorReport);
-			appendReportElementToScenarioJs(errorReport);
-		}
-	}
-
-	@Override
-	public boolean asUI() {
-		return true;		// TODO: what is the meaning of this? Preferrably this should be removed from the code
+		// This is coming from TestListener (the JUnit API interface) but we should instead use the report() method
 	}
 
 	@Override

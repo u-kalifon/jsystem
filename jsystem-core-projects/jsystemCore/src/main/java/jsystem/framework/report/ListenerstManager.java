@@ -50,8 +50,6 @@ public class ListenerstManager extends DefaultReporterImpl implements
 
 	boolean silent = false;
 
-	boolean timeStampEnabled = true;
-
 	private static boolean lastTestFail = false;
 
 	boolean isPause = false;
@@ -272,11 +270,6 @@ public class ListenerstManager extends DefaultReporterImpl implements
 
 	public boolean isSilent() {
 		return silent;
-	}
-
-	public void setTimeStamp(boolean enable) {
-		timeStampEnabled = enable;
-		remoteRunner.setTimeStamp(enable);
 	}
 
 	/*
@@ -503,8 +496,9 @@ public class ListenerstManager extends DefaultReporterImpl implements
 		}
 	}
 
+	@Override
 	public synchronized void report(String title, String message, int status,
-			boolean bold, boolean html, boolean step, boolean link, long time) {
+			boolean bold, boolean html, boolean step, boolean link) {
 		checkExecutionStatus();
 		if (isSilent()) {
 			return;
@@ -523,14 +517,13 @@ public class ListenerstManager extends DefaultReporterImpl implements
 			currentReportElement.setLink(link);
 			currentReportElement
 					.setOriginator(Thread.currentThread().getName());
-			currentReportElement.setTime(time);
+			currentReportElement.setTime(System.currentTimeMillis());
 			reportsBuffer.add(currentReportElement);
 			if (!printBufferdReportsInRunTime) {
 				return;
 			}
 		}
-		remoteRunner.report(title, String.valueOf(message), status, bold, html,
-				step, link, time);
+		remoteRunner.report(title, String.valueOf(message), status, bold, html, step, link);
 		if (status == Reporter.FAIL && !isFailToPass() && !isFailToWarning() && !isSilent()) {
 			if (failDebug) {
 				writeToDebugFile("Test was set to fail from report");

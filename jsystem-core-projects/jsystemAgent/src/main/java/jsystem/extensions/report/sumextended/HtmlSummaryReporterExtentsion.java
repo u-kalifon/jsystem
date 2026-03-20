@@ -247,24 +247,6 @@ public class HtmlSummaryReporterExtentsion implements TestReporter, TestListener
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see jsystem.framework.launcher.report.TestReporter#initReporterManager()
-	 */
-	public void initReporterManager() throws IOException {
-
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see jsystem.framework.launcher.report.TestReporter#asUI()
-	 */
-	public boolean asUI() {
-		return false;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
 	 * @see jsystem.framework.launcher.report.TestReporter#report(java.lang.String,
 	 *      java.lang.String, boolean, boolean)
 	 */

@@ -3,21 +3,12 @@
  */
 package jsystem.framework.report;
 
-import java.io.IOException;
-
 /**
  * Print the reporting to the standard output.
  * 
  * @author Guy Arieli
  */
 public class SystemOutTestReporter implements TestReporter {
-	public void initReporterManager() throws IOException {
-	}
-
-	public boolean asUI() {
-		return false;
-	}
-
 	public void report(String title, String message, boolean isPass, boolean bold) {
 		if (isPass) {
 			System.out.println("\n" + title);

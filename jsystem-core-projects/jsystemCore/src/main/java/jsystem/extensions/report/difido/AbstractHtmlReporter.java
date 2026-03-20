@@ -94,11 +94,6 @@ public abstract class AbstractHtmlReporter implements ExtendLevelTestReporter, E
 	}
 
 	@Override
-	public boolean asUI() {
-		return true;
-	}
-
-	@Override
 	public void report(String title, String message, boolean isPass, boolean bold) {
 		report(title, message, isPass ? 0 : 1, bold, false, false);
 	}

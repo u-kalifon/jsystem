@@ -27,7 +27,6 @@ import jsystem.framework.scenario.JTestContainer;
 import jsystem.framework.scenario.ScenariosManager;
 import jsystem.framework.scenario.flow_control.AntForLoop;
 import jsystem.framework.sut.SutFactory;
-import jsystem.utils.BrowserLauncher;
 import jsystem.utils.DateUtils;
 import jsystem.utils.FileUtils;
 import jsystem.utils.StringUtils;
@@ -70,8 +69,6 @@ public class HtmlTestReporter implements ExtendTestReporter,
 	private String reportDir;
 
 	boolean isTemp = false;
-	
-	private String timeStampToReplace = "";
 
 	/**
 	 * If set to true (by the html.zip.disable=true in the jsystem.properties
@@ -205,16 +202,6 @@ public class HtmlTestReporter implements ExtendTestReporter,
 		}
 	}
 	
-	public void initReporterManager() throws IOException {
-
-		BrowserLauncher.openURL(getIndexFile().getAbsolutePath());
-
-	}
-
-	public boolean asUI() {
-		return true;
-	}
-
 	public void report(String title, String message, boolean isPass,boolean bold, boolean ignore) {
 		try {
 			int status;
@@ -386,8 +373,6 @@ public class HtmlTestReporter implements ExtendTestReporter,
 				lastTestStatus = Reporter.WARNING;
 			}
 			tr = new TestReport(title, message, status, bold, false, null);
-			tr.setTime(timeStampToReplace);
-			timeStampToReplace = "";
 			if (html) {
 				tr.setHtmlMessage(true);
 			}
@@ -527,9 +512,6 @@ public class HtmlTestReporter implements ExtendTestReporter,
 		writer.setContainerProperties(ancestorLevel, key, value);
 	}
 
-	public void setTimeStampToReplace(String timeStampToReplace) {
-		this.timeStampToReplace = timeStampToReplace;
-	}
 }
 
 class ZipDeleteLogDirectory extends Thread {

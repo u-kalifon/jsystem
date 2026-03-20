@@ -18,7 +18,6 @@ import jsystem.framework.report.Summary;
 import jsystem.framework.report.TestInfo;
 import jsystem.framework.scenario.ScenariosManager;
 import jsystem.framework.sut.SutFactory;
-import jsystem.utils.BrowserLauncher;
 import jsystem.utils.DateUtils;
 
 import org.apache.commons.io.FileUtils;
@@ -43,15 +42,6 @@ public class HtmlReporter extends AbstractHtmlReporter {
 	private File logOld;
 
 	private int executedTests;
-
-	@Override
-	public void initReporterManager() throws IOException {
-		BrowserLauncher.openURL(getIndexFile().getAbsolutePath());
-	}
-
-	private File getIndexFile() {
-		return new File(getLogDirectory(), "current" + File.separator + "index.html");
-	}
 
 	@Override
 	public void init() {

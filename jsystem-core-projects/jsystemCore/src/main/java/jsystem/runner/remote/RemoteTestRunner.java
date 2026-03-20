@@ -74,7 +74,7 @@ public class RemoteTestRunner extends DefaultReporterImpl implements ExtendTestL
 		M_SET_SILENT,
 		
 		/**
-		 * Set the reporter to be silent (<--)
+		 * Deprecated: ignored. Kept to preserve RemoteMessage ordinal values on the wire.
 		 */
 		M_SET_TIME_STAMP,
 
@@ -749,13 +749,6 @@ public class RemoteTestRunner extends DefaultReporterImpl implements ExtendTestL
 	public boolean isSilent() {
 		return silent;
 	}
-	
-	public void setTimeStamp(boolean enable) {
-		Message m = new Message();
-		m.setType(RemoteMessage.M_SET_TIME_STAMP);
-		m.addField(Boolean.toString(enable));
-		sendMessage(m);
-	}
 
 	public void saveFile(String fileName, byte[] content) {
 		Message m = new Message();
@@ -790,7 +783,8 @@ public class RemoteTestRunner extends DefaultReporterImpl implements ExtendTestL
 		sendMessage(m);
 	}
 	
-	public void report(String title, String message, int status, boolean bold, boolean html, boolean step, boolean link, long time) {
+	@Override
+	public void report(String title, String message, int status, boolean bold, boolean html, boolean step, boolean link) {
 		Message m = new Message();
 		m.setType(RemoteMessage.M_REPORT);
 		m.addField(title);
@@ -800,7 +794,6 @@ public class RemoteTestRunner extends DefaultReporterImpl implements ExtendTestL
 		m.addField(Boolean.toString(html));
 		m.addField(Boolean.toString(step));
 		m.addField(Boolean.toString(link));
-		m.addField(Long.toString(time));
 		sendMessage(m);
 	}
 

@@ -6,7 +6,6 @@ import il.co.topq.difido.model.remote.ExecutionDetails;
 import il.co.topq.difido.model.test.TestDetails;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import org.slf4j.Logger;
@@ -36,10 +35,6 @@ public class RemoteHtmlReporter extends AbstractHtmlReporter {
 
 	public RemoteHtmlReporter() {
 		super();
-	}
-
-	@Override
-	public void initReporterManager() throws IOException {
 	}
 
 	@Override

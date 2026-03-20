@@ -1,8 +1,6 @@
 package jsystem.extensions.report.junit;
 
 import java.io.File;
-import java.io.IOException;
-
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
@@ -448,15 +446,6 @@ public class JUnitReporter implements ExtendTestReporter, ExtendTestListener {
 
 	@Override
 	public void flush() throws Exception {
-	}
-
-	@Override
-	public void initReporterManager() throws IOException {
-	}
-
-	@Override
-	public boolean asUI() {
-		return false;
 	}
 
 	@Override

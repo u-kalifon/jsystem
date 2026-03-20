@@ -456,15 +456,6 @@ public class SurefireReporter implements ExtendTestReporter, ExtendTestListener 
 	}
 
 	@Override
-	public void initReporterManager() throws IOException {
-	}
-
-	@Override
-	public boolean asUI() {
-		return false;
-	}
-
-	@Override
 	public String getName() {
 		return null;
 	}

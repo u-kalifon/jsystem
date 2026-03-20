@@ -108,13 +108,6 @@ public class XmlReporter implements ExtendTestReporter, ExtendTestListener, SutL
 		start();
 	}
 
-	public void initReporterManager() throws IOException {
-	}
-
-	public boolean asUI() {
-		return false;
-	}
-
 	public synchronized void report(String title, String message, boolean isPass, boolean bold) {
 	}
 
