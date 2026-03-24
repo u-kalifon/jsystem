@@ -1110,6 +1110,12 @@ public class RunnerListenersManager extends DefaultReporterImpl implements JSyst
 					} catch (Throwable ex) {
 						log.error("Fail to addLink", ex);
 					}
+				} else if (currentObject instanceof TestReporter) {
+					try {
+						((TestReporter) currentObject).report(title, message, status, bold);
+					} catch (Throwable ex) {
+						log.error("Fail to addLink", ex);
+					}
 				}
 			}
 		} else if (html) {
@@ -1120,6 +1126,12 @@ public class RunnerListenersManager extends DefaultReporterImpl implements JSyst
 						((ExtendTestReporter) currentObject).report(title, message, status, false, true, false);
 					} catch (Throwable ex) {
 						log.error("Fail to reportHtml", ex);
+					}
+				} else if (currentObject instanceof TestReporter) {
+					try {
+						((TestReporter) currentObject).report(title, message, status, bold);
+					} catch (Throwable ex) {
+						log.error("Fail to report", ex);
 					}
 				}
 			}

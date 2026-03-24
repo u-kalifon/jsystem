@@ -211,6 +211,16 @@
 				<artifactId>commons-compress</artifactId>
 				<version>1.28.0</version>
 			</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-text</artifactId>
+			<version>1.15.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+			<version>3.20.0</version>
+		</dependency>
 			<dependency>
 				<groupId>il.co.top-q.difido</groupId>
 				<artifactId>difido-reports-common</artifactId>

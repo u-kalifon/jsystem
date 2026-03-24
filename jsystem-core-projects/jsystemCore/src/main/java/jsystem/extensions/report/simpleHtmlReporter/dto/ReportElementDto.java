@@ -64,22 +64,14 @@ public class ReportElementDto {
         return element;
     }
 
-    public static ReportElementDto newReportEntry(String timeStamp, String title, String message, Status status) {
+    public static ReportElementDto newReportEntry(String type, String timeStamp, String title, String message, Status status) {
         ReportElementDto element = new ReportElementDto();
-        element.setType("regular");
+        element.setType(type);      // "regular", "html", "lnk"
         element.setStatus(status);
         element.setTime(timeStamp);
         element.setTitle(title);
         element.setMessage(message);
         return element;
-    }
-
-    public static ReportElementDto newFailureReport(String timeStamp, String title, String message) {
-        return newReportEntry(timeStamp, title, message, Status.FAILURE);
-    }
-
-    public static ReportElementDto newErrorReport(String timeStamp, String title, String message) {
-        return newReportEntry(timeStamp, title, message, Status.ERROR);
     }
 
     public static ReportElementDto newChildScenarioStart(String timeStamp, String title, String userDoc) {

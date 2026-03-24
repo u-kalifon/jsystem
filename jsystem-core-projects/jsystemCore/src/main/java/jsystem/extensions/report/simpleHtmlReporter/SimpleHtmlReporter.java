@@ -18,6 +18,7 @@ import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.apache.commons.text.StringEscapeUtils;
 
 import jsystem.extensions.report.html.ExtendLevelTestReporter;
 import jsystem.extensions.report.simpleHtmlReporter.ContainerStack.Container;
@@ -896,13 +897,11 @@ public class SimpleHtmlReporter implements ExtendLevelTestReporter, ExtendTestLi
 
 	@Override
 	public void report(String title, final String message, boolean isPass, boolean bold) {
-		// FIXME: try to get rid of this overloaded method
 		report(title, message, isPass ? 0 : 1, bold, false, false);
 	}
 
 	@Override
 	public void report(String title, final String message, int statusCode, boolean bold) {
-		// FIXME: try to get rid of this overloaded method
 		report(title, message, statusCode, bold, false, false);
 	}
 
@@ -916,9 +915,14 @@ public class SimpleHtmlReporter implements ExtendLevelTestReporter, ExtendTestLi
 			// FIXME: handle the ERROR status
 		};
 
-		// TODO: support bold (used to be a step), html and link
+		if (bold && !html) {
+			// we give some support for "bold" by converting it to html
+			title = "<b>" + StringEscapeUtils.escapeHtml4(title) + "</b>";
+			html = true;
+		}
 
 		ReportElementDto reportEntry = ReportElementDto.newReportEntry(
+			html ? "html" : link ? "lnk" : "regular",		// support for "bold" removed (it used to be a "step")
 			LocalDateTime.now().format(DATE_TIME_FORMATTER), title, message, status);
 		testReportDto.getReportElements().add(reportEntry);
 		appendReportElementToScenarioJs(reportEntry);

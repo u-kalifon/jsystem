@@ -110,6 +110,8 @@
 				<include>*:commons-logging-api:*</include>
 				<include>*:commons-io:*</include>
 				<include>*:commons-compress:*</include>
+				<include>*:commons-text:*</include>
+				<include>*:commons-lang3:*</include>
 				<include>*:looks:*</include>
 				<include>*:tftp4java-server:*</include>
 				<include>*:tftp4java-client:*</include>

@@ -222,7 +222,7 @@ function setReportElements($container, reportElements) {
                 setImageElement($container,this);
                 break;
             case "html":
-                setRegularElement($container, this,true);
+                setRegularElement($container, this, true);
                 break;
             default:
                 setRegularElement($container, this ,false);
