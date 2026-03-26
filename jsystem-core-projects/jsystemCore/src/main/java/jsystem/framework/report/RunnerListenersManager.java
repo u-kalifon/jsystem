@@ -818,15 +818,15 @@ public class RunnerListenersManager extends DefaultReporterImpl implements JSyst
 		if (isSilent()) {
 			return;
 		}
-		try {
-
-			File file = new File(getCurrentTestFolder(), fileName);
-			file.getParentFile().mkdirs();
-			FileOutputStream out = new FileOutputStream(file);
-			out.write(content);
-			out.close();
-		} catch (IOException e) {
-			log.warn("Fail to save file", e);
+		for (int i = 0; i < listeners.size(); i++) {
+			Object currentObject = listeners.get(i);
+			if (currentObject instanceof ExtendTestReporter) {
+				try {
+					((ExtendTestReporter) currentObject).saveFile(fileName, content);
+				} catch (Throwable ex) {
+					log.error("Reporter " + currentObject.getClass().getSimpleName() + " failed to save file: " + fileName, ex);
+				}
+			}
 		}
 	}
 

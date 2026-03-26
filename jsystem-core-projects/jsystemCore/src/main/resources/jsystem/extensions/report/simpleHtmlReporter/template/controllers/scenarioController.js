@@ -140,6 +140,16 @@ function setImageElement($container, element){
     var $div = $("<div>");
 
     var $img = $("<img>").attr("src",element.message).addClass("example-image").attr("alt",element.title);
+    $img.on('load', function() {
+        var natW = this.naturalWidth;
+        var natH = this.naturalHeight;
+        if (natW < 600 && natH < 400) {
+            $(this).css({ width: natW + 'px', height: natH + 'px' });
+        } else {
+            var scale = Math.min(1, Math.max(600 / natW, 400 / natH));
+            $(this).css({ width: Math.round(natW * scale) + 'px', height: Math.round(natH * scale) + 'px' });
+        }
+    });
     var $a = $("<a>").attr("href",element.message).attr("data-lightbox","image-1").attr("title",element.title);
     $a.append($img);
     indent($a);

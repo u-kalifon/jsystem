@@ -128,7 +128,15 @@
 }
 
 h3 {color: gray ; font-size: small}
-img {width: 100px}
+
+img.example-image {
+    display: inline-block;
+    max-width: 100%;
+    height: auto;
+    cursor: pointer;
+    margin: 4px 0;
+    vertical-align: top;
+}
 
 .innerToggle {
     cursor: pointer;

@@ -4,7 +4,6 @@
 package jsystem.framework.report;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -279,18 +278,8 @@ public class ListenerstManager extends DefaultReporterImpl implements
 	 * java.io.InputStream)
 	 */
 	public synchronized void saveFile(String fileName, byte[] content) {
-		try {
-
-			File file = new File(getCurrentTestFolder(), fileName);
-			file.getParentFile().mkdirs();
-			FileOutputStream out = new FileOutputStream(file);
-			out.write(content);
-			out.close();
-		} catch (IOException e) {
-			log.warn("Fail to save file", e);
-		}
+		remoteRunner.saveFile(fileName, content);
 		checkExecutionStatus();
-		;
 	}
 
 	/*

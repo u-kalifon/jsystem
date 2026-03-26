@@ -1,6 +1,7 @@
 package jsystem.extensions.report.simpleHtmlReporter;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.channels.FileChannel;
@@ -8,11 +9,13 @@ import java.nio.channels.FileLock;
 import java.nio.channels.OverlappingFileLockException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 import java.util.UUID;
 
@@ -33,6 +36,7 @@ import jsystem.framework.report.TestInfo;
 import jsystem.framework.scenario.JTestContainer;
 import jsystem.framework.scenario.flow_control.AntForLoop;
 import jsystem.framework.sut.SutFactory;
+import jsystem.utils.StringUtils;
 import junit.framework.AssertionFailedError;
 import junit.framework.Test;
 
@@ -58,6 +62,7 @@ public class SimpleHtmlReporter implements ExtendLevelTestReporter, ExtendTestLi
 	private static final long DEFAULT_LOCK_TIMEOUT_MS = 2 * 60 * 1000; // 2 minutes
 	private static final long LOCK_RETRY_INTERVAL_MS = 200; // 100ms between retries
 	private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+	private static final List<String> IMAGES_TYPES = List.of(".jpg", ".png", ".gif");
 
 	private String reportDir;
 	private File logDirectory = null;
@@ -157,6 +162,7 @@ public class SimpleHtmlReporter implements ExtendLevelTestReporter, ExtendTestLi
 		"status_colors.css",
 		"test_page.css",
 		"table.css",
+		"lightbox.css",
 		"bootstrap.min.css",
 		"jquery.dataTables.min.css"
 	};
@@ -912,9 +918,13 @@ public class SimpleHtmlReporter implements ExtendLevelTestReporter, ExtendTestLi
 			case 1 -> Status.FAILURE;
 			case 2 -> Status.WARNING;
 			default -> Status.SUCCESS;
-			// FIXME: handle the ERROR status
+			// FIXME: handle the ERROR status everywhere
 		};
 
+		report(title, message, status, bold, html, link);
+	}
+
+	public void report(String title, final String message, Status status, boolean bold, boolean html, boolean link) {
 		if (bold && !html) {
 			// we give some support for "bold" by converting it to html
 			title = "<b>" + StringEscapeUtils.escapeHtml4(title) + "</b>";
@@ -922,7 +932,7 @@ public class SimpleHtmlReporter implements ExtendLevelTestReporter, ExtendTestLi
 		}
 
 		ReportElementDto reportEntry = ReportElementDto.newReportEntry(
-			html ? "html" : link ? "lnk" : "regular",		// support for "bold" removed (it used to be a "step")
+			html ? "html" : link && isImage(message) ? "img" : link ? "lnk" : "regular",	// support for "bold" removed (it used to be a "step")
 			LocalDateTime.now().format(DATE_TIME_FORMATTER), title, message, status);
 		testReportDto.getReportElements().add(reportEntry);
 		appendReportElementToScenarioJs(reportEntry);
@@ -931,6 +941,14 @@ public class SimpleHtmlReporter implements ExtendLevelTestReporter, ExtendTestLi
 		if (currentStep != null)
 			currentStep.setStatus(status);	// will only update if it's more severe
 		containerStack.peek().setStatus(status);	// will only update if it's more severe
+	}
+
+	private boolean isImage(String fileName) {
+		fileName = fileName.toLowerCase().trim();
+		if (fileName.length() < 5) {
+			return false;
+		}
+		return IMAGES_TYPES.contains(fileName.substring(fileName.length() - 4));
 	}
 
 	@Override
@@ -950,8 +968,20 @@ public class SimpleHtmlReporter implements ExtendLevelTestReporter, ExtendTestLi
 
 	@Override
 	public void saveFile(String fileName, byte[] content) {
-		// TODO: save a binary file (like a screenshot, etc...)
-		// TODO: this should include a log line in the report, which should be passed as a parameter
+		try {
+			Path scenarioDir = getScenarioDir(testReportDto.getNameAndUid());
+			fileName = Paths.get(fileName).getFileName().toString();
+			File file = scenarioDir.resolve(fileName).toFile();
+			FileOutputStream out = new FileOutputStream(file);
+			try {
+				out.write(content);
+			}finally{
+				out.close();
+			}
+		} catch (IOException e) {
+			log.error("Failed to save file: " + fileName, e);
+			report("Fail to save file: " + fileName, StringUtils.getStackTrace(e), Status.ERROR, false, false, false);
+		}
 	}
 
 	@Override
