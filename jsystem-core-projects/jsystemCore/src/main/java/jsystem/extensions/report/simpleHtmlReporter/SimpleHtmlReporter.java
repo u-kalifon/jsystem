@@ -44,14 +44,12 @@ import junit.framework.Test;
  * 
  * @author Udi Kalifon
  * 
- * This replaces HtmlReporter (a difido reporter, written by Itai Agmon).
+ * HTML reporter that generates a self-contained HTML report.
  * It writes the course of the scenario into a single file, to allow for continuous
  * reading of the report (as opposed to writing each step to a separate file).
  * 
  * It also supports running multiple instances of the runner, synchronizing the access to
  * the execution file.
- * 
- * This is still a (big) work in progress.
  * 
  */
 public class SimpleHtmlReporter implements ExtendLevelTestReporter, ExtendTestListener {

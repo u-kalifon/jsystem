@@ -36,7 +36,7 @@ public class JSystemMojo extends AbstractMojo {
 	private static final String SCENARIO_PATH = "target/classes/scenarios";
 	private static final String SUT_PATH = "target/classes/sut";
 	private static final String TEST_PROPERTIES_FILE_EMPTY = ".testPropertiesFile_Empty";
-	private static final String DEFAULT_REPORTERS = "jsystem.extensions.report.difido.HtmlReporter;jsystem.framework.report.SystemOutTestReporter;jsystem.extensions.report.xml.XmlReporter;jsystem.extensions.report.junit.JUnitReporter";
+	private static final String DEFAULT_REPORTERS = "jsystem.extensions.report.simpleHtmlReporter.SimpleHtmlReporter;jsystem.framework.report.SystemOutTestReporter";
 	private static final String DELIMITER = ",";
 
 	/**
