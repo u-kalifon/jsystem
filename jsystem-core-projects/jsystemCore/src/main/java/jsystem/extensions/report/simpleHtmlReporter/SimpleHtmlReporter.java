@@ -542,8 +542,6 @@ public class SimpleHtmlReporter implements ExtendLevelTestReporter, ExtendTestLi
 		log.debug("### Recieved end run event");
 	}
 
-	// TODO: implement the rest of the methods to log lines, levels, etc...
-
 	public File getLogDirectory() {
 		if (logDirectory == null) {
 			logDirectory = new File(getLogDir());
@@ -803,17 +801,26 @@ public class SimpleHtmlReporter implements ExtendLevelTestReporter, ExtendTestLi
 
 	@Override
 	public void startLevel(String levelName, jsystem.framework.report.Reporter.EnumReportLevel place) throws IOException {
-
-		// FIXME: levels should have a log line and not just a level name
-
 		log.debug("Starting level: " + levelName + " at place: " + place.name());	// place = CurrentPlace or MainFrame
 		if (containerStack.isEmpty()) {
 			log.error("Cannot start level: no container is active");
 			return;
 		}
+
+		// if no level name is provided - generate one
+		if (levelName == null || levelName.isBlank()) {
+			levelName = "Level " + (containerStack.peek().getLogLevelSize() + 1);
+		}
+
+		// see if there is a step property for the title of the level line
+		String logLine = levelName;
+		if (currentStep != null && currentStep.getProperties() != null && currentStep.getProperties().containsKey("logLine")) {
+			logLine = currentStep.getProperties().get("logLine");
+		}
+
+		// start a new log level
 		containerStack.peek().startLevel(levelName);
-		ReportElementDto levelStart = ReportElementDto.newLogLevelStart(LocalDateTime.now().format(DATE_TIME_FORMATTER), 
-			levelName);		// FIXME: we want to report a line, not the level name
+		ReportElementDto levelStart = ReportElementDto.newLogLevelStart(LocalDateTime.now().format(DATE_TIME_FORMATTER), logLine);
 		testReportDto.getReportElements().add(levelStart);
 		appendReportElementToScenarioJs(levelStart);
 	}
@@ -918,7 +925,7 @@ public class SimpleHtmlReporter implements ExtendLevelTestReporter, ExtendTestLi
 			case 1 -> Status.FAILURE;
 			case 2 -> Status.WARNING;
 			default -> Status.SUCCESS;
-			// FIXME: handle the ERROR status everywhere
+			// NOTE: there is no statusCode for ERROR, and maybe we should leave it that way (there is only FAILURE)
 		};
 
 		report(title, message, status, bold, html, link);
@@ -986,7 +993,7 @@ public class SimpleHtmlReporter implements ExtendLevelTestReporter, ExtendTestLi
 
 	@Override
 	public void setContainerProperties(final int ancestorLevel, String key, String property) {
-		// FIXME: we want to get rid of scenario properties
+		// currently not used, and ancestorLevel is not relevant anyways
 	}
 
 	@Override
@@ -996,22 +1003,26 @@ public class SimpleHtmlReporter implements ExtendLevelTestReporter, ExtendTestLi
 
 	@Override
 	public void startSection() {
-		// TODO: not clear what it's for... need to investigate
+		// This used to implement a collapsible section (inside a <table>) in the original Html reporter.
+		// Maybe we'll add it back in the future...
 	}
 
 	@Override
 	public void endSection() {
-		// TODO: not clear what it's for... need to investigate
+		// This used to implement a collapsible section (inside a <table>) in the original Html reporter.
+		// Maybe we'll add it back in the future...
 	}
 
 	@Override
 	public void addProperty(String key, String value) {
-		// FIXME: make sure that this is not called from anywhere, and remove this from the interface
-		currentStep.addProperty(key, value);
+		// used, for example, to add "isHiddenInHtml"="true"
+		if (currentStep != null) {
+			currentStep.addProperty(key, value);
+		}
 	}
 
 	@Override
 	public void setData(String data) {
-		// TODO: not clear what it's for... need to investigate (and remove from the interface if it's not used)
+		// TODO: remove from the interface, as it's not used anywhere
 	}
 }

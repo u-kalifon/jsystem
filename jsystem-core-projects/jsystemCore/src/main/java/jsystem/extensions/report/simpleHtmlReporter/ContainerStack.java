@@ -107,6 +107,10 @@ class ContainerStack {
 			return logLevels.peek().getName();
 		}
 
+		public int getLogLevelSize() {
+			return logLevels.size();
+		}
+
 		public Status getStatus() {
 			return status;
 		}

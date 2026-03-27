@@ -226,7 +226,9 @@ function setReportElements($container, reportElements) {
                 setLinkElement($container, this);
                 break;
             case "step":
-                setStepElement($container, this);
+                if (!(isPropertyExist(this, "properties") && this.properties.isHiddenInHtml === "true" && this.status === "SUCCESS")) {
+                    setStepElement($container, this);
+                }
                 break;
             case "img":
                 setImageElement($container,this);
@@ -237,9 +239,6 @@ function setReportElements($container, reportElements) {
             default:
                 setRegularElement($container, this ,false);
                 break;
-        }
-        if(parseInt($(this).attr("levelDepth")) > 1){
-            this.hide();
         }
     });
 
