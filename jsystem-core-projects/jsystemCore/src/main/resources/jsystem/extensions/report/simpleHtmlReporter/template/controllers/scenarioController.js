@@ -116,6 +116,12 @@ function setCollapsableElement($container, element, className, startExpanded) {
     var $div = $("<div>").append($timestamp).append($content);
     indent($content);
 
+    if (isPropertyExist(element, "userDoc")) {
+        var $userDocDiv = $("<div>").addClass('innerContent userDocContent').html(nl2br(element.userDoc));
+        $userDocDiv.css("margin-left", (levelsStack.length + 1) * depthStep + "px");
+        $div.append($userDocDiv);
+    }
+
     addStatusAsClass($div, element, "_text");
     appendElement($container, $div);
 
@@ -226,6 +232,7 @@ function setReportElements($container, reportElements) {
                 setLinkElement($container, this);
                 break;
             case "step":
+                // if the step is hidden in html, and the status is success, don't set the step element
                 if (!(isPropertyExist(this, "properties") && this.properties.isHiddenInHtml === "true" && this.status === "SUCCESS")) {
                     setStepElement($container, this);
                 }

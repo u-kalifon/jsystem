@@ -478,9 +478,6 @@ public class SimpleHtmlReporter implements ExtendLevelTestReporter, ExtendTestLi
 		// add the step to the scenario report (adds an item to the log) and write to disk
 		testReportDto.getReportElements().add(currentStep);
 		appendReportElementToScenarioJs(currentStep);
-
-		// TODO: understand what testInfo.comment is
-		
 	}
 
 	/**
@@ -636,7 +633,8 @@ public class SimpleHtmlReporter implements ExtendLevelTestReporter, ExtendTestLi
 			// Add the scenario to the execution file
 			addScenarioToExecutionFile(scenarioName, testReportDto.getTimestamp(), sanitizedSutFile, testReportDto.getUid());
 		} else {
-			ReportElementDto childScenarioStart = ReportElementDto.newChildScenarioStart(LocalDateTime.now().format(DATE_TIME_FORMATTER), container.getName(), container.getDocumentation());
+			String scriptName = container.getMeaningfulName() != null && !container.getMeaningfulName().isBlank() ? container.getMeaningfulName() : container.getName();
+			ReportElementDto childScenarioStart = ReportElementDto.newChildScenarioStart(LocalDateTime.now().format(DATE_TIME_FORMATTER), scriptName, container.getDocumentation());
 			testReportDto.getReportElements().add(childScenarioStart);
 			appendReportElementToScenarioJs(childScenarioStart);
 		}
