@@ -39,7 +39,6 @@ import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
-import jsystem.extensions.report.xml.Reader;
 import jsystem.runner.loader.ClassPathBuilder;
 import jsystem.treeui.images.ImageCenter;
 
@@ -68,7 +67,7 @@ public class JarListDialog {
 	// dialog itself.
 	JarsTableDialog tableDialog;
 
-	private static Logger log = LoggerFactory.getLogger(Reader.class);
+	private static Logger log = LoggerFactory.getLogger(JarListDialog.class);
 
 	/**
 	 * The constructor is creating the jarlist and init the Table Dialog.

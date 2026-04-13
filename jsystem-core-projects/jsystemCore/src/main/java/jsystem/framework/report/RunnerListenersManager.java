@@ -23,8 +23,6 @@ import org.slf4j.LoggerFactory;
 import jsystem.extensions.report.html.ExtendLevelTestReporter;
 import jsystem.extensions.report.simpleHtmlReporter.SimpleHtmlReporter;
 import jsystem.extensions.report.html.RepeatTestIndex;
-import jsystem.extensions.report.junit.JUnitReporter;
-import jsystem.extensions.report.xml.XmlReporter;
 import jsystem.framework.FrameworkOptions;
 import jsystem.framework.JSystemProperties;
 import jsystem.framework.RunnerStatePersistencyManager;
