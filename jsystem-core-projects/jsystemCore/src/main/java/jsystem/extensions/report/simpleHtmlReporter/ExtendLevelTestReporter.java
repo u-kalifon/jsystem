@@ -1,4 +1,4 @@
-package jsystem.extensions.report.html;
+package jsystem.extensions.report.simpleHtmlReporter;
 
 import java.io.IOException;
 

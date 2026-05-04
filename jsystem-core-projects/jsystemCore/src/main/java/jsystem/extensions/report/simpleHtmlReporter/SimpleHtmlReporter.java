@@ -23,7 +23,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.apache.commons.text.StringEscapeUtils;
 
-import jsystem.extensions.report.html.ExtendLevelTestReporter;
 import jsystem.extensions.report.simpleHtmlReporter.ContainerStack.Container;
 import jsystem.extensions.report.simpleHtmlReporter.dto.Execution;
 import jsystem.extensions.report.simpleHtmlReporter.dto.ReportElementDto;

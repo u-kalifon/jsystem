@@ -20,9 +20,9 @@ import java.util.Vector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import jsystem.extensions.report.html.ExtendLevelTestReporter;
+import jsystem.extensions.report.simpleHtmlReporter.ExtendLevelTestReporter;
+import jsystem.extensions.report.simpleHtmlReporter.RepeatTestIndex;
 import jsystem.extensions.report.simpleHtmlReporter.SimpleHtmlReporter;
-import jsystem.extensions.report.html.RepeatTestIndex;
 import jsystem.framework.FrameworkOptions;
 import jsystem.framework.JSystemProperties;
 import jsystem.framework.RunnerStatePersistencyManager;

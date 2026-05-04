@@ -12,7 +12,7 @@ import java.util.HashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import jsystem.extensions.report.html.HtmlCodeWriter;
+import jsystem.extensions.report.simpleHtmlReporter.HtmlCodeWriter;
 import jsystem.framework.FrameworkOptions;
 import jsystem.framework.JSystemProperties;
 import jsystem.framework.common.CommonResources;

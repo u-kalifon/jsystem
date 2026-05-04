@@ -13,7 +13,7 @@ import javax.swing.JTree;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 
-import jsystem.extensions.report.html.HtmlCodeWriter;
+import jsystem.extensions.report.simpleHtmlReporter.HtmlCodeWriter;
 import jsystem.framework.scenario.JTest;
 import jsystem.framework.scenario.RunnerSOTest;
 import jsystem.framework.scenario.RunnerTest;

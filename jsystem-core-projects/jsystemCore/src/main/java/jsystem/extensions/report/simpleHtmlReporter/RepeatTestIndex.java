@@ -1,7 +1,7 @@
 /*
  * Copyright 2005-2010 Ignis Software Tools Ltd. All rights reserved.
  */
-package jsystem.extensions.report.html;
+package jsystem.extensions.report.simpleHtmlReporter;
 
 import java.io.Serializable;
 import java.util.HashMap;
