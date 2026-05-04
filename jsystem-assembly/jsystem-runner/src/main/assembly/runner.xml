@@ -105,7 +105,6 @@
 				<include>*:activation:*</include>
 				<include>*:cli:*</include>
 				<include>*:FileTransfer:*</include>
-				<include>*:embeddedCatalina:*</include>
 				<include>*:commons-logging:*</include>
 				<include>*:commons-logging-api:*</include>
 				<include>*:commons-io:*</include>
@@ -113,13 +112,9 @@
 				<include>*:commons-text:*</include>
 				<include>*:commons-lang3:*</include>
 				<include>*:looks:*</include>
-				<include>*:tftp4java-server:*</include>
-				<include>*:tftp4java-client:*</include>
 				<include>*:commons-net:*</include>
-				<include>*:ganymed-ssh2:*</include>
 				<include>*:comm:*</include>
 				<include>*:ftpserver-core:*</include>
-				<include>*:catalina:*</include>
 				<include>*:jwizz:*</include>
 				<include>*:swingx:*</include>
 				<include>*:junit:*</include>

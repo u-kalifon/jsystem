@@ -3,12 +3,8 @@
  */
 package jsystem.runner.agent.server;
 
-import java.lang.management.ManagementFactory;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.management.MBeanServer;
 
 import jsystem.framework.FrameworkOptions;
 import jsystem.framework.JSystemProperties;
@@ -16,11 +12,7 @@ import jsystem.framework.common.CommonResources;
 import jsystem.framework.launcher.StartRunner;
 import jsystem.framework.scenario.RunningProperties;
 import jsystem.framework.sut.SutFactory;
-import jsystem.runner.agent.MBeanNames;
 import jsystem.utils.FileLock;
-
-import com.aqua.filetransfer.ftp.FTPServer;
-import com.ignis.embeddedcatalina.EmbeddedCatalina;
 
 /**
  * @author goland
@@ -71,35 +63,8 @@ public class RunnerAgentMain implements StartRunner {
 	 * @throws Exception
 	 */
 	private void initAgent() throws Exception {
-
-		
-//		MBeanExporter	exporter	=	new	MBeanExporter();
-//		MBeanServer		server	=	ManagementFactory.getPlatformMBeanServer();
-//		exporter.setServer(server);
-//
-//		//agent
-//		RunnerAgent agent = new RunnerAgent();
-//		server.registerMBean(agent,MBeanNames.RUNNER_AGENT);
-//
-//		//ftp server
-//		FTPServer ftpServer = new FTPServer();
-//		ftpServer.setDefaultUserHomeDirectory("externalFiles");
-//		ftpServer.setPort(getFtpPort());
-//		ftpServer.init();
-//		ftpServer.startServer();
-//		exporter.registerManagedResource(ftpServer,MBeanNames.FTP_SERVER);
-//
-//		//servlet container
-//		EmbeddedCatalina catalina = new EmbeddedCatalina();
-//		catalina.setDefaultConnectorPort(getWebPort());
-//		catalina.init();
-//		catalina.start();
-//
-//		//main class
-//		exporter.registerManagedResource(this,MBeanNames.AGENT_MAIN);
-//		agent.init();
 	}
-			
+
 	private void waitForShutdownSignal() throws Exception {
 		synchronized (RunnerAgentMain.class) {
 			RunnerAgentMain.class.wait();

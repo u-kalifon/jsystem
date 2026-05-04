@@ -22,8 +22,6 @@ import jsystem.utils.StringUtils;
 import jsystem.utils.exec.Command;
 import jsystem.utils.exec.Execute;
 
-import com.aqua.sysobj.conn.CliConnectionImpl;
-
 /**
  * This class is a system object that contain all SUT data and implements the
  * basic operations on the agent.
@@ -40,8 +38,6 @@ public class AgentConnection extends SystemObjectImpl {
 	private String runAgent;
 
 	private String runnerDir;
-	
-	public CliConnectionImpl cli; 
 	
 	private Process agentProcess;
 

@@ -47,20 +47,15 @@
 				<exclude>*:activation:*</exclude>
 				<exclude>*:cli:*</exclude>
 				<exclude>*:FileTransfer:*</exclude>
-				<exclude>*:embeddedCatalina:*</exclude>
 				<exclude>*:commons-logging:*</exclude>
 				<exclude>*:commons-logging-api:*</exclude>
 				<exclude>*:looks:*</exclude>
 				<exclude>javax.mail:mail:*</exclude>
 				<exclude>*:poi:*</exclude>
-				<exclude>*:tftp4java-server:*</exclude>
-				<exclude>*:tftp4java-client:*</exclude>
 				<exclude>*:commons-net:*</exclude>
-				<exclude>*:ganymed-ssh2:*</exclude>
 				<exclude>*:comm:*</exclude>
 				<exclude>*:ftpserver-core:*</exclude>
 				<exclude>*:commons-io:*</exclude>
-				<exclude>*:catalina:*</exclude>
 				<exclude>*:jwizz:*</exclude>
 				<exclude>*:swingx:*</exclude>
 				<exclude>*:junit:*</exclude>
