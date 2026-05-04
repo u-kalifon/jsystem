@@ -22,7 +22,7 @@ import java.util.zip.ZipFile;
 
 import javax.swing.JOptionPane;
 
-import jsystem.extensions.report.html.HtmlCodeWriter;
+import jsystem.extensions.report.simpleHtmlReporter.HtmlCodeWriter;
 import jsystem.framework.FrameworkOptions;
 import jsystem.framework.IgnoreMethod;
 import jsystem.framework.JSystemProperties;

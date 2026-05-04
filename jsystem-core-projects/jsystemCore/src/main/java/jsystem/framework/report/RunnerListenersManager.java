@@ -20,11 +20,9 @@ import java.util.Vector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import jsystem.extensions.report.difido.HtmlReporter;
-import jsystem.extensions.report.html.ExtendLevelTestReporter;
-import jsystem.extensions.report.html.RepeatTestIndex;
-import jsystem.extensions.report.junit.JUnitReporter;
-import jsystem.extensions.report.xml.XmlReporter;
+import jsystem.extensions.report.simpleHtmlReporter.ExtendLevelTestReporter;
+import jsystem.extensions.report.simpleHtmlReporter.RepeatTestIndex;
+import jsystem.extensions.report.simpleHtmlReporter.SimpleHtmlReporter;
 import jsystem.framework.FrameworkOptions;
 import jsystem.framework.JSystemProperties;
 import jsystem.framework.RunnerStatePersistencyManager;
@@ -173,8 +171,7 @@ public class RunnerListenersManager extends DefaultReporterImpl implements JSyst
 		testIndex = new RepeatTestIndex();
 		String reporters = JSystemProperties.getInstance().getPreference(FrameworkOptions.REPORTERS_CLASSES);
 		if (reporters == null) {
-			reporters = HtmlReporter.class.getName() + ";" + SystemOutTestReporter.class.getName() + ";"
-					+ XmlReporter.class.getName() + ";" + JUnitReporter.class.getName();
+			reporters = SimpleHtmlReporter.class.getName() + ";" + SystemOutTestReporter.class.getName();
 			JSystemProperties.getInstance().setPreference(FrameworkOptions.REPORTERS_CLASSES, reporters);
 		}
 		StringTokenizer st = new StringTokenizer(reporters, ";");

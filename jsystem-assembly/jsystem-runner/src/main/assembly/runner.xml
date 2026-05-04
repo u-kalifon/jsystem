@@ -134,7 +134,6 @@
 				<include>*:jackson-core:*</include>
 				<include>*:jackson-dataformat-xml:*</include>
 				<include>*:stax2-api:*</include>
-				<include>*:difido-reports-common:*</include>
 			</includes>
 		</dependencySet>
 		<dependencySet>

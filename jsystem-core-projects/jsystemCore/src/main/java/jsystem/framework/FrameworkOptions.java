@@ -1021,22 +1021,7 @@ public enum FrameworkOptions {
 			DataType.SEARCH_AND_LIST, 
 			"",
 			true, 
-			new String[] { "jsystem.runner.agent.publisher.Publisher" }),
-
-	REPORTS_PUBLISHER_HOST(
-			"publisher.host",
-			"Reports Server host name or ip",
-			DataType.TEXT,
-			"localhost",
-			false),
-
-	REPORTS_PUBLISHER_PORT(
-			"publisher.port",
-			"Reports server port",
-			DataType.TEXT,
-			"8080",
-			false);
-
+			new String[] { "jsystem.runner.agent.publisher.Publisher" });
 	
 	private String string;
 	private String description;

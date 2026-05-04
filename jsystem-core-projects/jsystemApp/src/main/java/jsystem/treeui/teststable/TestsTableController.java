@@ -77,7 +77,7 @@ import javax.swing.tree.TreeSelectionModel;
 
 import org.jfree.util.Log;
 
-import jsystem.extensions.report.html.HtmlCodeWriter;
+import jsystem.extensions.report.simpleHtmlReporter.HtmlCodeWriter;
 import jsystem.extensions.scenarionamehook.ScenarioNameHookManager;
 import jsystem.extensions.scenarionamehook.ScenarioNameHookManager.HookData;
 import jsystem.extensions.sourcecontrol.SourceControlHandler;

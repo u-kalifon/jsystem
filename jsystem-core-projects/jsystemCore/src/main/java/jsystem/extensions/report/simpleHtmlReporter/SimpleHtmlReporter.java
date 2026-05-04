@@ -23,7 +23,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.apache.commons.text.StringEscapeUtils;
 
-import jsystem.extensions.report.html.ExtendLevelTestReporter;
 import jsystem.extensions.report.simpleHtmlReporter.ContainerStack.Container;
 import jsystem.extensions.report.simpleHtmlReporter.dto.Execution;
 import jsystem.extensions.report.simpleHtmlReporter.dto.ReportElementDto;
@@ -44,14 +43,12 @@ import junit.framework.Test;
  * 
  * @author Udi Kalifon
  * 
- * This replaces HtmlReporter (a difido reporter, written by Itai Agmon).
+ * HTML reporter that generates a self-contained HTML report.
  * It writes the course of the scenario into a single file, to allow for continuous
  * reading of the report (as opposed to writing each step to a separate file).
  * 
  * It also supports running multiple instances of the runner, synchronizing the access to
  * the execution file.
- * 
- * This is still a (big) work in progress.
  * 
  */
 public class SimpleHtmlReporter implements ExtendLevelTestReporter, ExtendTestListener {
