@@ -838,21 +838,7 @@ public enum GUIFrameworkOptions {
 			"In order to add a new publisher, please implement \n" +
 			"jsystem.runner.agent.publisher.Publish interface \n" +
 			"and then select you class here."
-	),
-	
-	
-	REPORTS_PUBLISHER_HOST(
-			FrameworkOptions.REPORTS_PUBLISHER_HOST,
-			true,
-			Group.REPORTS_PUBLISHER,
-			"Reports publisher host or ip\n"),
-	
-	REPORTS_PUBLISHER_PORT(
-			FrameworkOptions.REPORTS_PUBLISHER_PORT,
-			true,
-			Group.REPORTS_PUBLISHER,
-			"Reports publisher port\n");
-
+	);
 	
 	private boolean exposeToDialog;
 	private Group group;

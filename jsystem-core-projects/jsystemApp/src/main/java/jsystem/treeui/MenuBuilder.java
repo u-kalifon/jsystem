@@ -27,7 +27,6 @@ import jsystem.treeui.actionItems.ExportProjectAction;
 import jsystem.treeui.actionItems.InitReportersAction;
 import jsystem.treeui.actionItems.JSystemPropertiesAction;
 import jsystem.treeui.actionItems.NewScenarioAction;
-import jsystem.treeui.actionItems.OpenReportsApplicationAction;
 import jsystem.treeui.actionItems.OpenScenarioAction;
 import jsystem.treeui.actionItems.PasteAction;
 import jsystem.treeui.actionItems.PasteAfterAction;
@@ -153,7 +152,6 @@ public class MenuBuilder {
 		PublishXmlResultAction.getInstance().setEnabled(false);
 		toolsMenu.add(ShowJarListAction.getInstance());
 		toolsMenu.add(ShowMultipleScenarioAction.getInstance());
-		toolsMenu.add(OpenReportsApplicationAction.getInstance());
 		//toolsMenu.add(DbPropertiesAction.getInstance());
 		toolsMenu.add(JSystemPropertiesAction.getInstance());
 		toolsMenu.add(AgentsListAction.getInstance());
