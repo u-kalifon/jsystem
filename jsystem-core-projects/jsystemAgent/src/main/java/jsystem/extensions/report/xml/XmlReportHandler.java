@@ -32,6 +32,7 @@ import javax.xml.transform.stream.StreamResult;
 import jsystem.framework.FrameworkOptions;
 import jsystem.framework.JSystemProperties;
 import jsystem.runner.agent.reportdb.TestInfo;
+import jsystem.runner.agent.tests.PublishTest;
 import jsystem.utils.StringUtils;
 
 import org.apache.xpath.XPathAPI;
@@ -49,6 +50,24 @@ import org.xml.sax.SAXException;
  */
 public class XmlReportHandler implements ReportInformation {
 	private static final String PROPERTIES_SEPARATOR = "/SEP/";
+
+	public static final String INIT_REPORT = "init_report";
+
+	public static final String ACTION_TYPE = "action_type";
+
+	public static final String SCENARIO_NAME = "Scenario";
+
+	public static final String STATION = "Station";
+
+	public static final String SETUP = "Setup";
+
+	public static final String UPLOAD_FILES="UploadFiles";
+
+	public static final String USER = "User";
+
+	public static final String START_TIME = "startTime";
+
+	public static final String EXECUTION_PROPERTIES = "properties";
 
 	private static Logger log = LoggerFactory.getLogger(XmlReportHandler.class);
 
@@ -152,15 +171,15 @@ public class XmlReportHandler implements ReportInformation {
 
 			if (i == 0) {
 				executionPropertiesMap = propetiesStringToMap(((Element) doc.getFirstChild())
-						.getAttribute(XmlReporter.EXECUTION_PROPERTIES));
+						.getAttribute(EXECUTION_PROPERTIES));
 				if (executionPropertiesMap == null) {
 					executionPropertiesMap = new HashMap<String, String>();
 				}
-				sutName = ((Element) doc.getFirstChild()).getAttribute(XmlReporter.SETUP);
-				userName = ((Element) doc.getFirstChild()).getAttribute(XmlReporter.USER);
-				scenarioName = ((Element) doc.getFirstChild()).getAttribute(XmlReporter.SCENARIO_NAME);
-				station = ((Element) doc.getFirstChild()).getAttribute(XmlReporter.STATION);
-				startTime = Long.parseLong(((Element) doc.getFirstChild()).getAttribute(XmlReporter.START_TIME));
+				sutName = ((Element) doc.getFirstChild()).getAttribute(SETUP);
+				userName = ((Element) doc.getFirstChild()).getAttribute(USER);
+				scenarioName = ((Element) doc.getFirstChild()).getAttribute(SCENARIO_NAME);
+				station = ((Element) doc.getFirstChild()).getAttribute(STATION);
+				startTime = Long.parseLong(((Element) doc.getFirstChild()).getAttribute(START_TIME));
 			}
 			i++;
 
@@ -234,12 +253,12 @@ public class XmlReportHandler implements ReportInformation {
 
 	@Override
 	public String getVersion() {
-		return executionPropertiesMap.get(XmlReporter.VERSION);
+		return executionPropertiesMap.get(PublishTest.VERSION);
 	}
 
 	@Override
 	public String getBuild() {
-		return executionPropertiesMap.get(XmlReporter.BUILD);
+		return executionPropertiesMap.get(PublishTest.BUILD);
 	}
 
 	@Override
@@ -297,34 +316,34 @@ public class XmlReportHandler implements ReportInformation {
 	}
 
 	public void setSutName(String sutName) {
-		setRootAttributeValue(XmlReporter.SETUP, sutName);
+		setRootAttributeValue(SETUP, sutName);
 	}
 
 	public void setScenarioName(String scenarioName) {
-		setRootAttributeValue(XmlReporter.SCENARIO_NAME, scenarioName);
+		setRootAttributeValue(SCENARIO_NAME, scenarioName);
 	}
 
 	public void setStation(String station) {
-		setRootAttributeValue(XmlReporter.STATION, station);
+		setRootAttributeValue(STATION, station);
 	}
 
 	public void setBuild(String build) {
-		executionPropertiesMap.put(XmlReporter.BUILD, build);
-		setRootAttributeValue(XmlReporter.EXECUTION_PROPERTIES, mapToPropertiesString(executionPropertiesMap));
+		executionPropertiesMap.put(PublishTest.BUILD, build);
+		setRootAttributeValue(EXECUTION_PROPERTIES, mapToPropertiesString(executionPropertiesMap));
 
 	}
 
 	public void setVersion(String version) {
-		executionPropertiesMap.put(XmlReporter.VERSION, version);
-		setRootAttributeValue(XmlReporter.EXECUTION_PROPERTIES, mapToPropertiesString(executionPropertiesMap));
+		executionPropertiesMap.put(PublishTest.VERSION, version);
+		setRootAttributeValue(EXECUTION_PROPERTIES, mapToPropertiesString(executionPropertiesMap));
 	}
 
 	public void setUser(String user) {
-		setRootAttributeValue(XmlReporter.USER, user);
+		setRootAttributeValue(USER, user);
 	}
 
 	public void setDescription(String description) {
-		setRootAttributeValue(XmlReporter.DESCRIPTION, description);
+		setRootAttributeValue(PublishTest.DESCRIPTION, description);
 	}
 
 	public void addExecutionProperties(Map<String, String> executionPropertiesMapParam) {
@@ -332,7 +351,7 @@ public class XmlReportHandler implements ReportInformation {
 			return;
 		}
 		executionPropertiesMap.putAll(executionPropertiesMapParam);
-		setRootAttributeValue(XmlReporter.EXECUTION_PROPERTIES, mapToPropertiesString(executionPropertiesMap));
+		setRootAttributeValue(EXECUTION_PROPERTIES, mapToPropertiesString(executionPropertiesMap));
 
 	}
 

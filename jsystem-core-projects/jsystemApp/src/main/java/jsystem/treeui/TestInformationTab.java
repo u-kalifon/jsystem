@@ -38,7 +38,7 @@ import javax.swing.event.TreeSelectionListener;
 import javax.swing.plaf.ColorUIResource;
 import javax.swing.tree.TreePath;
 
-import jsystem.extensions.report.html.HtmlCodeWriter;
+import jsystem.extensions.report.simpleHtmlReporter.HtmlCodeWriter;
 import jsystem.framework.scenario.DistributedExecutionHelper;
 import jsystem.framework.scenario.DistributedExecutionParameter;
 import jsystem.framework.scenario.JTest;

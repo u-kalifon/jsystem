@@ -1,0 +1,192 @@
+/* Fixed top banner height; general_page #page sets padding:0 on body */
+:root {
+	--scenario-top-banner-height: 50px;
+}
+
+#page {
+	padding-top: 50px;
+	padding-top: var(--scenario-top-banner-height);
+}
+
+.scenario-top-banner {
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	height: 50px;
+	height: var(--scenario-top-banner-height);
+	z-index: 1000;
+	box-sizing: border-box;
+	background-color: #222;
+	border-bottom: 1px solid #080808;
+}
+
+.scenario-top-banner-inner {
+	height: 100%;
+	padding: 0 15px;
+	display: flex;
+	align-items: center;
+}
+
+.scenario-top-banner-brand {
+	color: #fff;
+	font-size: 18px;
+	line-height: 1;
+	text-decoration: none;
+	font-weight: normal;
+}
+
+.scenario-top-banner-brand:hover,
+.scenario-top-banner-brand:focus {
+	color: #fff;
+	text-decoration: none;
+	opacity: 0.9;
+}
+
+.timestamp{
+    display: inline-block;
+    width: 100px;
+    color: gray;
+}
+
+/* initially hide all non root divs */
+#detailsDiv div >div{
+    display: none;
+}
+
+/* user doc is always visible and not collapsed by the step toggle */
+#detailsDiv .userDocContent {
+    display: block !important;
+    width: fit-content;
+    background-color: #fffde7;
+}
+
+#detailsDiv .step {
+    display: inline-block;
+    margin-top: 0.33em; /* fallback where lh is unsupported */
+    margin-top: 0.33lh;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.step.closed:after{
+    font-weight: normal;
+    font-size: x-small;
+    color: gray;
+    margin-left: 5px;
+    content: " [...]";
+}
+
+.step:not(closed):after{
+    font-weight: normal;
+    font-size: x-small;
+    color: gray;
+    margin-left: 5px;
+    content: " [ - ]";
+}
+
+.attrDiv{
+    font-size: x-small;
+    color: purple;
+}
+
+#detailsDiv div.attrDiv {
+    margin: 0; /* counter the rule [#detailsDiv div] */
+}
+
+.attr{
+    font-size: x-small;
+    display: inline-block;
+    width: 85px;
+    padding-right: 15px;
+}
+
+.attr:after{
+    font-size: x-small;
+    content: ":";
+}
+
+.attrValue{
+    font-size: x-small;
+}
+
+#detailsDiv div{
+    word-wrap: break-word;
+    margin: 5px 0 5px 0;
+}
+
+.smallTbl { 
+    padding: 0; 
+    border: 0; 
+    width: 70%; 
+    font-size: small;
+    border-collapse: collapse;
+}
+
+#detailsDiv .smallTbl div {
+    margin: 0 !important;
+}
+
+h3 {color: gray ; font-size: small}
+
+img.example-image {
+    display: inline-block;
+    max-width: 100%;
+    height: auto;
+    cursor: pointer;
+    margin: 4px 0;
+    vertical-align: top;
+}
+
+.innerToggle {
+    cursor: pointer;
+}
+
+.startLevel {   
+    font-weight: normal;
+    cursor: pointer;
+}
+
+.startLevel.closed:after{
+    font-weight: normal;
+    font-size: x-small;
+    color: gray;
+    margin-left: 5px;
+    content: " [...]";
+}
+
+.emptyStartLevel,
+.startLevel:not(closed):after{
+    font-weight: normal;
+    font-size: x-small;
+    color: gray;
+    margin-left: 5px;
+    content: " [ - ]";
+}
+
+.startScenario {
+    color: black !important;
+    font-weight: bold !important;
+    cursor: pointer;
+}
+
+.startScenario.closed:after{
+    font-weight: normal;
+    font-size: x-small;
+    color: gray;
+    margin-left: 5px;
+    content: " [...]";
+}
+
+.emptyStartScenario,
+.startScenario:not(closed):after{
+    font-weight: normal;
+    font-size: x-small;
+    color: gray;
+    margin-left: 5px;
+    content: " [ - ]";
+}
+
+.pointer{
+    cursor: pointer;
+}

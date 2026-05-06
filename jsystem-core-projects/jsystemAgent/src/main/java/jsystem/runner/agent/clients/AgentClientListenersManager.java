@@ -229,11 +229,6 @@ public class AgentClientListenersManager implements JSystemListeners,Notificatio
 		invokeMethod("report",new Object[]{title,message,status,bold,html,step,link},new Class[]{String.class,String.class,int.class,boolean.class,boolean.class,boolean.class,boolean.class});
 	}
 
-	public void report(String title, String message, int status, boolean bold,
-			boolean html, boolean step, boolean link, long time) {
-		invokeMethod("report",new Object[]{title,message,status,bold,html,step,link,time},new Class[]{String.class,String.class,int.class,boolean.class,boolean.class,boolean.class,boolean.class,long.class});
-	}
-
 	public void report(ReportElement report) {
 		invokeMethod("report",new Object[]{report},new Class[]{ReportElement.class});
 	}
@@ -282,10 +277,6 @@ public class AgentClientListenersManager implements JSystemListeners,Notificatio
 		invokeMethod("setSilent",new Object[]{status},new Class[]{boolean.class});
 	}
 	
-	public void setTimeStamp(boolean enable) {
-		invokeMethod("setTimeStamp",new Object[]{enable},new Class[]{boolean.class});
-	}
-
 	public int showConfirmDialog(String title, String message, int optionType,
 			int messageType) {
 		return (Integer)invokeMethod("showConfirmDialog",new Object[]{title,message,optionType,messageType},new Class[]{String.class,String.class,int.class,int.class});

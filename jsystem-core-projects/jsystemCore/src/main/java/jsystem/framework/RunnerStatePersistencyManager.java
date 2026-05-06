@@ -7,7 +7,6 @@ import java.io.Externalizable;
 import java.io.File;
 import java.util.Properties;
 
-import jsystem.extensions.report.html.LevelHtmlTestReporter;
 import jsystem.framework.report.ListenerstManager;
 import jsystem.framework.report.RunnerListenersManager;
 import jsystem.utils.FileUtils;

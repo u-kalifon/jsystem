@@ -148,16 +148,6 @@ public interface Reporter extends InteractiveReporter{
 	 *            if true no reports will be seen.
 	 */
 	boolean isSilent();
-	
-	/**
-	 * Set the reports to print\not print TimeStamps.
-	 * by default, TimeStamp will be added to each report.
-	 * set to true every new test.
-	 * 
-	 * @param enable
-	 *            if set to True no reports will be seen.
-	 */
-	void setTimeStamp(boolean enable);
 
 	/**
 	 * Report a HTML content. The message of the report as asumed to be in HTML
@@ -368,30 +358,6 @@ public interface Reporter extends InteractiveReporter{
 	 */
 	public void report(String title, String message, int status, boolean bold,
 			boolean html, boolean step, boolean link);
-
-	/**
-	 * Add a report to all the register reporters
-	 * 
-	 * @param title
-	 *            the report title.
-	 * @param message
-	 *            the report message
-	 * @param status
-	 *            the report status. {@link #PASS}, {@link #FAIL},
-	 *            {@link #WARNING}
-	 * @param bold
-	 *            if set to true the report will be seen bold.
-	 * @param html
-	 *            if set to true the report message will considered html formated.
-	 * @param step
-	 *            if set to true the report will be considered as step.
-	 * @param link
-	 *            if set to true the report will be considered as link.
-	 * @param time
-	 *            the time of the report.
-	 */
-	public void report(String title, String message, int status, boolean bold,
-			boolean html, boolean step, boolean link, long time);
 
 	/**
 	 * Get the current test folder. For example for the first test it will be

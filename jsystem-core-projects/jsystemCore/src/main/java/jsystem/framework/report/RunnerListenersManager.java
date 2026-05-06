@@ -6,14 +6,12 @@ package jsystem.framework.report;
 import java.io.Externalizable;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Properties;
 import java.util.StringTokenizer;
@@ -22,45 +20,33 @@ import java.util.Vector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import jsystem.extensions.report.difido.HtmlReporter;
-import jsystem.extensions.report.html.CssUtils.CssType;
-import jsystem.extensions.report.html.ExtendLevelTestReporter;
-import jsystem.extensions.report.html.HtmlCodeWriter;
-import jsystem.extensions.report.html.HtmlTestReporter;
-import jsystem.extensions.report.html.LevelHtmlTestReporter;
-import jsystem.extensions.report.html.RepeatTestIndex;
-import jsystem.extensions.report.junit.JUnitReporter;
-import jsystem.extensions.report.xml.XmlReporter;
+import jsystem.extensions.report.simpleHtmlReporter.ExtendLevelTestReporter;
+import jsystem.extensions.report.simpleHtmlReporter.RepeatTestIndex;
+import jsystem.extensions.report.simpleHtmlReporter.SimpleHtmlReporter;
 import jsystem.framework.FrameworkOptions;
 import jsystem.framework.JSystemProperties;
 import jsystem.framework.RunnerStatePersistencyManager;
 import jsystem.framework.analyzer.AnalyzerException;
 import jsystem.framework.common.CommonResources;
-import jsystem.framework.common.JSystemInnerTests;
 import jsystem.framework.fixture.Fixture;
 import jsystem.framework.fixture.FixtureListener;
-import jsystem.framework.scenario.JTest;
 import jsystem.framework.scenario.JTestContainer;
 import jsystem.framework.scenario.Parameter;
-import jsystem.framework.scenario.ParameterUtils;
 import jsystem.framework.scenario.RunnerTest;
 import jsystem.framework.scenario.RunningProperties;
 import jsystem.framework.scenario.Scenario;
-import jsystem.framework.scenario.ScenarioAsTest;
 import jsystem.framework.scenario.ScenarioChangeType;
 import jsystem.framework.scenario.ScenarioHelpers;
 import jsystem.framework.scenario.ScenarioListener;
 import jsystem.framework.scenario.ScenariosManager;
 import jsystem.framework.scenario.UpgradeAndBackwardCompatibility;
 import jsystem.framework.scenario.flow_control.AntForLoop;
-import jsystem.framework.sut.SutFactory;
 import jsystem.framework.sut.SutListener;
 import jsystem.framework.system.SystemObjectImpl;
 import jsystem.framework.system.TName;
 import jsystem.framework.system.TestNameServer;
 import jsystem.runner.ErrorLevel;
 import jsystem.runner.loader.LoadersManager;
-import jsystem.utils.DateUtils;
 import jsystem.utils.StackTraceUtil;
 import jsystem.utils.StringUtils;
 import junit.framework.AssertionFailedError;
@@ -92,10 +78,6 @@ public class RunnerListenersManager extends DefaultReporterImpl implements JSyst
 
 	boolean silent = false;
 
-	int inLoop = 0;
-
-	boolean propertiesTimeStampFlag;
-
 	long startTime = 0;
 
 	long endTime = 0;
@@ -111,8 +93,6 @@ public class RunnerListenersManager extends DefaultReporterImpl implements JSyst
 	//Will be set to true if in some point one test had warning.
 	public static boolean hadWarning = false;
 
-	boolean addTimeStamp = true;
-
 	long testsCount = 0;
 
 	public Vector<Test> runningTests;
@@ -127,19 +107,11 @@ public class RunnerListenersManager extends DefaultReporterImpl implements JSyst
 
 	private EventParser parser;
 
-	private boolean inScenarioAsTest = false;
-
-	private String lastTestLevelName = null;
-
-	private Test lastTest = null;
-
 	private long lastGC = System.currentTimeMillis();
 
 	private boolean testMarkedAsKnownIssue = false;
-	private boolean scenarioMarkedAsKnownIssue = false;
 
 	private boolean testMarkedNegativeTest = false;
-	private boolean scenarioMarkedAsNegativeTest = false;
 
 	private long lastFlashReportTime = 0;
 
@@ -148,8 +120,6 @@ public class RunnerListenersManager extends DefaultReporterImpl implements JSyst
 	 * issue, without affecting Reporter signatures
 	 */
 	private boolean isError = false;
-
-	private boolean showMemory = false;
 
 	public void addListener(Object listener) {
 		removeListener(listener);
@@ -199,12 +169,9 @@ public class RunnerListenersManager extends DefaultReporterImpl implements JSyst
 
 	private RunnerListenersManager() {
 		testIndex = new RepeatTestIndex();
-		String addTimeStampStatus = JSystemProperties.getInstance().getPreference(FrameworkOptions.HTML_ADD_TIME);
-		propertiesTimeStampFlag = addTimeStampStatus == null || addTimeStampStatus.toLowerCase().equals("true");
 		String reporters = JSystemProperties.getInstance().getPreference(FrameworkOptions.REPORTERS_CLASSES);
 		if (reporters == null) {
-			reporters = HtmlReporter.class.getName() + ";" + SystemOutTestReporter.class.getName() + ";"
-					+ XmlReporter.class.getName() + ";" + JUnitReporter.class.getName();
+			reporters = SimpleHtmlReporter.class.getName() + ";" + SystemOutTestReporter.class.getName();
 			JSystemProperties.getInstance().setPreference(FrameworkOptions.REPORTERS_CLASSES, reporters);
 		}
 		StringTokenizer st = new StringTokenizer(reporters, ";");
@@ -259,7 +226,6 @@ public class RunnerListenersManager extends DefaultReporterImpl implements JSyst
 		objectStream.writeObject(isSilent());
 		objectStream.writeObject(startTime);
 		objectStream.writeObject(lastTestFail);
-		objectStream.writeObject(addTimeStamp);
 		objectStream.writeObject(testIndex);
 		objectStream.writeObject(testClassName);
 		objectStream.writeObject(blockReporters);
@@ -287,7 +253,6 @@ public class RunnerListenersManager extends DefaultReporterImpl implements JSyst
 		setSilent((Boolean) objectStream.readObject());
 		startTime = (Long) objectStream.readObject();
 		lastTestFail = (Boolean) objectStream.readObject();
-		addTimeStamp = (Boolean) objectStream.readObject();
 		testIndex = (RepeatTestIndex) objectStream.readObject();
 		testClassName = (String) objectStream.readObject();
 		inTest = false;
@@ -390,13 +355,7 @@ public class RunnerListenersManager extends DefaultReporterImpl implements JSyst
 	}
 
 	public synchronized void addFailure(Test test, AssertionFailedError t) {
-		boolean negativeState = false;
-		if(inScenarioAsTest){
-			negativeState = inNegativeTestState();
-		}
-		else{
-			negativeState = testMarkedNegativeTest;
-		}
+		boolean negativeState = testMarkedNegativeTest;
 		setLastTestFail(!inKnownIssueState() && !negativeState);
 		setFailToPass(false);
 		setFailToWarning(false);
@@ -433,13 +392,7 @@ public class RunnerListenersManager extends DefaultReporterImpl implements JSyst
 	}
 
 	public synchronized void addFailure(Test test, String message, String stack, boolean analyzerException) {
-		boolean negativeState = false;
-		if(inScenarioAsTest){
-			negativeState = inNegativeTestState();
-		}
-		else{
-			negativeState = testMarkedNegativeTest;
-		}
+		boolean negativeState = testMarkedNegativeTest;
 		setLastTestFail(!inKnownIssueState() && !negativeState);
 		setFailToPass(false);
 		setFailToWarning(false);
@@ -500,67 +453,17 @@ public class RunnerListenersManager extends DefaultReporterImpl implements JSyst
 
 	}
 
-	/**
-	 * Right split - under top rectangle adding the starting and ending time of
-	 * the test
-	 */
-	private void addEndTestInfo() {
-		addEndTestInfo(0);
-	}
-
-	/**
-	 * Right split - under top rectangle adding the starting and ending time of
-	 * the test
-	 */
-	private void addEndTestInfo(long endTime) {
-		if (endTime <= 0) {
-			endTime = System.currentTimeMillis();
-		}
-		boolean addTimeStampOld = addTimeStamp;
-		addTimeStamp = false;
-		report("Start time: " + DateUtils.getDate(startTime));
-		report("End time  : " + DateUtils.getDate(endTime));
-		long runningTime = (endTime - startTime);
-		if (runningTime == 0) {
-			runningTime = 1;
-		}
-		report("Test running time: " + (runningTime / 1000) + " sec.");
-
-		if (showMemory) {
-			report("Total Memory: " + Runtime.getRuntime().totalMemory());
-			report("Max Memory:   " + Runtime.getRuntime().maxMemory());
-			report("Free Memory:  " + Runtime.getRuntime().freeMemory());
-		}
-
-		addTimeStamp = addTimeStampOld;
-
-	}
-
 	public synchronized void endTest(Test test) {
 		if (test == null) {
 			test = currentTest;
 		}
 		runningTests.removeElement(test);
-		if (!(currentTest instanceof InternalTest) && !blockReporters && !inScenarioAsTest) {
-			addEndTestInfo();
-		}
-		
-		if (inScenarioAsTest) {
-			try {
-				stopLevel();
-				updateNegativeTest(test);
-				fireStatusManager(null, currentTest, false);
-			} catch (IOException e) {
-				log.error("Fail to stopLevel", e);
-			}
-		} else {
-			fireEndTest(test, blockReporters);
-			updateCurrentTest(null);
-			inTest = false;
-			if (System.currentTimeMillis() - lastGC > 60000) {
-				System.gc();
-				lastGC = System.currentTimeMillis();
-			}
+		fireEndTest(test, blockReporters);
+		updateCurrentTest(null);
+		inTest = false;
+		if (System.currentTimeMillis() - lastGC > 60000) {
+			System.gc();
+			lastGC = System.currentTimeMillis();
 		}
 		if (!blockReporters) {
 			endTime = System.currentTimeMillis();
@@ -576,27 +479,6 @@ public class RunnerListenersManager extends DefaultReporterImpl implements JSyst
 			}
 		}
 
-	}
-
-	private void fireStatusManager(TestInfo ti, Test test, boolean start) {
-		for (int i = 0; i < listeners.size(); i++) {
-			Object currentObject = listeners.get(i);
-			if (currentObject instanceof TestStatusListener) {
-				try {
-					if (start) {
-						if (currentObject instanceof ExtendTestListener) {
-							((ExtendTestListener) currentObject).startTest(ti);
-						} else {
-							((TestListener) currentObject).startTest(test);
-						}
-					} else {
-						((TestListener) currentObject).endTest(test);
-					}
-				} catch (Throwable ex) {
-					log.error("Fail to signal status manager", ex);
-				}
-			}
-		}
 	}
 
 	/**
@@ -674,7 +556,7 @@ public class RunnerListenersManager extends DefaultReporterImpl implements JSyst
 		stopBufferingReports();
 		clearReportsBuffer();
 
-		if (inTest && !inScenarioAsTest) {
+		if (inTest) {
 			endTest(currentTest);
 		}
 		if (test instanceof SystemTest) {
@@ -700,14 +582,10 @@ public class RunnerListenersManager extends DefaultReporterImpl implements JSyst
 		runningTests.addElement(test);
 		testsCount++;
 		setSilent(false);
-		addTimeStamp = propertiesTimeStampFlag;
 		setLastTestFail(false);
 		TName tname = TestNameServer.getInstance().getTestName(test);
 		int count = testIndex.getTestIndex(tname.getFullName());
-		lastTest = test;
-		if (!inScenarioAsTest) {
-			updateCurrentTest(test);
-		}
+		updateCurrentTest(test);
 		RunnerTest rt = null;
 		/*
 		 * Init the meaningful name from the RunnerTest will be done only when
@@ -748,34 +626,16 @@ public class RunnerListenersManager extends DefaultReporterImpl implements JSyst
 		ti.meaningfulName = meaningfulName;
 		ti.comment = tname.getComment();
 		ti.parameters = tname.getParamsString();
+		ti.userDoc = tname.getUserDocumentation();
 		ti.count = count;
 		ti.fullUuid = uuid;
 		if (rt != null) {
 			ti.isHiddenInHTML = rt.isHiddenInHTML();
 		}
-		if (inScenarioAsTest) {
-			try {
-				String name = tname.getClassName() + "-" + tname.getMethodName();
-				if (!StringUtils.isEmpty(ti.meaningfulName)) {
-					name = ti.meaningfulName;
-				}
-				startLevel(name, Reporter.MainFrame);
-				lastTestLevelName = name;
-
-				((ScenarioAsTest) currentTest).setCurrentRunnerTest(test);
-				fireStatusManager(ti, currentTest, true);
-			} catch (IOException e) {
-				log.error("Fail to startLevel", e);
-			}
-		} else {
-			fireTestStart(ti, test, false);
-			if (!blockReporters) {
-				startTime = System.currentTimeMillis();
-			}
+		fireTestStart(ti, test, false);
+		if (!blockReporters) {
+			startTime = System.currentTimeMillis();
 		}
-		boolean disableCode = "false".equals(JSystemProperties.getInstance().getPreference(
-				FrameworkOptions.TEST_CODE_ENABLE));
-		addTestInfo(tname, meaningfulName, test, disableCode, null, null, rt);
 		testClassName = test.getClass().getName();
 
 		inTest = true;
@@ -810,159 +670,6 @@ public class RunnerListenersManager extends DefaultReporterImpl implements JSyst
 				}
 			}
 		}
-	}
-
-	/**
-	 * right Split - top rectangle data , documentations, parameters
-	 * 
-	 * @param tname
-	 *            name tab
-	 * @param test
-	 *            the junit test
-	 * @param disableCode
-	 * @param cDoc
-	 *            class doc
-	 * @param tDoc
-	 *            test doc
-	 */
-	private void addTestInfo(TName tname, String meaningfulName, Test test, boolean disableCode, String cDoc,
-			String tDoc, JTest testPresentationInRunner) {
-		boolean addTimeStampOld = addTimeStamp;
-		addTimeStamp = false;
-		report(CssType.TEST_INFO_TABLE.getCssStart(), ReportAttribute.HTML);
-		startSection();
-		String name = tname.getBasicName();
-		report("Test: " + name);
-		if (meaningfulName != null) {
-			name = meaningfulName;
-		}
-		report("(" + testsCount + ")Steps in test: " + name + " :");
-		String params = tname.getParamsString();
-		report(CssType.PARAMETERS.getCssStart(), ReportAttribute.HTML);
-		if (params != null) {
-			if ("true".equals(JSystemProperties.getInstance().getPreference(FrameworkOptions.HTML_LOG_PARAMS_IN_LEVEL))) {
-				try {
-					startLevel("Test paremeters", 0);
-				} catch (Exception e) {
-				}
-				;
-			}
-			report(PARAMETERS_START, null, true, true);
-			try {
-				/*
-				 * separating parameters to array and printing each in a new
-				 * line
-				 */
-				String[] seperatedParams = ParameterUtils.stringToPropertiesArray(params);
-				for (int i = 0; i < seperatedParams.length; i++) {
-					report(seperatedParams[i]);
-				}
-			} catch (Exception e) {
-				report("Failed parsing test parameters. " + e.getMessage());
-			} finally {
-				if ("true".equals(JSystemProperties.getInstance().getPreference(
-						FrameworkOptions.HTML_LOG_PARAMS_IN_LEVEL))) {
-					try {
-						stopLevel();
-					} catch (Exception e) {
-					}
-					;
-				}
-				report(PARAMETERS_END, null, true, true);
-				report(CssType.getCssClosingTag(), ReportAttribute.HTML);
-			}
-		}
-		// Inner JSystem tests should not display source code in HTML
-		if (!disableCode && !JSystemInnerTests.isInnerTest(tname.getClassName(), tname.getMethodName())) {
-			/*
-			 * Add the test code to the report
-			 */
-			String code;
-			try {
-				code = HtmlCodeWriter.getInstance().getCode(tname.getClassName());
-				code = code.replaceAll(tname.getMethodName(), "<b>" + tname.getMethodName() + "</b>");
-				reportHtml("test code", code, true);
-			} catch (FileNotFoundException e) {
-				log.warn("Fail to load test code because source file is missing. " + e.getMessage());
-			} catch (Exception e) {
-				log.warn("Fail to load test code. " + e.getMessage());
-			}
-		}
-
-		/*
-		 * Add a link to the setup if exists
-		 */
-		String link = SutFactory.getInstance().getSutInstance().getSetupLink();
-
-		if (link != null) {
-			addLink("sut: " + SutFactory.getInstance().getSutInstance().getSetupName(), link);
-		}
-		String classDoc = null;
-		String testDoc = null;
-		if (cDoc != null) {
-			classDoc = cDoc;
-		} else {
-			try {
-				classDoc = HtmlCodeWriter.getInstance().getClassJavaDoc(tname.getClassName());
-			} catch (Exception e) {
-				log.warn("Fail to process document", e);
-			}
-		}
-		if (tDoc != null) {
-			testDoc = tDoc;
-		} else {
-			try {
-				testDoc = HtmlCodeWriter.getInstance().getMethodJavaDoc(tname.getClassName(), tname.getMethodName());
-			} catch (Exception e) {
-				log.warn("Fail to process document", e);
-			}
-		}
-		if (classDoc != null && (!classDoc.equals(""))) {
-			String[] lines = classDoc.split("[\\r\\n]+");
-			report(CssType.CLASS_DOCUMENTATION.getCssStart(), ReportAttribute.HTML);
-			report("Class documentation", null, true, true);
-			for (int i = 0; i < lines.length; i++) {
-				report(lines[i]);
-			}
-			report(CssType.getCssClosingTag(), ReportAttribute.HTML);
-		}
-		if (testDoc != null && (!testDoc.equals(""))) {
-			String[] lines = testDoc.split("[\\r\\n]+");
-			report(CssType.TEST_DOCUMENTATION.getCssStart(), ReportAttribute.HTML);
-			report("Test documentation", null, true, true);
-			for (int i = 0; i < lines.length; i++) {
-				report(lines[i]);
-			}
-			report(CssType.getCssClosingTag(), ReportAttribute.HTML);
-			// set the test javadoc into the test object
-			if (test != null && test instanceof SystemTest) {
-				((SystemTest) test).setTestDocumentation(testDoc);
-			}
-
-		}
-
-		tname = TestNameServer.getInstance().getTestName(test);
-		String userDoc = tname.getUserDocumentation();
-		if (userDoc != null) {
-			String[] lines = userDoc.split("[\\r\\n]+");
-			report(CssType.USER_DOCUMENTATION.getCssStart(), ReportAttribute.HTML);
-			report("User documentation", null, true, true);
-			for (int i = 0; i < lines.length; i++) {
-				report(lines[i]);
-			}
-			report(CssType.getCssClosingTag(), ReportAttribute.HTML);
-		}
-
-		if (testPresentationInRunner != null) {
-			report(CssType.BREAD_CRUMBS.getCssStart(), ReportAttribute.HTML);
-			report(ScenarioHelpers.getTestHierarchyInPresentableFormat(testPresentationInRunner)
-					+ CssType.getCssClosingTag(), ReportAttribute.HTML);
-		}
-
-		endSection();
-		report(CssType.getCssClosingTag(), ReportAttribute.HTML);
-		addTimeStamp = addTimeStampOld;
-
 	}
 
 	public synchronized void aboutToChangeTo(Fixture fixture) {
@@ -1054,10 +761,6 @@ public class RunnerListenersManager extends DefaultReporterImpl implements JSyst
 		return silent;
 	}
 
-	public void setTimeStamp(boolean enable) {
-		addTimeStamp = enable;
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -1112,15 +815,15 @@ public class RunnerListenersManager extends DefaultReporterImpl implements JSyst
 		if (isSilent()) {
 			return;
 		}
-		try {
-
-			File file = new File(getCurrentTestFolder(), fileName);
-			file.getParentFile().mkdirs();
-			FileOutputStream out = new FileOutputStream(file);
-			out.write(content);
-			out.close();
-		} catch (IOException e) {
-			log.warn("Fail to save file", e);
+		for (int i = 0; i < listeners.size(); i++) {
+			Object currentObject = listeners.get(i);
+			if (currentObject instanceof ExtendTestReporter) {
+				try {
+					((ExtendTestReporter) currentObject).saveFile(fileName, content);
+				} catch (Throwable ex) {
+					log.error("Reporter " + currentObject.getClass().getSimpleName() + " failed to save file: " + fileName, ex);
+				}
+			}
 		}
 	}
 
@@ -1223,7 +926,6 @@ public class RunnerListenersManager extends DefaultReporterImpl implements JSyst
 			}
 		}
 
-		addTestInfo(tname, null, stc, true, classDoc, testDoc, null);
 		inTest = true;
 		startTime = System.currentTimeMillis();
 
@@ -1233,7 +935,6 @@ public class RunnerListenersManager extends DefaultReporterImpl implements JSyst
 		if (isSilent()) {
 			return;
 		}
-		addEndTestInfo();
 		if (steps != null) {
 			((SystemTest) currentTest).addExecutedSteps(steps);
 		}
@@ -1292,29 +993,13 @@ public class RunnerListenersManager extends DefaultReporterImpl implements JSyst
 			reportsBuffer.add(re);
 			return;
 		}
-		if (inScenarioAsTest && place == Reporter.MainFrame) {
-			for (int i = 0; i < listeners.size(); i++) {
-				Object currentObject = listeners.get(i);
-				if (currentObject instanceof ExtendLevelTestReporter) {
-					try {
-						if(inLoop==0){
-							((ExtendLevelTestReporter) currentObject).closeLevelsUpTo(lastTestLevelName, false);
-						}
-						((ExtendLevelTestReporter) currentObject).startLevel(level, Reporter.CurrentPlace);
-					} catch (Throwable ex) {
-						log.error("Fail to report", ex);
-					}
-				}
-			}
-		} else {
-			for (int i = 0; i < listeners.size(); i++) {
-				Object currentObject = listeners.get(i);
-				if (currentObject instanceof ExtendLevelTestReporter) {
-					try {
-						((ExtendLevelTestReporter) currentObject).startLevel(level, place);
-					} catch (Throwable ex) {
-						log.error("Fail to report", ex);
-					}
+		for (int i = 0; i < listeners.size(); i++) {
+			Object currentObject = listeners.get(i);
+			if (currentObject instanceof ExtendLevelTestReporter) {
+				try {
+					((ExtendLevelTestReporter) currentObject).startLevel(level, place);
+				} catch (Throwable ex) {
+					log.error("Fail to report", ex);
 				}
 			}
 		}
@@ -1348,8 +1033,9 @@ public class RunnerListenersManager extends DefaultReporterImpl implements JSyst
 		}
 	}
 
+	@Override
 	public synchronized void report(String title, String message, int status, boolean bold, boolean html, boolean step,
-			boolean link, long time) {
+			boolean link) {
 		if (isSilent()) {
 			return;
 		}
@@ -1367,7 +1053,7 @@ public class RunnerListenersManager extends DefaultReporterImpl implements JSyst
 			newReportElementInstance.setStep(step);
 			newReportElementInstance.setLink(link);
 			newReportElementInstance.setOriginator(Thread.currentThread().getName());
-			newReportElementInstance.setTime(time);
+			newReportElementInstance.setTime(System.currentTimeMillis());
 			reportsBuffer.add(newReportElementInstance);
 			if (!printBufferdReportsInRunTime) {
 				return;
@@ -1381,24 +1067,12 @@ public class RunnerListenersManager extends DefaultReporterImpl implements JSyst
 			status = Reporter.WARNING;
 		}
 
-		if(inScenarioAsTest){
-			if (inNegativeTestState() && !title.equals(CommonResources.NEGATIVE_TEST_STRING) && status == Reporter.FAIL) {
-				if (currentTest != null) {
-					ScenarioHelpers.getRunnerTest(currentTest).setFailureOccurred(true);
-				}
-				if (!isError) {
-					status = Reporter.PASS;
-				}
+		if (testMarkedNegativeTest && !title.equals(CommonResources.NEGATIVE_TEST_STRING) && status == Reporter.FAIL) {
+			if (currentTest != null) {
+				ScenarioHelpers.getRunnerTest(currentTest).setFailureOccurred(true);
 			}
-		}
-		else{
-			if (testMarkedNegativeTest && !title.equals(CommonResources.NEGATIVE_TEST_STRING) && status == Reporter.FAIL) {
-				if (currentTest != null) {
-					ScenarioHelpers.getRunnerTest(currentTest).setFailureOccurred(true);
-				}
-				if (!isError) {
-					status = Reporter.PASS;
-				}
+			if (!isError) {
+				status = Reporter.PASS;
 			}
 		}
 
@@ -1433,6 +1107,12 @@ public class RunnerListenersManager extends DefaultReporterImpl implements JSyst
 					} catch (Throwable ex) {
 						log.error("Fail to addLink", ex);
 					}
+				} else if (currentObject instanceof TestReporter) {
+					try {
+						((TestReporter) currentObject).report(title, message, status, bold);
+					} catch (Throwable ex) {
+						log.error("Fail to addLink", ex);
+					}
 				}
 			}
 		} else if (html) {
@@ -1444,36 +1124,23 @@ public class RunnerListenersManager extends DefaultReporterImpl implements JSyst
 					} catch (Throwable ex) {
 						log.error("Fail to reportHtml", ex);
 					}
+				} else if (currentObject instanceof TestReporter) {
+					try {
+						((TestReporter) currentObject).report(title, message, status, bold);
+					} catch (Throwable ex) {
+						log.error("Fail to report", ex);
+					}
 				}
 			}
 		} else if (step) {
-			report(title, null, Reporter.PASS, true, false, false, false, time);
+			report(title, null, Reporter.PASS, true, false, false, false);
 			if (currentTest != null && currentTest instanceof SystemTest) {
 				((SystemTest) currentTest).addExecutedSteps(title);
 			}
 		} else {
-			String timeStamp = "";
-			if (addTimeStamp) {
-				if (date != null) {
-					timeStamp = date + ": ";
-				} else if (time > 0) {
-					SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
-					timeStamp = DateUtils.getDate(time, sdf) + ": ";
-				}
-				title = timeStamp + title;
-
-			}
 			for (int i = 0; i < listeners.size(); i++) {
 				Object currentObject = listeners.get(i);
 				if (currentObject instanceof ExtendTestReporter) {
-					if (currentObject instanceof HtmlTestReporter) { // added to
-																		// support
-																		// CSS
-																		// on
-																		// time
-																		// stamps
-						((HtmlTestReporter) currentObject).setTimeStampToReplace(timeStamp);
-					}
 					try {
 						((ExtendTestReporter) currentObject).report(title, message, status, bold, false, false);
 					} catch (Throwable ex) {
@@ -1616,84 +1283,19 @@ public class RunnerListenersManager extends DefaultReporterImpl implements JSyst
 	}
 
 	private boolean inKnownIssueState() {
-		return (inScenarioAsTest && scenarioMarkedAsKnownIssue) || (!inScenarioAsTest && testMarkedAsKnownIssue);
-	}
-
-//	private boolean inNegativeTestState() {
-//		return (inScenarioAsTest && scenarioMarkedAsNegativeTest) || (!inScenarioAsTest && testMarkedNegativeTest);
-//	}
-	
-	private boolean inNegativeTestState() {
-		return (scenarioMarkedAsNegativeTest) || (testMarkedNegativeTest);
+		return testMarkedAsKnownIssue;
 	}
 
 	@Override
 	public void startContainer(JTestContainer container) {
-		if (container instanceof Scenario && ScenarioHelpers.isScenarioAsTestAndNotRoot(container)) {
-			inScenarioAsTest = true;
-			// The following code should be enabled if saving all default
-			// scenarios flags in all father scenarios will be stopped as needed
-			// Scenario scenario = (Scenario)
-			// ScenariosManager.getInstance().getCurrentScenario().getTestByFullId(container.getFullUUID());
-			// Properties properties =
-			// ScenarioHelpers.getAllTestPropertiesUpTo(scenario, null, false);
-			// String scenarioMarkedAsKnownIssueStr =
-			// properties.getProperty(RunningProperties.MARKED_AS_KNOWN_ISSUE);
-			// String scenarioMarkedAsNegativeTestStr =
-			// properties.getProperty(RunningProperties.MARKED_AS_NEGATIVE_TEST);
-			//
-			// if(scenarioMarkedAsKnownIssueStr != null){
-			// scenarioMarkedAsKnownIssue =
-			// Boolean.parseBoolean(scenarioMarkedAsKnownIssueStr);
-			// }
-			//
-			// if(scenarioMarkedAsNegativeTestStr != null){
-			// scenarioMarkedAsNegativeTest =
-			// Boolean.parseBoolean(scenarioMarkedAsNegativeTestStr);
-			// }
-
-			scenarioMarkedAsKnownIssue = ScenarioHelpers.isMarkedAsKnownIssue(container.getFullUUID(), ScenariosManager
-					.getInstance().getCurrentScenario().getName());
-			scenarioMarkedAsNegativeTest = ScenarioHelpers.isMarkedAsNegativeTest(container.getFullUUID(),
-					ScenariosManager.getInstance().getCurrentScenario().getName());
-
-			String scenarioAsClassName = container.getName().replace('/', '.').replace('\\', '.');
-			TestInfo ti = new TestInfo();
-			ti.className = scenarioAsClassName;
-			ti.basicName = StringUtils.getClassName(scenarioAsClassName);
-			ti.methodName = null;
-			ti.meaningfulName = null;
-			ti.comment = container.getComment();
-			ti.classDoc = container.getDocumentation();
-			ti.fullUuid = container.getFullUUID();
-			ti.count = testIndex.getTestIndex(scenarioAsClassName);
-			ti.isHiddenInHTML = container.isHiddenInHTML();
-
-			Test currentRunnerTest = lastTest;
-			
-
-			updateCurrentTest(new ScenarioAsTest());
-			((SystemTest) currentTest).setName(scenarioAsClassName);
-			((ScenarioAsTest) currentTest).setCurrentRunnerTest(currentRunnerTest);
-
-			fireTestStart(ti, currentTest, blockReporters);
-			boolean addTimeStampOld = addTimeStamp;
-			addTimeStamp = false;
-			report("Execute scenario test: " + scenarioAsClassName);
-			addTimeStamp = addTimeStampOld;
-
-			startTime = System.currentTimeMillis();
-
-		} else if (!inScenarioAsTest) {
-			for (int i = 0; i < listeners.size(); i++) {
-				Object currentObject = listeners.get(i);
-				if (currentObject instanceof ExtendTestListener) {
-					ExtendTestListener tl = (ExtendTestListener) currentObject;
-					try {
-						tl.startContainer(container);
-					} catch (Throwable ex) {
-						log.error("Fail to send startContainer notification to testlistener", ex);
-					}
+		for (int i = 0; i < listeners.size(); i++) {
+			Object currentObject = listeners.get(i);
+			if (currentObject instanceof ExtendTestListener) {
+				ExtendTestListener tl = (ExtendTestListener) currentObject;
+				try {
+					tl.startContainer(container);
+				} catch (Throwable ex) {
+					log.error("Fail to send startContainer notification to testlistener", ex);
 				}
 			}
 		}
@@ -1701,50 +1303,22 @@ public class RunnerListenersManager extends DefaultReporterImpl implements JSyst
 
 	@Override
 	public void endContainer(JTestContainer container) {
-		if (container instanceof Scenario && ((Scenario) container).isScenarioAsTest()) {
-			inScenarioAsTest = false;
-			lastTestLevelName = null;
-			addEndTestInfo(endTime);
-			fireEndTest(currentTest, blockReporters);
-			inTest = false;
-			updateCurrentTest(null);
-			if (System.currentTimeMillis() - lastGC > 60000) {
-				System.gc();
-				lastGC = System.currentTimeMillis();
-			}
-		} else if (!inScenarioAsTest) {
-			for (int i = 0; i < listeners.size(); i++) {
-				Object currentObject = listeners.get(i);
-				if (currentObject instanceof ExtendTestListener) {
-					ExtendTestListener tl = (ExtendTestListener) currentObject;
-					try {
-						tl.endContainer(container);
-					} catch (Throwable ex) {
-						log.error("Fail to send endContainer notification to testlistener", ex);
-					}
+		for (int i = 0; i < listeners.size(); i++) {
+			Object currentObject = listeners.get(i);
+			if (currentObject instanceof ExtendTestListener) {
+				ExtendTestListener tl = (ExtendTestListener) currentObject;
+				try {
+					tl.endContainer(container);
+				} catch (Throwable ex) {
+					log.error("Fail to send endContainer notification to testlistener", ex);
 				}
 			}
 		}
-
 		setLastTestFail(false);
 	}
 
 	@Override
 	public void startLoop(AntForLoop loop, int count) {
-		if(inScenarioAsTest) {
-			inLoop++;
-			for (int i = 0; i < listeners.size(); i++) {
-				Object currentObject = listeners.get(i);
-				if (currentObject instanceof LevelHtmlTestReporter) {
-					try {
-						((ExtendLevelTestReporter) currentObject).startLevel("Loop Number: " + count + ", " + loop.getLoopParamName() +"="+ loop.getLoopValue(count), Reporter.CurrentPlace);
-					} catch (Throwable ex) {
-						log.error("Fail to report", ex);
-					}
-				}
-			}
-			return;
-		}
 		for (int i = 0; i < listeners.size(); i++) {
 			Object currentObject = listeners.get(i);
 			if (currentObject instanceof ExtendTestListener) {
@@ -1760,20 +1334,6 @@ public class RunnerListenersManager extends DefaultReporterImpl implements JSyst
 
 	@Override
 	public void endLoop(AntForLoop loop, int count) {
-		if(inScenarioAsTest) {
-			inLoop--;
-			for (int i = 0; i < listeners.size(); i++) {
-				Object currentObject = listeners.get(i);
-				if (currentObject instanceof LevelHtmlTestReporter) {
-					try {
-						((ExtendLevelTestReporter) currentObject).stopLevel();
-					} catch (Throwable ex) {
-						log.error("Fail to report", ex);
-					}
-				}
-			}
-			return;
-		}
 		for (int i = 0; i < listeners.size(); i++) {
 			Object currentObject = listeners.get(i);
 			if (currentObject instanceof ExtendTestListener) {
@@ -1793,11 +1353,7 @@ public class RunnerListenersManager extends DefaultReporterImpl implements JSyst
 			Object currentObject = listeners.get(i);
 			if (currentObject instanceof ExtendLevelTestReporter) {
 				try {
-					if (lastTestLevelName == null && inLoop==0) {
-						((ExtendLevelTestReporter) currentObject).closeAllLevels();
-					} else if(inLoop==0){
-						((ExtendLevelTestReporter) currentObject).closeLevelsUpTo(lastTestLevelName, false);
-					}
+					((ExtendLevelTestReporter) currentObject).closeAllLevels();
 				} catch (Throwable ex) {
 					log.error("Fail to close all levels", ex);
 				}

@@ -73,7 +73,6 @@ import jsystem.treeui.actionItems.ExportProjectAction;
 import jsystem.treeui.actionItems.ImportProjectAction;
 import jsystem.treeui.actionItems.InitReportersAction;
 import jsystem.treeui.actionItems.NewScenarioAction;
-import jsystem.treeui.actionItems.OpenReportsApplicationAction;
 import jsystem.treeui.actionItems.PauseAction;
 import jsystem.treeui.actionItems.PlayAction;
 import jsystem.treeui.actionItems.PublishXmlResultAction;
@@ -104,7 +103,6 @@ import jsystem.treeui.tree.TestsTreeListener;
 import jsystem.utils.FileUtils;
 import jsystem.utils.StringUtils;
 import jsystem.utils.SwingUtils;
-import jsystem.utils.UploadRunner;
 import jsystem.utils.XmlUtils;
 
 import org.w3c.dom.Document;
@@ -443,9 +441,6 @@ public class TestTreeView extends JFrame implements ActionListener, TestsTreeLis
 		toolBar.add(SystemObjectBrowserAction.getInstance());
 		toolBar.addSeparator(new Dimension(5, 0));
 		toolBar.add(SwitchProjectAction.getInstance());
-		toolBar.add(OpenReportsApplicationAction.getInstance());
-
-		refreshOpenReportsButton();
 
 		repeatCheckBox = new JCheckBox("Repeat", false);
 		repeatCheckBox.setToolTipText("Repeat Scenario");
@@ -680,40 +675,6 @@ public class TestTreeView extends JFrame implements ActionListener, TestsTreeLis
 		}
 		sutCombo.setToolTipText(tooltip);
 
-	}
-
-	public boolean validateUrl(String url) {
-		return UploadRunner.validateUrl(url);
-	}
-
-	public boolean validateUrl() {
-		String urlFromFile = null;
-		try {
-			urlFromFile = UploadRunner.getReportsApplicationUrl();
-			return validateUrl(urlFromFile);
-		} catch (Exception e) {
-			log.debug("Failed validating url " + urlFromFile, e);
-			return false;
-		}
-	}
-
-	/**
-	 * Called from DbPropertiesListener, and enable the button only if both: 1 -
-	 * validateUrl() - ended successfully 2 - checkDBConnection() - ended
-	 * successfully
-	 */
-	public void refreshOpenReportsButton(boolean value) {
-		OpenReportsApplicationAction.getInstance().setEnabled(value);
-	}
-
-	/**
-	 * This method is called from old code, therefore should not change This
-	 * method enable the button if validateUrl() - ended successfully. This
-	 * method doesnt check if the connection parameters to the database are
-	 * correct
-	 */
-	public void refreshOpenReportsButton() {
-		refreshOpenReportsButton(validateUrl());
 	}
 
 	public void pause() {

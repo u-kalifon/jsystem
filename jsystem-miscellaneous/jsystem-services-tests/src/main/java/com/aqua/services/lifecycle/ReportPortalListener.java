@@ -115,11 +115,6 @@ public class ReportPortalListener implements ExtendTestListener, Reporter {
     }
 
     @Override
-    public void setTimeStamp(boolean enable) {
-
-    }
-
-    @Override
     public void reportHtml(String title, String html, boolean status) {
 
     }
@@ -211,11 +206,6 @@ public class ReportPortalListener implements ExtendTestListener, Reporter {
 
     @Override
     public void report(String title, String message, int status, boolean bold, boolean html, boolean step, boolean link) {
-
-    }
-
-    @Override
-    public void report(String title, String message, int status, boolean bold, boolean html, boolean step, boolean link, long time) {
 
     }
 

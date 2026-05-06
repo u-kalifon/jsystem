@@ -14,7 +14,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import jsystem.extensions.report.xml.XmlReportHandler;
-import jsystem.extensions.report.xml.XmlReporter;
 import jsystem.framework.FrameworkOptions;
 import jsystem.framework.JSystemProperties;
 import jsystem.framework.ParameterProperties;
@@ -44,6 +43,13 @@ public class PublishTest extends SystemTestCase4 {
 	protected static Logger log = LoggerFactory.getLogger(PublishTest.class);
 
 	public final static String delimiter = ":ABCDEDCBA:";
+
+	public static final String DESCRIPTION = "Description";
+
+	public static final String VERSION = "Version";
+
+	public static final String BUILD = "Build";
+	
 	/**
 	 * properties to be written to run.properties for publish URL
 	 */
@@ -145,9 +151,9 @@ public class PublishTest extends SystemTestCase4 {
 		if (new File(valuesFile).exists()) {
 			try {
 				valueProperties = FileUtils.loadPropertiesFromFile(valuesFile);
-				versionOptions = getOptionsArray(XmlReporter.VERSION);
-				descriptionOptions = getOptionsArray(XmlReporter.DESCRIPTION);
-				buildOptions = getOptionsArray(XmlReporter.BUILD);
+				versionOptions = getOptionsArray(VERSION);
+				descriptionOptions = getOptionsArray(DESCRIPTION);
+				buildOptions = getOptionsArray(BUILD);
 			} catch (IOException ioException) {
 				log.debug("couldn't find file " + valuesFile);
 			}

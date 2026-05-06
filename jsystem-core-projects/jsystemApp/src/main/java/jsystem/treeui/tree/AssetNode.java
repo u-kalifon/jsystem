@@ -22,7 +22,6 @@ import jsystem.framework.JSystemProperties;
 import jsystem.framework.fixture.Fixture;
 import jsystem.framework.scenario.RunnerScript;
 import jsystem.framework.scenario.Scenario;
-import jsystem.framework.scenario.ScenarioHelpers;
 import jsystem.framework.scripts.ScriptEngine;
 import jsystem.framework.scripts.ScriptExecutor;
 import jsystem.framework.scripts.ScriptsEngineManager;
@@ -36,7 +35,6 @@ import jsystem.utils.StringUtils;
 import jsystem.utils.XmlUtils;
 import jsystem.utils.beans.AsmUtils;
 import jsystem.utils.beans.MethodElement;
-import junit.framework.SystemTestCase;
 import junit.framework.SystemTestCase4;
 import junit.framework.TestCase;
 
@@ -140,13 +138,8 @@ public abstract class AssetNode extends DefaultMutableTreeNode implements Compar
 									scenarioName)) {
 								continue;
 							}
-							if (ScenarioHelpers.isPackedScenario(resource.replace(".xml",""))){
-								children.add(new ScenarioAsATestNode(this, scenarioName,
-										Scenario.getMeaningfulNameFromScenarioFile(f)));
-							}else{
-								children.add(new ScenarioNode(this, scenarioName,
-										Scenario.getMeaningfulNameFromScenarioFile(f)));
-							}
+							children.add(new ScenarioNode(this, scenarioName,
+									Scenario.getMeaningfulNameFromScenarioFile(f)));
 						}
 					} else if(fileNameToLower.endsWith(".class") && ! fileNameToLower.endsWith("$py.class")){ // class
 						File root = (File) this.getRootUserObject();

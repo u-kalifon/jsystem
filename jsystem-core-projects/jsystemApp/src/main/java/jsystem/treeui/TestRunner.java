@@ -352,7 +352,6 @@ public class TestRunner extends BaseTestRunner implements StartRunner {
 		treeView.refreshInternals();
 		TestTreeView.treeController.refreshView();
 		TestTreeView.treeController.expandTree();
-		treeView.refreshOpenReportsButton();
 		treeView.tableController.refresh();
 		PerformanceUtil.endMeasure(index, "Refreshing scenario");
 		SystemObjectBrowserUtils.startCollectSOs();

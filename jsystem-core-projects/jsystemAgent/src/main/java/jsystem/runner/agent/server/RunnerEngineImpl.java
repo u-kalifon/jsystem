@@ -17,7 +17,7 @@ import java.util.Vector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import jsystem.extensions.report.html.HtmlCodeWriter;
+import jsystem.extensions.report.simpleHtmlReporter.HtmlCodeWriter;
 import jsystem.framework.FrameworkOptions;
 import jsystem.framework.JSystemProperties;
 import jsystem.framework.RunProperties;
@@ -347,7 +347,7 @@ public class RunnerEngineImpl implements RunnerEngine {
 	 */
 	public URL getLogUrl() throws Exception {
 		String logDir = JSystemProperties.getInstance().getPreference(FrameworkOptions.LOG_FOLDER);
-		File f = new File(logDir, "current/index.html");
+		File f = new File(logDir, "index.html");
 		String uri = f.toURI().toString().replace("\\", "/");
 		return new URL(uri);
 	}

@@ -6,13 +6,14 @@ package jsystem.framework.scenario;
 import java.util.HashMap;
 import java.util.Properties;
 
-import jsystem.extensions.report.html.HtmlCodeWriter;
 import junit.framework.Test;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+
+import jsystem.extensions.report.simpleHtmlReporter.HtmlCodeWriter;
 
 /**
  * represents a fixture entity on the runner scenario tree. RunnerFixture

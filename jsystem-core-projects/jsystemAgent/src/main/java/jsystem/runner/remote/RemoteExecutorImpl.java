@@ -317,7 +317,7 @@ public class RemoteExecutorImpl implements RemoteExecutor {
 							reporter.report(m.getField(0), m.getField(1), Integer.parseInt(m.getField(2)), Boolean
 									.valueOf(m.getField(3)).booleanValue(), Boolean.valueOf(m.getField(4))
 									.booleanValue(), Boolean.valueOf(m.getField(5)).booleanValue(),
-									Boolean.valueOf(m.getField(6)).booleanValue(), Long.parseLong(m.getField(7)));
+									Boolean.valueOf(m.getField(6)).booleanValue());
 						} catch (Throwable t) {
 							throw new Exception("Fail to report:\n" + StringUtils.getStackTrace(t) + "\n"
 									+ m.toString());
@@ -378,7 +378,7 @@ public class RemoteExecutorImpl implements RemoteExecutor {
 						reporter.setSilent(Boolean.valueOf(m.getField(0)).booleanValue());
 						break;
 					case M_SET_TIME_STAMP:
-						reporter.setTimeStamp(Boolean.valueOf(m.getField(0)).booleanValue());
+						// Deprecated: ignored. Kept to preserve RemoteMessage ordinal values on the wire.
 						break;
 					case M_STEP:
 						reporter.step(m.getField(0));

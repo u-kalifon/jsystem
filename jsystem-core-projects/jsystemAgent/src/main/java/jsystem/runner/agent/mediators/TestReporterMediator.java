@@ -3,7 +3,6 @@
  */
 package jsystem.runner.agent.mediators;
 
-import java.io.IOException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,22 +22,12 @@ public class TestReporterMediator extends BaseMediator implements TestReporter {
 		super(agent);
 	}
 	
-	public boolean asUI() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
 	public String getName() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	public void init() {
-		// TODO Auto-generated method stub
-
-	}
-
-	public void initReporterManager() throws IOException {
 		// TODO Auto-generated method stub
 
 	}

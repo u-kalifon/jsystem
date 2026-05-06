@@ -199,16 +199,6 @@ public enum FrameworkOptions {
 			new String[] { "java.lang.Thread" }),
 
 	/**
-	 * Add time stamp to html report
-	 */
-	HTML_ADD_TIME(
-			"reporter.addtime",
-			"Add time stamp to the html report",
-			DataType.BOOLEAN,
-			true,
-			true),
-
-	/**
 	 * List of the reporters classes
 	 */
 	REPORTERS_CLASSES(
@@ -562,15 +552,6 @@ public enum FrameworkOptions {
 	/**
 	 * see description in GUIFrameworkOptions
 	 */
-	SCENARIO_AS_TEST(
-			"enable.mark.scenario.as.test", 
-			"Enable marking scenario as test", 
-			DataType.BOOLEAN,
-			true,
-			false),
-	/**
-	 * see description in GUIFrameworkOptions
-	 */
 	RESTORE_DEFAULTS(
 			"enable.restore.parameters.defaults", 
 			"Enables the restore to default menu item", 
@@ -844,14 +825,6 @@ public enum FrameworkOptions {
 			"",
 			false
 			),
-			
-	SCEANRIO_AS_TEST_TERMINATE_ON_FAIL (
-			"scenario.as.test.fail.terminate",
-			"Terminate Scenario as Test if any test fails",
-			DataType.BOOLEAN,
-			true,
-			false
-			),
 	
 	FILTER_SUT_IN_ASSETS_TREE(
 			"filter.sut.tree",
@@ -1048,22 +1021,7 @@ public enum FrameworkOptions {
 			DataType.SEARCH_AND_LIST, 
 			"",
 			true, 
-			new String[] { "jsystem.runner.agent.publisher.Publisher" }),
-
-	REPORTS_PUBLISHER_HOST(
-			"publisher.host",
-			"Reports Server host name or ip",
-			DataType.TEXT,
-			"localhost",
-			false),
-
-	REPORTS_PUBLISHER_PORT(
-			"publisher.port",
-			"Reports server port",
-			DataType.TEXT,
-			"8080",
-			false);
-
+			new String[] { "jsystem.runner.agent.publisher.Publisher" });
 	
 	private String string;
 	private String description;

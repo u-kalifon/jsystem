@@ -10,8 +10,6 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
-import java.io.IOException;
-
 import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.SwingConstants;
@@ -107,24 +105,6 @@ public class TestReporterTable extends JTable implements TestReporter, TestListe
 	public void report(String title, String message, boolean isPass, boolean bold) {
 		int status = isPass? Reporter.PASS : Reporter.FAIL;
 		report(title, message, status, bold);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see jsystem.framework.report.TestReporter#initReporterManager()
-	 */
-	public void initReporterManager() throws IOException {
-
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see jsystem.framework.report.TestReporter#asUI()
-	 */
-	public boolean asUI() {
-		return false;
 	}
 
 	public String getName() {

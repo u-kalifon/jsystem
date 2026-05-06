@@ -882,34 +882,17 @@ public class ScenarioHelpers {
 	 * <code>t</code> is <code>null</code>, returns null.
 	 */
 	public static Scenario getFirstScenarioAncestor(JTest t) {
-		if ((t instanceof Scenario || t == null)
-				&& !isScenarioAsTestAndNotRoot(t)) {
+		if (t instanceof Scenario || t == null) {
 			return (Scenario) t;
 		}
 		JTest toRet = t.getParent();
 		while (toRet != null) {
-			if (toRet instanceof Scenario && !isScenarioAsTestAndNotRoot(toRet)) {
+			if (toRet instanceof Scenario) {
 				break;
 			}
 			toRet = toRet.getParent();
 		}
 		return (Scenario) toRet;
-	}
-
-	/**
-	 * check if a given test is a Scenario marked as test and is not the root
-	 * Scenario
-	 * 
-	 * @param test
-	 *            the Test to check
-	 * @return
-	 */
-	public static boolean isScenarioAsTestAndNotRoot(JTest test) {
-		if (!(test instanceof Scenario)) {
-			return false;
-		}
-		Scenario s = (Scenario) test;
-		return s.isScenarioAsTest() && !s.isRoot();
 	}
 
 	private static Properties convertParametersToProperties(Parameter[] param) {
@@ -976,12 +959,6 @@ public class ScenarioHelpers {
 		return newName;
 	}
 
-	public static boolean isPackedScenario(String scenarioName) {
-		String value = getScenarioProperties(scenarioName).getProperty(
-				RunningProperties.SCENARIO_AS_TEST_TAG);
-		return (value != null && value.toLowerCase().equals("true"));
-	}
-
 	public static boolean isMarkedAsKnownIssue(String uuid, String scenarioName) {
 		return "true".equals(getTestProperty(uuid, scenarioName,
 				RunningProperties.MARKED_AS_KNOWN_ISSUE));
@@ -1022,22 +999,6 @@ public class ScenarioHelpers {
 	public static boolean isHiddenInHTML(String fullUuid, Scenario rootScenario) {
 		return "true".equals(getParameterValueFromProperties(fullUuid,
 				rootScenario, RunningProperties.HIDDEN_IN_HTML, null));
-	}
-
-	/**
-	 * 
-	 */
-	public static boolean isParentScenarioPackedScenario(String uuid) {
-		String mainScenarioName = System
-				.getProperty(RunningProperties.CURRENT_SCENARIO_NAME);
-		int lastIndexOfDot = uuid.lastIndexOf('.');
-		String parentScenarioUUID = "";
-		if (lastIndexOfDot > 0) {
-			parentScenarioUUID = uuid.substring(0, lastIndexOfDot);
-		}
-		String value = ScenarioHelpers.getTestProperty(parentScenarioUUID,
-				mainScenarioName, RunningProperties.SCENARIO_AS_TEST_TAG);
-		return (value != null && value.toLowerCase().equals("true"));
 	}
 
 	/**
@@ -1600,138 +1561,8 @@ public class ScenarioHelpers {
 	 * @return a RunnerTest object
 	 */
 	public static RunnerTest getRunnerTest(Test test) {
-		RunnerTest runnerTest;
-		if (test instanceof ScenarioAsTest) {
-			runnerTest = ((ScenarioAsTest) test).getCurrentRunnerTest();
-		} else {
-			runnerTest = ScenariosManager.getInstance().getCurrentScenario()
-					.findRunnerTest(test);
-		}
-		return runnerTest;
-	}
-
-	/**
-	 * Raise the scenarioAsTestStart flag if not already raised
-	 * 
-	 * @param scenarioAsTestUUID
-	 *            Scenario unique id
-	 */
-	public static boolean signalScenarioAsTestStart(boolean isScenarioAsTest,
-			String scenarioAsTestUUID) {
-		try {
-			String value = RunProperties.getInstance().getRunProperty(
-					RunningProperties.SCENARIO_AS_TEST_START);
-			if (value == null
-					|| (value != null && !scenarioAsTestUUID.startsWith(value))) { // second
-																					// condition
-																					// is
-																					// for
-																					// edge
-																					// case
-																					// in
-																					// which
-																					// flag
-																					// was
-																					// not
-																					// deleted!
-				if (isScenarioAsTest) {
-					RunProperties.getInstance().setRunProperty(
-							RunningProperties.SCENARIO_AS_TEST_START,
-							scenarioAsTestUUID);
-					return true;
-				}
-				if (value != null) {
-					removeScenarioAsTestFlag();
-				}
-				return false;
-			}
-			return false;
-		} catch (Exception e1) {
-			log.warn("failed updating scenario as test flag");
-			return true;
-		}
-	}
-
-	/**
-	 * Remove scenario as test flag
-	 * 
-	 * @param isScenarioAsTest
-	 *            flag value to mark
-	 */
-	public static void removeScenarioAsTestFlag() {
-		try {
-			RunProperties.getInstance().removeRunProperty(
-					RunningProperties.SCENARIO_AS_TEST_START);
-			removeFailFlag();
-		} catch (Exception e1) {
-			log.warn("failed updating scenario as test flag");
-		}
-	}
-
-	/**
-	 * A test is skipped if any parent scenario is marked as test, a failure
-	 * occurred and the terminate flag is true
-	 * 
-	 * @return True if test should be skipped
-	 */
-	public static boolean shouldTestBeSkipped() {
-		return isFailFlagUp() && shouldTerminateOnFail()
-				&& insideScenarioAsTest();
-	}
-
-	private static boolean shouldTerminateOnFail() {
-		String isScenarioTerminateOnFail = JSystemProperties.getInstance()
-				.getPreference(
-						FrameworkOptions.SCEANRIO_AS_TEST_TERMINATE_ON_FAIL);
-		if (null == isScenarioTerminateOnFail) {
-			isScenarioTerminateOnFail = FrameworkOptions.SCEANRIO_AS_TEST_TERMINATE_ON_FAIL
-					.getDefaultValue().toString();
-		}
-		return "true".equalsIgnoreCase(isScenarioTerminateOnFail);
-	}
-
-	private static boolean lastTestFailed() {
-		return ListenerstManager.getInstance().getLastTestFailed();
-	}
-
-	public static void updateFailFlag() {
-		if (lastTestFailed() && insideScenarioAsTest()) {
-			try {
-				RunProperties.getInstance().setRunProperty(
-						RunningProperties.SCENARIO_AS_TEST_FAILURE, "true");
-			} catch (IOException e) {
-				log.warn("failed updating scenario as test FAIL flag");
-			}
-		}
-	}
-
-	private static boolean isFailFlagUp() {
-		try {
-			return RunProperties.getInstance().getRunProperty(
-					RunningProperties.SCENARIO_AS_TEST_FAILURE) != null;
-		} catch (IOException e) {
-			log.warn("failed checking scenario as test FAIL flag");
-			return false;
-		}
-	}
-
-	private static void removeFailFlag() {
-		try {
-			RunProperties.getInstance().removeRunProperty(
-					RunningProperties.SCENARIO_AS_TEST_FAILURE);
-		} catch (IOException e) {
-			log.warn("failed updating scenario as test FAIL flag");
-		}
-	}
-
-	private static boolean insideScenarioAsTest() {
-		try {
-			return RunProperties.getInstance().getRunProperty(
-					RunningProperties.SCENARIO_AS_TEST_START) != null;
-		} catch (IOException e) {
-			log.debug("failed checking scenario as test flag");
-			return false;
-		}
+		return ScenariosManager.getInstance().getCurrentScenario()
+				.findRunnerTest(test);
 	}
 
 	/**

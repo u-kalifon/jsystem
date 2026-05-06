@@ -22,7 +22,7 @@ public class RunningProperties {
 	
 	public static String MEANINGFUL_NAME_TAG = "meaningfulName";
 	
-	public final static String SCENARIO_AS_TEST_TAG = "jsystem.scenario.as.test";
+	public final static String SCENARIO_AS_TEST_TAG = "jsystem.scenario.as.test";	// Deprecated, leave it here for backwards compatibility with old scenario files
 	
 	//APPLIED - the property key that will be seen in the properties file
 	public final static String EDIT_ONLY_LOCALLY = "jsystem.scenario.edit.only.locally";
@@ -30,16 +30,6 @@ public class RunningProperties {
 	public final static String SCENARIO_EXTERNAL_ID = "jsystem.scenario.external.id";
 
 	public final static String SCENARIO_PROJECT_NAME = "jsystem.scenario.project.name";
-	
-	/**
-	 * Signal a scenario as test started to solve bugs #248 and #342
-	 */
-	public final static String SCENARIO_AS_TEST_START = "jsystem.scenario.as.test.start";
-	
-	/**
-	 * A counter for identifying if we are currently in a Scenario as test
-	 */
-	public final static String SCENARIO_AS_TEST_FAILURE = "jsystem.scenario.as.test.failure";
 	
 	public final static String MARKED_AS_KNOWN_ISSUE = "jsystem.known.issue";
 	

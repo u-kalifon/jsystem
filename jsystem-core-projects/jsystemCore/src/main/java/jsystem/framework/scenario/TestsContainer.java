@@ -34,8 +34,6 @@ public class TestsContainer {
 	
 	private boolean hasElse; // not Else if!
 	
-	private boolean hasTestScenario;
-	
 	private boolean hasSwitchDefault; 
 
 	private ArrayList<Scenario> allScenarios;
@@ -75,7 +73,7 @@ public class TestsContainer {
 	public JTestContainer getContainerRoot() {
 		if (!isEmpty()) {
 			JTest firstElement = map.get(map.firstKey());
-			if (firstElement instanceof JTestContainer && !ScenarioHelpers.isScenarioAsTestAndNotRoot(firstElement)) {
+			if (firstElement instanceof JTestContainer) {
 				return (JTestContainer)firstElement;
 			}
 			return firstElement.getParent();
@@ -135,12 +133,8 @@ public class TestsContainer {
 		if (test.isDisable())
 			allMapped = false;
 		if (test instanceof Scenario) {
-			if (((Scenario)test).isScenarioAsTest() && !((Scenario)test).isRoot()){
-				hasTestScenario = true;
-			}else{
-				hasScen = true;
-				allScenarios.add((Scenario)test);
-			}
+			hasScen = true;
+			allScenarios.add((Scenario)test);
 			if (((Scenario) test).isRoot()){
 				hasRoot = true;
 			}
@@ -264,15 +258,6 @@ public class TestsContainer {
 	 */
 	public boolean hasScenario() {
 		return hasScen;
-	}
-	
-	/**
-	 * checks if there is a Test Scenario in the container
-	 * 
-	 * @return true if there is a scenario in the container
-	 */
-	public boolean hasTestScenario() {
-		return hasTestScenario;
 	}
 	
 	/**

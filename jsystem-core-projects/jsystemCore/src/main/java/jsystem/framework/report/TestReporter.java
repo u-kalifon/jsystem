@@ -3,8 +3,6 @@
  */
 package jsystem.framework.report;
 
-import java.io.IOException;
-
 /**
  * TestReporter define the methods that should be implemented by all the system
  * reporter. The reporter should register to the ListenerManager, and will be
@@ -14,19 +12,6 @@ import java.io.IOException;
  * 
  */
 public interface TestReporter {
-	/**
-	 * Launch the manager GUI.
-	 * @throws IOException TODO
-	 * 
-	 */
-	public void initReporterManager() throws IOException;
-
-	/**
-	 * 
-	 * @return true if suport GUI false if not
-	 */
-	public boolean asUI();
-
 	/**
 	 * This method will be called by the ListenerManager when new report is
 	 * added.

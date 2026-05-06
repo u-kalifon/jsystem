@@ -77,7 +77,7 @@ import javax.swing.tree.TreeSelectionModel;
 
 import org.jfree.util.Log;
 
-import jsystem.extensions.report.html.HtmlCodeWriter;
+import jsystem.extensions.report.simpleHtmlReporter.HtmlCodeWriter;
 import jsystem.extensions.scenarionamehook.ScenarioNameHookManager;
 import jsystem.extensions.scenarionamehook.ScenarioNameHookManager.HookData;
 import jsystem.extensions.sourcecontrol.SourceControlHandler;
@@ -249,10 +249,6 @@ public class TestsTableController extends Observable implements TestStatusListen
 	private JMenuItem popupCollapseTree;
 
 	private JMenuItem popupExpandTree;
-
-	private JMenuItem markScenarioAsTest;
-
-	private JMenuItem unMarkScenarioAsTest;
 
 	// Limor Bortman
 	private JMenuItem resetToDefault;
@@ -499,8 +495,7 @@ public class TestsTableController extends Observable implements TestStatusListen
 			if (((test instanceof Scenario) && (destJTestContainer instanceof Scenario) && (((Scenario) test).getName()
 					.equals(destJTestContainer.getName())))
 					|| (pasteUpLevels > 0)
-					|| (after && !(container.getTests()[0] instanceof RunnerTest) && (!((container.getTests()[0] instanceof Scenario) && (((Scenario) container
-							.getTests()[0])).isScenarioAsTest())))) {
+					|| (after && !(container.getTests()[0] instanceof RunnerTest))) {
 				// In case we navigated up to a higher scenario level, there is
 				// no need to do it again
 				if (after)
@@ -1414,8 +1409,6 @@ public class TestsTableController extends Observable implements TestStatusListen
 				|| source.equals(popupExpandTree)
 				|| source.equals(popupCollapseTreeRoot)
 				|| source.equals(popupExpandTreeRoot)
-				|| source.equals(markScenarioAsTest)
-				|| source.equals(unMarkScenarioAsTest)
 				|| source.equals(markAsKnownIssue)
 				// APPLIED - this is to recognize the item was selected from the
 				// JPopupMenu
@@ -1526,14 +1519,6 @@ public class TestsTableController extends Observable implements TestStatusListen
 					}
 				}
 			}
-		} else if (source.equals(markScenarioAsTest) || source.equals(unMarkScenarioAsTest)) {
-			Scenario root = (Scenario) currentNode.getTest();
-			boolean scenarioAsTest = source.equals(markScenarioAsTest);
-			root.setScenarioAsTest(scenarioAsTest);
-			ScenarioHelpers.setDirtyFlag();
-
-			testsTreeControler.refreshView();
-			testsTreeControler.expandTree();
 		} else if (source.equals(editOnlyLocallyItem)) {
 			Scenario root = (Scenario) currentNode.getTest();
 			root.setEditLocalOnly(!root.isEditLocalOnly());
@@ -1721,8 +1706,6 @@ public class TestsTableController extends Observable implements TestStatusListen
 	 * 
 	 * @param expand
 	 * 
-	 * @param scenarioAsTest
-	 *            if on root, then signals if root is marked as test
 	 * @param markedAsKnownIssue
 	 * 
 	 * @param meaningfulName
@@ -1738,7 +1721,7 @@ public class TestsTableController extends Observable implements TestStatusListen
 	 * @return the created JPopupMenu
 	 */
 	private JPopupMenu createPopup(int type, boolean comment, boolean map, boolean moveUp, boolean moveDown,
-			boolean collapse, boolean expand, boolean scenarioAsTest, boolean markedAsKnownIssue,
+			boolean collapse, boolean expand, boolean markedAsKnownIssue,
 			boolean meaningfulName, boolean hiddenInHTML, boolean markedAsNegativeTest, boolean mapAll, boolean unMapAll) {
 
 		popupMenu = new JPopupMenu();
@@ -1781,22 +1764,6 @@ public class TestsTableController extends Observable implements TestStatusListen
 
 			// delete is always shown
 			popupMenu.add(RemoveItemAction.getInstance());
-
-			if (scenarioAsTest
-					&& !"false"
-							.equals(JSystemProperties.getInstance().getPreference(FrameworkOptions.SCENARIO_AS_TEST))) {
-				popupNavigateToSubScenario = new JMenuItem("Navigate to sub scenario");
-				popupNavigateToSubScenario.addActionListener(this);
-				popupMenu.add(popupNavigateToSubScenario);
-			}
-
-			if (!"false".equals(JSystemProperties.getInstance().getPreference(FrameworkOptions.SCENARIO_AS_TEST))) {
-				if (scenarioAsTest) {
-					unMarkScenarioAsTest = new JMenuItem(JsystemMapping.getInstance().getScenarioUnMarkAsTestMenuItem());
-					unMarkScenarioAsTest.addActionListener(this);
-					popupMenu.add(unMarkScenarioAsTest);
-				}
-			}
 
 			if (markedAsNegativeTest) {
 				unMarkAsNegativeTest = new JMenuItem(JsystemMapping.getInstance().getUnMarkAsNegativeTestMenuItem(),
@@ -1861,18 +1828,6 @@ public class TestsTableController extends Observable implements TestStatusListen
 				popupSetName = new JMenuItem(JsystemMapping.getInstance().getUpdateMeaningfulNameMenuItem());
 				popupSetName.addActionListener(this);
 				popupMenu.add(popupSetName);
-			}
-
-			if (!"false".equals(JSystemProperties.getInstance().getPreference(FrameworkOptions.SCENARIO_AS_TEST))) {
-				if (!scenarioAsTest) {
-					markScenarioAsTest = new JMenuItem(JsystemMapping.getInstance().getScenarioMarkAsTestMenuItem());
-					markScenarioAsTest.addActionListener(this);
-					popupMenu.add(markScenarioAsTest);
-				} else {
-					unMarkScenarioAsTest = new JMenuItem(JsystemMapping.getInstance().getScenarioUnMarkAsTestMenuItem());
-					unMarkScenarioAsTest.addActionListener(this);
-					popupMenu.add(unMarkScenarioAsTest);
-				}
 			}
 
 			if (collapse) {
@@ -1958,12 +1913,6 @@ public class TestsTableController extends Observable implements TestStatusListen
 				popupExpandTree = new JMenuItem("Expand tree");
 				popupExpandTree.addActionListener(this);
 				popupMenu.add(popupExpandTree);
-			}
-
-			if (!"false".equals(JSystemProperties.getInstance().getPreference(FrameworkOptions.SCENARIO_AS_TEST))) {
-				markScenarioAsTest = new JMenuItem(JsystemMapping.getInstance().getScenarioMarkAsTestMenuItem());
-				markScenarioAsTest.addActionListener(this);
-				popupMenu.add(markScenarioAsTest);
 			}
 
 			if (hiddenInHTML) {
@@ -2170,7 +2119,6 @@ public class TestsTableController extends Observable implements TestStatusListen
 		boolean collapse = false;
 		boolean mapAll = false;
 		boolean unMapAll = false;
-		boolean singleTestScenarioSelected = false;
 		boolean meaningful = false;
 		boolean markedAsKnownIssue = test.isMarkedAsKnownIssue();
 		boolean markedAsNegativeTest = test.isMarkedAsNegativeTest();
@@ -2180,8 +2128,6 @@ public class TestsTableController extends Observable implements TestStatusListen
 		moveUp = rootScenario.canMoveUp(container);
 		// check if can move down
 		moveDown = rootScenario.canMoveDown(container);
-
-		singleTestScenarioSelected = container.hasTestScenario() && container.getNumOfTests() == 1;
 
 		meaningful = container.getNumOfTests() == 1;
 
@@ -2219,7 +2165,7 @@ public class TestsTableController extends Observable implements TestStatusListen
 
 		if (currentNode.isRoot()) { // ROOT Menu
 			menu = createPopup(ROOT_POP_UP, comment, false, false, false, false, expand,
-					rootScenario.isScenarioAsTest(), markedAsKnownIssue, true, hiddenInHTML, markedAsNegativeTest,
+					markedAsKnownIssue, true, hiddenInHTML, markedAsNegativeTest,
 					mapAll, unMapAll);
 		} else {
 			if (container.hasScenario() && container.getNumOfTests() == 1) { // Single
@@ -2235,9 +2181,9 @@ public class TestsTableController extends Observable implements TestStatusListen
 
 			if (test instanceof RunnerFixture) {
 				menu = createPopup(FIXTURE_POP_UP, true, false, false, false, false, false, false, false, false, false,
-						false, false, false);
+						false, false);
 			} else {
-				menu = createPopup(type, comment, map, moveUp, moveDown, collapse, expand, singleTestScenarioSelected,
+				menu = createPopup(type, comment, map, moveUp, moveDown, collapse, expand,
 						markedAsKnownIssue, meaningful, hiddenInHTML, markedAsNegativeTest, mapAll, unMapAll);
 			}
 		}
@@ -3579,8 +3525,7 @@ public class TestsTableController extends Observable implements TestStatusListen
 			 * handle check box pressing
 			 */
 			boolean checkBoxLocation = isTheMouseOnTheCheckBox(currentNode, x);
-			boolean legalComponent = (!currentNode.isJTestContainer() || ScenarioHelpers
-					.isScenarioAsTestAndNotRoot(currentNode.getTest()));
+			boolean legalComponent = !currentNode.isJTestContainer();
 			if (legalComponent && checkBoxLocation) {
 				restoreSelections(null);
 

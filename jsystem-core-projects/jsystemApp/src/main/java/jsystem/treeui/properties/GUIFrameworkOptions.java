@@ -476,18 +476,6 @@ public enum GUIFrameworkOptions {
 	),
 
 	/**
-	 * If set to true, meaningful name will be ignored in scenario tree
-	 */
-	SCENARIO_AS_TEST(
-			FrameworkOptions.SCENARIO_AS_TEST,
-			true,
-			Group.ADVANCED, 			
-			"When set to true, root scenario can be marked as a test. A scenario which is marked as a test, will be visualized as a test"+
-			"when added as a sub scenario and in the HTML report. \n"+
-			"In JSystem reports server the scenario will be count as a test for the statiistics"			
-	),
-		
-	/**
 	 * Indicates the command line executor that should be used when running JSystem from command line.
 	 */
 	CMD_LINE_EXECUTER(
@@ -699,13 +687,6 @@ public enum GUIFrameworkOptions {
 
 			"customer.product = \"apcon-1.5;ixia 5.5;version=6\" \n"
 	),
-	
-	SCEANRIO_AS_TEST_TERMINATE_ON_FAIL(
-			FrameworkOptions.SCEANRIO_AS_TEST_TERMINATE_ON_FAIL,
-			true,
-			Group.RUNNER,
-			"If enabled, and a Scenario is marked as a test,\n" +
-			"then the scenario will stop execution if any of it's tests fail."),
 	AUTO_SAVE_NO_CONFIRMATION(
 			FrameworkOptions.AUTO_SAVE_NO_CONFIRMATION,
 			true,
@@ -857,21 +838,7 @@ public enum GUIFrameworkOptions {
 			"In order to add a new publisher, please implement \n" +
 			"jsystem.runner.agent.publisher.Publish interface \n" +
 			"and then select you class here."
-	),
-	
-	
-	REPORTS_PUBLISHER_HOST(
-			FrameworkOptions.REPORTS_PUBLISHER_HOST,
-			true,
-			Group.REPORTS_PUBLISHER,
-			"Reports publisher host or ip\n"),
-	
-	REPORTS_PUBLISHER_PORT(
-			FrameworkOptions.REPORTS_PUBLISHER_PORT,
-			true,
-			Group.REPORTS_PUBLISHER,
-			"Reports publisher port\n");
-
+	);
 	
 	private boolean exposeToDialog;
 	private Group group;

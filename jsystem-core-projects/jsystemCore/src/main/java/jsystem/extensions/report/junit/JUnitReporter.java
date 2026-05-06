@@ -1,8 +1,6 @@
 package jsystem.extensions.report.junit;
 
 import java.io.File;
-import java.io.IOException;
-
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
@@ -19,7 +17,6 @@ import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlText;
 
-import jsystem.extensions.report.xml.XmlReporter;
 import jsystem.framework.FrameworkOptions;
 import jsystem.framework.JSystemProperties;
 import jsystem.framework.report.ExtendTestListener;
@@ -42,7 +39,7 @@ import junit.framework.Test;
  * 
  */
 public class JUnitReporter implements ExtendTestReporter, ExtendTestListener {
-	static Logger log = LoggerFactory.getLogger(XmlReporter.class);
+	static Logger log = LoggerFactory.getLogger(JUnitReporter.class);
 
 	private static final double MILL_TO_SEC = 1000;
 	private final String logFileName = "TEST-JSystem_JUnit_report.xml";
@@ -448,15 +445,6 @@ public class JUnitReporter implements ExtendTestReporter, ExtendTestListener {
 
 	@Override
 	public void flush() throws Exception {
-	}
-
-	@Override
-	public void initReporterManager() throws IOException {
-	}
-
-	@Override
-	public boolean asUI() {
-		return false;
 	}
 
 	@Override

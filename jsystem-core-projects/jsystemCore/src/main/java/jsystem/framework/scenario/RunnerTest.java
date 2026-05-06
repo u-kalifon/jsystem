@@ -27,7 +27,7 @@ import java.util.regex.Pattern;
 
 import jsystem.extensions.handlers.UIEventHandler;
 import jsystem.extensions.handlers.ValidationHandler;
-import jsystem.extensions.report.html.HtmlCodeWriter;
+import jsystem.extensions.report.simpleHtmlReporter.HtmlCodeWriter;
 import jsystem.framework.FrameworkOptions;
 import jsystem.framework.JSystemProperties;
 import jsystem.framework.ParameterProperties;

@@ -4,7 +4,6 @@
 package jsystem.framework.report;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -49,8 +48,6 @@ public class ListenerstManager extends DefaultReporterImpl implements
 	ArrayList<Object> listeners = new ArrayList<Object>();
 
 	boolean silent = false;
-
-	boolean timeStampEnabled = true;
 
 	private static boolean lastTestFail = false;
 
@@ -274,11 +271,6 @@ public class ListenerstManager extends DefaultReporterImpl implements
 		return silent;
 	}
 
-	public void setTimeStamp(boolean enable) {
-		timeStampEnabled = enable;
-		remoteRunner.setTimeStamp(enable);
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -286,18 +278,8 @@ public class ListenerstManager extends DefaultReporterImpl implements
 	 * java.io.InputStream)
 	 */
 	public synchronized void saveFile(String fileName, byte[] content) {
-		try {
-
-			File file = new File(getCurrentTestFolder(), fileName);
-			file.getParentFile().mkdirs();
-			FileOutputStream out = new FileOutputStream(file);
-			out.write(content);
-			out.close();
-		} catch (IOException e) {
-			log.warn("Fail to save file", e);
-		}
+		remoteRunner.saveFile(fileName, content);
 		checkExecutionStatus();
-		;
 	}
 
 	/*
@@ -503,8 +485,9 @@ public class ListenerstManager extends DefaultReporterImpl implements
 		}
 	}
 
+	@Override
 	public synchronized void report(String title, String message, int status,
-			boolean bold, boolean html, boolean step, boolean link, long time) {
+			boolean bold, boolean html, boolean step, boolean link) {
 		checkExecutionStatus();
 		if (isSilent()) {
 			return;
@@ -523,14 +506,13 @@ public class ListenerstManager extends DefaultReporterImpl implements
 			currentReportElement.setLink(link);
 			currentReportElement
 					.setOriginator(Thread.currentThread().getName());
-			currentReportElement.setTime(time);
+			currentReportElement.setTime(System.currentTimeMillis());
 			reportsBuffer.add(currentReportElement);
 			if (!printBufferdReportsInRunTime) {
 				return;
 			}
 		}
-		remoteRunner.report(title, String.valueOf(message), status, bold, html,
-				step, link, time);
+		remoteRunner.report(title, String.valueOf(message), status, bold, html, step, link);
 		if (status == Reporter.FAIL && !isFailToPass() && !isFailToWarning() && !isSilent()) {
 			if (failDebug) {
 				writeToDebugFile("Test was set to fail from report");
