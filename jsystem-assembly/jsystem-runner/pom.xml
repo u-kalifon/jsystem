@@ -78,20 +78,8 @@
 			<artifactId>ant-contrib</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>tftp4java</groupId>
-			<artifactId>tftp4java-server</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>tftp4java</groupId>
-			<artifactId>tftp4java-client</artifactId>
-		</dependency>
-		<dependency>
 			<groupId>commons-net</groupId>
 			<artifactId>commons-net</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>ch.ethz.ganymed</groupId>
-			<artifactId>ganymed-ssh2</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>javax.comm</groupId>
@@ -115,11 +103,6 @@
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>tomcat</groupId>
-			<artifactId>catalina</artifactId>
-
 		</dependency>
 		<dependency>
 			<groupId>com.jgoodies</groupId>
@@ -165,11 +148,6 @@
 		<dependency>
 			<groupId>org.jsystemtest.systemobjects</groupId>
 			<artifactId>FileTransfer</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.jsystemtest.systemobjects</groupId>
-			<artifactId>embeddedCatalina</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>

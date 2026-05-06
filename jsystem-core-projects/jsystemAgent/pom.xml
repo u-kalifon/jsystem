@@ -19,11 +19,6 @@
 			<artifactId>FileTransfer</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-		<dependency>
-			<groupId>org.jsystemtest.systemobjects</groupId>
-			<artifactId>embeddedCatalina</artifactId>
-			<version>${project.version}</version>
-		</dependency>
 		<!-- SLF4J and Logback dependencies -->
 		<dependency>
 			<groupId>org.slf4j</groupId>
