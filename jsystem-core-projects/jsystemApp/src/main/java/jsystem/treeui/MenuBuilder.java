@@ -23,7 +23,6 @@ import jsystem.treeui.actionItems.CutAction;
 import jsystem.treeui.actionItems.DeleteScenarioAction;
 import jsystem.treeui.actionItems.EditScenarioAction;
 import jsystem.treeui.actionItems.ExitAction;
-import jsystem.treeui.actionItems.ExportProjectAction;
 import jsystem.treeui.actionItems.InitReportersAction;
 import jsystem.treeui.actionItems.JSystemPropertiesAction;
 import jsystem.treeui.actionItems.NewScenarioAction;
@@ -110,7 +109,6 @@ public class MenuBuilder {
 		fileMenu.add(CopyScenarioAction.getInstance());
 		fileMenu.add(SaveFailedSequenceAction.getInstance());
 		fileMenu.addSeparator();
-		fileMenu.add(ExportProjectAction.getInstance());
 		fileMenu.add(SwitchProjectAction.getInstance());
 		fileMenu.addSeparator();
 		fileMenu.add(ExitAction.getInstance());

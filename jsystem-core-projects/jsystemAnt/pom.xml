@@ -18,10 +18,6 @@
 			<groupId>ant-contrib</groupId>
 			<artifactId>ant-contrib</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>org.apache.ant</groupId>
-			<artifactId>ant-nodeps</artifactId>
-		</dependency>
 		<!-- SLF4J and Logback dependencies -->
 		<dependency>
 			<groupId>org.slf4j</groupId>

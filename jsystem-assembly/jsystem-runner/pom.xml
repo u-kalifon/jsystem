@@ -31,9 +31,8 @@
 			<artifactId>junit</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>ant</groupId>
-			<artifactId>ant-full</artifactId>
-			<type>zip</type>
+			<groupId>org.apache.ant</groupId>
+			<artifactId>ant</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>javax.mail</groupId>
@@ -82,14 +81,8 @@
 			<artifactId>commons-net</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>javax.comm</groupId>
-			<artifactId>comm</artifactId>
-			<!-- type>pom</type -->
-		</dependency>
-		<dependency>
 			<groupId>org.apache.ftpserver</groupId>
 			<artifactId>ftpserver-core</artifactId>
-
 		</dependency>
 		<dependency>
 			<groupId>commons-io</groupId>
@@ -112,11 +105,6 @@
 		<dependency>
 			<groupId>com.github.javaparser</groupId>
 			<artifactId>javaparser-core</artifactId>
-
-		</dependency>
-		<dependency>
-			<groupId>net.javaprog.jwizz</groupId>
-			<artifactId>jwizz</artifactId>
 
 		</dependency>
 		<dependency>

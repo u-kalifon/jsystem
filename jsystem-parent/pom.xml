@@ -28,13 +28,12 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<assembly.format>dir</assembly.format>
-		<topq.repository.rootUrl>https://maven.top-q.co.il</topq.repository.rootUrl>
 		<maven.compiler.source>17</maven.compiler.source>
 		<maven.compiler.target>17</maven.compiler.target>
 		<slf4j.version>2.0.17</slf4j.version>
 		<logback.version>1.5.18</logback.version>
 		<jackson.version>2.15.2</jackson.version>
-		<ant.version>1.10.15</ant.version>
+		<ant.version>1.10.17</ant.version>
 	</properties>
 
 	<dependencies>
@@ -66,15 +65,9 @@
 				<version>${ant.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>ant</groupId>
-				<artifactId>ant-full</artifactId>
-				<version>1.9.6</version>
-				<type>zip</type>
-			</dependency>
-			<dependency>
 				<groupId>org.apache.ant</groupId>
-				<artifactId>ant-nodeps</artifactId>
-				<version>1.8.1</version>
+				<artifactId>ant</artifactId>
+				<version>${ant.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>commons-httpclient</groupId>
@@ -139,12 +132,6 @@
 				<artifactId>commons-net</artifactId>
 				<version>3.12.0</version>
 			</dependency>
-			<dependency>
-				<groupId>javax.comm</groupId>
-				<artifactId>comm</artifactId>
-				<version>1.0</version>
-				<!-- type>pom</type -->
-			</dependency>
 			<!-- dependency> <groupId>org.apache.ftpserver</groupId> <artifactId>ftpserver-core</artifactId> 
 				<version>1.0.0</version> </dependency> <dependency> <groupId>org.apache.ftpserver</groupId> 
 				<artifactId>ftplet-api</artifactId> <version>1.0.0</version> </dependency> 
@@ -153,7 +140,7 @@
 			<dependency>
 				<groupId>org.apache.ftpserver</groupId>
 				<artifactId>ftpserver-core</artifactId>
-				<version>dev</version>
+				<version>1.2.1</version>
 			</dependency>
 			<dependency>
 				<groupId>commons-io</groupId>
@@ -169,11 +156,6 @@
 				<groupId>com.github.javaparser</groupId>
 				<artifactId>javaparser-core</artifactId>
 				<version>3.27.0</version>
-			</dependency>
-			<dependency>
-				<groupId>net.javaprog.jwizz</groupId>
-				<artifactId>jwizz</artifactId>
-				<version>0.1.3</version>
 			</dependency>
 			<dependency>
 				<groupId>org.swinglabs</groupId>
@@ -284,32 +266,9 @@
 		<module>../jsystem-miscellaneous/jsystem-services-so</module>
 		<module>../jsystem-miscellaneous/jsystem-services-tests</module>
 	</modules>
-	<repositories>
-		<repository>
-			<id>topq</id>
-			<url>${topq.repository.rootUrl}/content/groups/public</url>
-		</repository>
-	</repositories>
-	<distributionManagement>
-		<repository>
-			<id>topq</id>
-			<name>RepositoryProxy</name>
-			<url>${topq.repository.rootUrl}/content/repositories/releases</url>
-		</repository>
-		<snapshotRepository>
-			<id>topq</id>
-			<name>RepositoryProxy</name>
-			<url>${topq.repository.rootUrl}/content/repositories/snapshots</url>
-		</snapshotRepository>
-	</distributionManagement>
-	<pluginRepositories>
-		<pluginRepository>
-			<id>topq</id>
-			<url>${topq.repository.rootUrl}/content/groups/public</url>
-		</pluginRepository>
-	</pluginRepositories>
 	<profiles>
 		<profile>
+			<!-- additional module if you pass -P dist to the maven command -->
 			<id>dist</id>
 			<modules>
 				<module>../jsystem-assembly/jsystem-runner</module>
