@@ -202,6 +202,14 @@ public class CommonResources {
 	 * @return ant library directory
 	 */
 	public static File getAntLibDirectory() {
+		// if ANT_HOME is set, use it
+		String antHome = System.getenv("ANT_HOME");
+		if (antHome != null && !antHome.trim().isBlank()) {
+			return new File(antHome, "lib");
+		}
+
+		// The following is old code, which relied on a binary distribution of Ant
+		// that was packaged with the runner (we removed it)...
 		return ANT_LIB_FILE;
 	}
 
@@ -354,6 +362,14 @@ public class CommonResources {
 	 * Returns Ant interpreter directory
 	 */
 	public static File getAntDirectory() {
+		// if ANT_HOME is set, use it
+		String antHome = System.getenv("ANT_HOME");
+		if (antHome != null && !antHome.trim().isBlank()) {
+			return new File(antHome);
+		}
+
+		// The following is old code, which relied on a binary distribution of Ant
+		// that was packaged with the runner (we removed it)...
 		if (isNewRunnerStructure()) {
 			return ANT_FILE;
 		}

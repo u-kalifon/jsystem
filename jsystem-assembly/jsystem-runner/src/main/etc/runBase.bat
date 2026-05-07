@@ -4,6 +4,13 @@ set current_dir=%~dp0
 set current_drive=%~d0
 set path=%path%;.;.\thirdparty\lib;.\lib;.\customer_lib;.\thirdparty\commonLib;
 
+if "%ANT_HOME%"=="" (
+    echo ERROR: ANT_HOME is not set
+    echo Please make sure that Ant is installed.
+    echo Ant can be downloaded from https://ant.apache.org/bindownload.cgi
+    exit /b 1
+)
+
 %current_drive%
 cd %current_dir%
 if exist jsystem.properties goto jsystemPropertiesExist

@@ -15,6 +15,7 @@ import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.Properties;
 
 import org.slf4j.Logger;
@@ -228,7 +229,7 @@ public class RemoteExecutorImpl implements RemoteExecutor {
 			cmdStringArray.add(vmParamsArr[i]);
 		}
 		cmdStringArray.add("-classpath");
-		cmdStringArray.add(antLauncher.getAbsolutePath());
+		cmdStringArray.add(sanitizeCommandLinePath(antLauncher.getAbsolutePath()));
 		if (additional != null) {
 			Enumeration<Object> enum1 = additional.keys();
 			while (enum1.hasMoreElements()) {
@@ -242,7 +243,7 @@ public class RemoteExecutorImpl implements RemoteExecutor {
 		cmdStringArray.add("-listener");
 		cmdStringArray.add(RemoteTestRunner.class.getName());
 		cmdStringArray.add("-cp");
-		cmdStringArray.add(System.getProperty("java.class.path"));
+		cmdStringArray.add(sanitizeClasspath(System.getProperty("java.class.path")));
 		cmdStringArray.add("-buildfile");
 		cmdStringArray.add(antFile);
 		cmdStringArray.add("-D" + RunningProperties.USER_DIR + "=" + System.getProperty("user.dir"));
@@ -537,6 +538,48 @@ public class RemoteExecutorImpl implements RemoteExecutor {
 
 		}
 
+	}
+
+	private String sanitizeCommandLinePath(String rawPath) {
+		if (rawPath == null) {
+			return "\"\"";
+		}
+		String sanitizedPath = rawPath.replace("\"", "").replace("'", "");
+		int end = sanitizedPath.length();
+		while (end > 0) {
+			char current = sanitizedPath.charAt(end - 1);
+			if (Character.isWhitespace(current) || current == '\\') {
+				end--;
+				continue;
+			}
+			break;
+		}
+		return sanitizedPath.substring(0, end);
+	}
+
+	private String sanitizeClasspath(String classpath) {
+		if (classpath == null || classpath.length() == 0) {
+			return "\"\"";
+		}
+		String[] entries = classpath.split(File.pathSeparator);
+		LinkedHashSet<String> uniqueEntries = new LinkedHashSet<String>();
+		for (String entry : entries) {
+			if (entry == null) {
+				continue;
+			}
+			String sanitizedEntry = entry.trim().replace("\"", "").replace("'", "");
+			if (sanitizedEntry.length() > 0) {
+				uniqueEntries.add(sanitizedEntry);
+			}
+		}
+		StringBuilder sanitizedClasspath = new StringBuilder();
+		for (String entry : uniqueEntries) {
+			if (sanitizedClasspath.length() > 0) {
+				sanitizedClasspath.append(File.pathSeparator);
+			}
+			sanitizedClasspath.append(entry);
+		}
+		return sanitizedClasspath.toString();
 	}
 
 	/**

@@ -31,7 +31,7 @@ public class Execute {
 			 */
 			HashMap<String, String> envMap = new HashMap<String, String>(System.getenv());
 			/*
-			 * Add teh new params to the current environment
+			 * Add the new params to the current environment
 			 */
 			String[] commandEnv = command.getEnvParams();
 			for (int i = 0; i < commandEnv.length; i++) {
@@ -50,7 +50,7 @@ public class Execute {
 			int envIndex = 0;
 			while (keys.hasNext()) {
 				String key = keys.next();
-				env[envIndex] = key + "=" + envMap.get(key);
+				env[envIndex] = key + "='" + envMap.get(key) + "'";
 				envIndex++;
 			}
 		}

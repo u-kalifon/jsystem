@@ -29,6 +29,7 @@ setJavaEnvironment()
 launch(){
 	echo "the _JAVACMD variable = "$_JAVACMD
 	echo "the DEBUG variable = "$DEBUG
+	echo "the ANT_HOME variable = "$ANT_HOME
 	echo "remove the remark on the DEBUG variable to debug the runner."
 	DEBUG=""
 	#DEBUG="-Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,address=8787,server=y,suspend=n"
@@ -46,6 +47,13 @@ if [ ! -f jsystem.properties ]; then
 	if [ -f .jsystembase ]; then
 		cp .jsystembase jsystem.properties
 	fi
+fi
+
+if [ "$ANT_HOME" == "" ]; then
+	echo "ERROR: ANT_HOME is not set"
+	echo "Please make sure that Ant is installed."
+	echo "Ant can be downloaded from https://ant.apache.org/bindownload.cgi"
+	exit 1
 fi
 
 setJavaEnvironment

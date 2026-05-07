@@ -76,7 +76,6 @@
 			<outputFileNameMapping>${artifact.artifactId}.${artifact.extension}</outputFileNameMapping>
 			<includes>
 				<include>*:ant:*</include>
-				<include>*:ant-launcher:*</include>
 				<include>*:asm:*</include>
 				<include>*:asm-commons:*</include>
 				<include>*:asm-tree:*</include>

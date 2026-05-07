@@ -45,7 +45,7 @@ public class AntExecutor {
 		File antBin = new File(antHome, "bin");
 		File antBat = new File(antBin, antBatch);
 		if (!antBat.exists()) {
-			command.getStderr().append("Can't find ANT bat file. Please set the ANT_HOME propery");
+			command.getStderr().append("Can't find ANT bat file. Please set the ANT_HOME properly");
 			return command;
 		}
 		String[] params = processProperties(prop);
