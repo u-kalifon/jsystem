@@ -290,18 +290,6 @@
 			<url>${topq.repository.rootUrl}/content/groups/public</url>
 		</repository>
 	</repositories>
-	<distributionManagement>
-		<repository>
-			<id>topq</id>
-			<name>RepositoryProxy</name>
-			<url>${topq.repository.rootUrl}/content/repositories/releases</url>
-		</repository>
-		<snapshotRepository>
-			<id>topq</id>
-			<name>RepositoryProxy</name>
-			<url>${topq.repository.rootUrl}/content/repositories/snapshots</url>
-		</snapshotRepository>
-	</distributionManagement>
 	<pluginRepositories>
 		<pluginRepository>
 			<id>topq</id>
