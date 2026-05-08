@@ -115,7 +115,6 @@
 				<include>*:commons-net:*</include>
 				<include>*:comm:*</include>
 				<include>*:ftpserver-core:*</include>
-				<include>*:jwizz:*</include>
 				<include>*:swingx:*</include>
 				<include>*:junit:*</include>
 				<include>*:swing-worker:*</include>

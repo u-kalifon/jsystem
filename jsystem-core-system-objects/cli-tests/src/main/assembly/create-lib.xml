@@ -56,7 +56,6 @@
 				<exclude>*:comm:*</exclude>
 				<exclude>*:ftpserver-core:*</exclude>
 				<exclude>*:commons-io:*</exclude>
-				<exclude>*:jwizz:*</exclude>
 				<exclude>*:swingx:*</exclude>
 				<exclude>*:junit:*</exclude>
 				<exclude>*:swing-worker:*</exclude>
