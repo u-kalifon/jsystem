@@ -10,20 +10,6 @@
 	<id>runner</id>
 	<dependencySets>
 		<dependencySet>
-			<outputDirectory>thirdparty</outputDirectory>
-			<unpack>true</unpack>
-			<directoryMode>774</directoryMode>
-			<fileMode>774</fileMode>
-			<includes>
-				<include>ant:ant-full:*</include>
-			</includes>
-			<unpackOptions>
-				<excludes>
-					<exclude>ant/docs/**</exclude>
-				</excludes>
-			</unpackOptions>
-		</dependencySet>
-		<dependencySet>
 			<outputDirectory>projects/jsystemServices/target/classes</outputDirectory>
 			<unpack>true</unpack>
 			<includes>
@@ -76,7 +62,6 @@
 			<outputFileNameMapping>${artifact.artifactId}.${artifact.extension}</outputFileNameMapping>
 			<includes>
 				<include>*:ant:*</include>
-				<include>*:ant-launcher:*</include>
 				<include>*:asm:*</include>
 				<include>*:asm-commons:*</include>
 				<include>*:asm-tree:*</include>
@@ -113,7 +98,6 @@
 				<include>*:commons-lang3:*</include>
 				<include>*:looks:*</include>
 				<include>*:commons-net:*</include>
-				<include>*:comm:*</include>
 				<include>*:ftpserver-core:*</include>
 				<include>*:swingx:*</include>
 				<include>*:junit:*</include>
@@ -145,6 +129,15 @@
 		</dependencySet>
 	</dependencySets>
 	<fileSets>
+		<fileSet>
+			<outputDirectory>thirdparty</outputDirectory>
+			<directory>${project.build.directory}/apache-ant-dist/apache-ant-${ant.version}</directory>
+			<directoryMode>774</directoryMode>
+			<fileMode>774</fileMode>
+			<excludes>
+				<exclude>docs/**</exclude>
+			</excludes>
+		</fileSet>
 		<fileSet>
 			<outputDirectory>dev</outputDirectory>
 			<directory>src/main/dev</directory>

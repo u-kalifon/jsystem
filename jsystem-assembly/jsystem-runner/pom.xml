@@ -31,11 +31,6 @@
 			<artifactId>junit</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>ant</groupId>
-			<artifactId>ant-full</artifactId>
-			<type>zip</type>
-		</dependency>
-		<dependency>
 			<groupId>javax.mail</groupId>
 			<artifactId>mail</artifactId>
 		</dependency>
@@ -80,11 +75,6 @@
 		<dependency>
 			<groupId>commons-net</groupId>
 			<artifactId>commons-net</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>javax.comm</groupId>
-			<artifactId>comm</artifactId>
-			<!-- type>pom</type -->
 		</dependency>
 		<dependency>
 			<groupId>org.apache.ftpserver</groupId>
@@ -201,6 +191,48 @@
 	<packaging>jar</packaging>
 	<build>
 		<plugins>
+			<plugin>
+				<groupId>com.googlecode.maven-download-plugin</groupId>
+				<artifactId>download-maven-plugin</artifactId>
+				<version>1.13.0</version>
+				<executions>
+					<execution>
+						<id>download-ant-binary</id>
+						<phase>generate-resources</phase>
+						<goals>
+							<goal>wget</goal>
+						</goals>
+						<configuration>
+							<url>https://dlcdn.apache.org/ant/binaries/apache-ant-${ant.version}-bin.zip</url>
+							<outputDirectory>${project.build.directory}/downloads</outputDirectory>
+							<outputFileName>apache-ant-${ant.version}-bin.zip</outputFileName>
+							<overwrite>false</overwrite>
+							<!-- ignoreVerifier>true</ignoreVerifier -->
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<version>3.1.0</version>
+				<executions>
+					<execution>
+						<id>unpack-ant-binary</id>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>run</goal>
+						</goals>
+						<configuration>
+							<target>
+								<delete dir="${project.build.directory}/apache-ant-dist" />
+								<mkdir dir="${project.build.directory}/apache-ant-dist" />
+								<unzip src="${project.build.directory}/downloads/apache-ant-${ant.version}-bin.zip"
+									dest="${project.build.directory}/apache-ant-dist" />
+							</target>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 			<plugin>
 				<artifactId>maven-assembly-plugin</artifactId>
 				<version>2.3</version>

@@ -15,10 +15,6 @@
 			<version>${jsystem.version}</version>
 			<scope>provided</scope>
 		</dependency>
-		<dependency>
-			<groupId>javax.comm</groupId>
-			<artifactId>comm</artifactId>
-		</dependency>
 		<!-- SLF4J API dependency (runtime provided by consuming modules) -->
 		<dependency>
 			<groupId>org.slf4j</groupId>
