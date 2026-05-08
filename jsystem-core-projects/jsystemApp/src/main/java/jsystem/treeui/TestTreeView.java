@@ -69,8 +69,6 @@ import jsystem.treeui.actionItems.ClearScenarioAction;
 import jsystem.treeui.actionItems.CopyScenarioAction;
 import jsystem.treeui.actionItems.EditSutAction;
 import jsystem.treeui.actionItems.ExitAction;
-import jsystem.treeui.actionItems.ExportProjectAction;
-import jsystem.treeui.actionItems.ImportProjectAction;
 import jsystem.treeui.actionItems.InitReportersAction;
 import jsystem.treeui.actionItems.NewScenarioAction;
 import jsystem.treeui.actionItems.PauseAction;
@@ -435,8 +433,6 @@ public class TestTreeView extends JFrame implements ActionListener, TestsTreeLis
 		}
 
 		toolBar.addSeparator(new Dimension(10, 0));
-		toolBar.add(ExportProjectAction.getInstance());
-		toolBar.add(ImportProjectAction.getInstance());
 		toolBar.addSeparator(new Dimension(5, 0));
 		toolBar.add(SystemObjectBrowserAction.getInstance());
 		toolBar.addSeparator(new Dimension(5, 0));
@@ -750,7 +746,6 @@ public class TestTreeView extends JFrame implements ActionListener, TestsTreeLis
 			menuBuilder.setView(VIEW_IDLE);
 			tableController.updateEnabledAndDisabledActions(null);
 			SwitchProjectAction.getInstance().setEnabled(true);
-			ImportProjectAction.getInstance().setEnabled(true);
 			PublishXmlResultAction.getInstance().setEnabled(false);
 			ViewTestCodeAction.getInstance().setEnabled(true);
 			repeatAmount.setEnabled(true);
@@ -774,7 +769,6 @@ public class TestTreeView extends JFrame implements ActionListener, TestsTreeLis
 			menuBuilder.setView(VIEW_RUNNING);
 			tableController.setEnableToolBar(false);
 			SwitchProjectAction.getInstance().setEnabled(false);
-			ImportProjectAction.getInstance().setEnabled(false);
 			ViewTestCodeAction.getInstance().setEnabled(false);
 			PublishXmlResultAction.getInstance().setEnabled(false);
 			repeatAmount.setEnabled(false);
@@ -992,9 +986,4 @@ public class TestTreeView extends JFrame implements ActionListener, TestsTreeLis
 	public MenuBuilder getMenuBuilder() {
 		return menuBuilder;
 	}
-
-	// public PublisherTreePanel getPublishPanel() {
-	// return publishPanel;
-	// }
-
 }
