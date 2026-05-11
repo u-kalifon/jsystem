@@ -53,12 +53,8 @@ import com.github.javaparser.ast.body.FieldDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.body.Parameter;
 import com.github.javaparser.ast.body.VariableDeclarator;
-import com.github.javaparser.ast.expr.AnnotationExpr;
 import com.github.javaparser.ast.type.Type;
-import com.github.javaparser.ast.comments.JavadocComment;
-import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 /**
  * The SOProcess contain static method to process

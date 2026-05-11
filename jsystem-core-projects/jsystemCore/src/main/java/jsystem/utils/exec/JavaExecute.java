@@ -11,6 +11,7 @@ import java.util.Properties;
 
 import jsystem.framework.FrameworkOptions;
 import jsystem.framework.JSystemProperties;
+import jsystem.utils.StringUtils;
 
 public class JavaExecute {
 
@@ -36,7 +37,7 @@ public class JavaExecute {
 			cmdStringArray.add(vmParamsArr[i]);
 		}
 		cmdStringArray.add("-classpath");
-		cmdStringArray.add(System.getProperty("java.class.path"));
+		cmdStringArray.add(StringUtils.sanitizeClasspath(System.getProperty("java.class.path")));
 		if (additional != null) {
 			Enumeration<Object> enum1 = additional.keys();
 			while (enum1.hasMoreElements()) {

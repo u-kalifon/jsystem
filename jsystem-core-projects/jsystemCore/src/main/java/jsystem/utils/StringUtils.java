@@ -3,6 +3,7 @@
  */
 package jsystem.utils;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -11,6 +12,7 @@ import java.util.Calendar;
 import java.util.Enumeration;
 import java.util.GregorianCalendar;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Properties;
 import java.util.Set;
 import java.util.StringTokenizer;
@@ -616,4 +618,33 @@ public class StringUtils {
 		return object.toString();
 	}
 	
+	public static String sanitizeClasspath(String classpath) {
+        if (classpath == null || classpath.length() == 0) {
+                return "\"\"";
+        }
+        StringBuilder sanitizedClasspath = new StringBuilder();
+        String[] entries = classpath.split(File.pathSeparator);
+        LinkedHashSet<String> uniqueEntries = new LinkedHashSet<String>();
+        for (String entry : entries) {
+			if (entry == null) {
+				continue;
+			}
+			String sanitizedEntry = new File(entry.trim()).getName();
+			if (sanitizedEntry.length() > 0) {
+				if (uniqueEntries.contains(sanitizedEntry)) {
+					continue;
+				}
+				// keep track only of unique entries that are jars and have no wildcards
+				if (sanitizedEntry.endsWith(".jar") && (! sanitizedEntry.endsWith("*.jar"))) {
+					uniqueEntries.add(sanitizedEntry);
+				}
+				if (sanitizedClasspath.length() > 0) {
+					sanitizedClasspath.append(File.pathSeparator);
+				}
+				sanitizedClasspath.append(entry);
+			}
+        }
+        
+        return sanitizedClasspath.toString();
+	}
 }

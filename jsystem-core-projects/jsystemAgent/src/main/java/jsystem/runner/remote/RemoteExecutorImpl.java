@@ -242,7 +242,7 @@ public class RemoteExecutorImpl implements RemoteExecutor {
 		cmdStringArray.add("-listener");
 		cmdStringArray.add(RemoteTestRunner.class.getName());
 		cmdStringArray.add("-cp");
-		cmdStringArray.add(System.getProperty("java.class.path"));
+		cmdStringArray.add(StringUtils.sanitizeClasspath(System.getProperty("java.class.path")));
 		cmdStringArray.add("-buildfile");
 		cmdStringArray.add(antFile);
 		cmdStringArray.add("-D" + RunningProperties.USER_DIR + "=" + System.getProperty("user.dir"));
