@@ -82,11 +82,6 @@
 			<artifactId>commons-net</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>javax.comm</groupId>
-			<artifactId>comm</artifactId>
-			<!-- type>pom</type -->
-		</dependency>
-		<dependency>
 			<groupId>org.apache.ftpserver</groupId>
 			<artifactId>ftpserver-core</artifactId>
 

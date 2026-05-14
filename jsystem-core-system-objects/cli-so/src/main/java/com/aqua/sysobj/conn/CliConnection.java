@@ -15,7 +15,7 @@ import systemobject.terminal.Prompt;
  * @author guy.arieli
  *
  */
-public interface CliConnection extends SystemObject{
+public interface CliConnection extends SystemObject {
     
 	/**
      * 
@@ -154,13 +154,13 @@ public interface CliConnection extends SystemObject{
     public void setUser(String user);
     
     /**
-     * a String representing the connection protocol (RS232/SSH/Telnet)
+     * a String representing the connection protocol (SSH/Telnet)
      * @return
      */
     public String getProtocol();
     
     /**
-     * set the protocol type for this connection ((RS232/SSH/Telnet)
+     * set the protocol type for this connection (SSH/Telnet)
      * @param protocol
      */
     public void setProtocol(String protocol);
@@ -211,7 +211,7 @@ public interface CliConnection extends SystemObject{
 	 *    in case of an error. (and ignore error flags were not raised)<br>
 	 * 4. Performs Analysis if one or more analyzers are defined (and ignore error flags were not raised)   
 	 */
-	public void handleCliCommand( String title,CliCommand command) throws Exception;
+	public void handleCliCommand (String title,CliCommand command) throws Exception;
 
 	/**
 	 * add possible Prompts to the CLI
@@ -259,7 +259,7 @@ public interface CliConnection extends SystemObject{
      * @param delayedTyping	if True will sleep 20 ms between each typed byte entered to the terminal
 	 * @throws Exception
 	 */
-	public void sendString(String toSend,boolean delayedTyping) throws Exception;
+	public void sendString(String toSend, boolean delayedTyping) throws Exception;
 	
 	/**
 	 * get the enter String set for this cli

@@ -113,7 +113,6 @@
 				<include>*:commons-lang3:*</include>
 				<include>*:looks:*</include>
 				<include>*:commons-net:*</include>
-				<include>*:comm:*</include>
 				<include>*:ftpserver-core:*</include>
 				<include>*:swingx:*</include>
 				<include>*:junit:*</include>

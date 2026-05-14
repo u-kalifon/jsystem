@@ -15,7 +15,7 @@ public class NTCli extends Cli {
     /**
      * Create a systemobject.terminal.Cli object
      *
-     * @param terminal The terminal to use, can be systemobject.terminal.Telnet or systemobject.terminal.RS232
+     * @param terminal The terminal to use, for example systemobject.terminal.Telnet
      * @throws java.io.IOException
      */
     public NTCli(Terminal terminal) throws IOException {

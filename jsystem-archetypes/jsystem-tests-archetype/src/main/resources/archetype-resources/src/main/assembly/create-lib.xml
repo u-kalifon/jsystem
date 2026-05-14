@@ -63,7 +63,6 @@
 				<exclude>*:looks:*</exclude>
 				<exclude>javax.mail:mail:*</exclude>
 				<exclude>*:commons-net:*</exclude>
-				<exclude>*:comm:*</exclude>
 				<exclude>*:ftpserver-core:*</exclude>
 				<exclude>*:commons-io:*</exclude>
 				<exclude>*:swingx:*</exclude>

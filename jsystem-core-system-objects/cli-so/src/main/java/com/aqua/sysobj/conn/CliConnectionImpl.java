@@ -22,7 +22,6 @@ import systemobject.terminal.BufferInputStream;
 import systemobject.terminal.Cli;
 import systemobject.terminal.InOutInputStream;
 import systemobject.terminal.Prompt;
-import systemobject.terminal.RS232;
 import systemobject.terminal.SSH;
 import systemobject.terminal.SSHWithRSA;
 import systemobject.terminal.Telnet;
@@ -42,8 +41,6 @@ public abstract class CliConnectionImpl extends SystemObjectImpl implements CliC
 	private boolean enableSudoTerminal = true;
 
     public static enum EnumConnectionType {    
-		COM("com"),
-		RS232("rs232"),
 		TELNET("telnet"),
 		SSH("ssh"),
 		SSH_RSA("ssh-rsa");
@@ -256,21 +253,9 @@ public abstract class CliConnectionImpl extends SystemObjectImpl implements CliC
 		if (dummy) {
 			return;
 		}
-		// Terminal t;
-		boolean isRs232 = false;
 
-
-    	boolean isRsa = false;
-		if (host.toLowerCase().startsWith(EnumConnectionType.COM.value()) || protocol.toLowerCase().equals(EnumConnectionType.RS232.value())) { 
-			// syntax for serial connection found
-			isRs232 = true;
-			String[] params = host.split("\\;");
-			if (params.length < 5) {
-				throw new Exception("Unable to extract parameters from host: " + host);
-			}
-			terminal = new RS232(params[0], Integer.parseInt(params[1]), Integer.parseInt(params[2]), Integer.parseInt(params[3]), Integer
-					.parseInt(params[4]));
-		} else if (protocol.toLowerCase().equals(EnumConnectionType.SSH.value())) {
+		boolean isRsa = false;
+		if (protocol.toLowerCase().equals(EnumConnectionType.SSH.value())) {
 			terminal = new SSH(host, user, password, port, enableSudoTerminal);
 		} else if (protocol.toLowerCase().equals(
 				EnumConnectionType.SSH_RSA.value())) {
@@ -312,7 +297,7 @@ public abstract class CliConnectionImpl extends SystemObjectImpl implements CliC
 		for (int i = 0; i < prompts.length; i++) {
 			cli.addPrompt(prompts[i]);
 		}
-		if (isRs232 || leadingEnter) {
+		if (leadingEnter) {
 			cli.command("");
 		}else if (isRsa){
 			cli.login();
