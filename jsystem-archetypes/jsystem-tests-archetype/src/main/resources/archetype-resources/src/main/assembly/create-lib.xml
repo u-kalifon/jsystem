@@ -57,7 +57,6 @@
 				<exclude>*:xml-apis:*</exclude>
 				<exclude>*:activation:*</exclude>
 				<exclude>*:cli:*</exclude>
-				<exclude>*:FileTransfer:*</exclude>
 				<exclude>*:commons-logging:*</exclude>
 				<exclude>*:commons-logging-api:*</exclude>
 				<exclude>*:looks:*</exclude>

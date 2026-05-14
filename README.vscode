@@ -1,6 +1,6 @@
 If you are using vscode or one of its derivatives (like Cursor)
 and you want to launch the tool from the debugger - add this to
-the "configurations" array in you .vscode/launch.json:
+the "configurations" array in your .vscode/launch.json:
 
     "configurations": [
         {

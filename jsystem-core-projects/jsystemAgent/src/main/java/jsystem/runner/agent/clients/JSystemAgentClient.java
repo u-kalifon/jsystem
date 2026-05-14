@@ -4,6 +4,9 @@
 package jsystem.runner.agent.clients;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.InetAddress;
 import java.net.URL;
 import java.text.MessageFormat;
@@ -34,7 +37,8 @@ import jsystem.runner.agent.server.RunnerEngine;
 import jsystem.runner.agent.server.RunnerEngineExecutionState;
 import jsystem.utils.ProgressNotifier;
 
-import com.aqua.filetransfer.ftp.FTPClient;
+import org.apache.commons.net.ftp.FTP;
+import org.apache.commons.net.ftp.FTPClient;
 
 /**
  * Agent client.
@@ -384,18 +388,30 @@ public class JSystemAgentClient extends SystemObjectImpl implements RunnerEngine
 	}
 
 	protected void uploadProject(File zippedProject, String name, ProjectComponent[] components) throws Exception {
-		FTPClient client = new FTPClient();
-		client.setServer(serviceURL.getHost());
-		client.setPort(Integer.parseInt(agentProps.getProperty(FrameworkOptions.AGENT_FTP_PORT.toString())));
-		client.setUsername("aqua");
-		client.setPassword("aqua");
-		client.init();
-		client.connect();
-		client.changeToBinary();
+		FTPClient ftp = new FTPClient();
+		String host = serviceURL.getHost();
+		int port = Integer.parseInt(agentProps.getProperty(FrameworkOptions.AGENT_FTP_PORT.toString()));
 		try {
-			client.putFile(zippedProject.getAbsolutePath(), name);
+			ftp.connect(host, port);
+			if (!ftp.login("aqua", "aqua")) {
+				throw new IOException("FTP login failed: " + ftp.getReplyString());
+			}
+			ftp.enterLocalPassiveMode();
+			ftp.setFileType(FTP.BINARY_FILE_TYPE);
+			try (InputStream in = new FileInputStream(zippedProject)) {
+				if (!ftp.storeFile(name, in)) {
+					throw new IOException("FTP upload failed: " + ftp.getReplyString());
+				}
+			}
+			ftp.logout();
 		} finally {
-			client.disconnect();
+			if (ftp.isConnected()) {
+				try {
+					ftp.disconnect();
+				} catch (IOException e) {
+					log.debug("FTP disconnect failed", e);
+				}
+			}
 		}
 		mbeanProxy.extractProjectZip(name, components);
 	}

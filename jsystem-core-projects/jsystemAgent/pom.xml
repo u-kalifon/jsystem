@@ -4,7 +4,7 @@
 	<parent>	
 		<groupId>org.jsystemtest</groupId>
 		<artifactId>jsystem-parent</artifactId>
-		<version>6.2.0-SNAPSHOT</version>	
+		<version>6.2.1-SNAPSHOT</version>
 		<relativePath>../../jsystem-parent</relativePath>
 	</parent>
 	<artifactId>jsystemAgent</artifactId>
@@ -12,11 +12,6 @@
 	<dependency>
 			<groupId>org.jsystemtest</groupId>
 			<artifactId>jsystemCommon</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.jsystemtest.systemobjects</groupId>
-			<artifactId>FileTransfer</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<!-- SLF4J and Logback dependencies -->
@@ -36,6 +31,9 @@
 			<groupId>org.slf4j</groupId>
 			<artifactId>jul-to-slf4j</artifactId>
 		</dependency>
-		
+		<dependency>
+			<groupId>commons-net</groupId>
+			<artifactId>commons-net</artifactId>
+		</dependency>
 	</dependencies>
 </project>

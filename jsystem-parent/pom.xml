@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.jsystemtest</groupId>
 	<artifactId>jsystem-parent</artifactId>
-	<version>6.2.0-SNAPSHOT</version>
+	<version>6.2.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>jsystem-parent</name>
 	<organization>
@@ -270,8 +270,6 @@
 		<module>../jsystem-core-projects</module>
 		<module>../jsystem-archetypes</module>
 		<module>../jsystem-miscellaneous/jsystem-maven-plugin</module>
-		<module>../jsystem-miscellaneous/jsystem-services-so</module>
-		<module>../jsystem-miscellaneous/jsystem-services-tests</module>
 	</modules>
 	<repositories>
 		<repository>

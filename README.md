@@ -10,7 +10,7 @@ JSystem is a professional open-source framework for writing and managing automat
 
 JSystem is a collaborative environment for all members of the QA lifecycle:
 
-* The automation expert: JSystem helps the test automation expert manage any type of user, JSystem has built in integration with Selenium, Autoit, and practically any API based protocols like Telnet/SSH, SNMP, XML, Tcl, etc
+* The automation expert: JSystem lets the test automation expert break down the automation task into clear and highly reusable building blocks (keywords), significantly reducing the development effort and offering easy scalability.
 
 * QA engineer: with JSystem the QA engineer can create and run test-scenarios without any need to see or touch code using simple drag and drop approach.
 
