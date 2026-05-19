@@ -14,7 +14,7 @@ import jsystem.extensions.analyzers.tabletext.TableCellValue;
  * For the header we use an array of strings called header.
  * For the cells we use a two dimensional array of strings.
  * after the extracting we use the command: 
- *  setTestAgainsObject(new BaseTableRepository(header,header,cells)
+ *  setTestAgainstObject(new BaseTableRepository(header,header,cells)
  *  Now we can use Aqua analyzers 
  */
 public class BaseTableRepositoryTest extends SystemTestCase {

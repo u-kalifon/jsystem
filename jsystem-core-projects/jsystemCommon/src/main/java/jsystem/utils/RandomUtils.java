@@ -45,10 +45,10 @@ static final ArrayList<Character> ALPHABET_LETTERS_ALL;
 		ArrayList<Character> temp = ( ArrayList<Character> ) ALPHABET_LETTERS_ALL.clone();
 		if (differentThen != ' '){
 			if (caseSensitive){
-				temp.remove( new Character(differentThen) );
+				temp.remove(Character.valueOf(differentThen));
 			}else{
-				temp.remove( new Character(( char ) ( (differentThen+"").toUpperCase().charAt( 0 ) )) );
-				temp.remove( new Character(( char ) ( (differentThen+"").toLowerCase().charAt( 0 ) )) );
+				temp.remove(Character.valueOf((char) ((differentThen + "").toUpperCase().charAt(0))));
+				temp.remove(Character.valueOf((char) ((differentThen + "").toLowerCase().charAt(0))));
 			}
 		}
 		
@@ -89,10 +89,10 @@ static final ArrayList<Character> ALPHABET_LETTERS_ALL;
 		ArrayList<Character> chars = getAllCharsInRange( ranges );
 		if (differentThen != ' '){
 			if (caseSensitive){
-				chars.remove( new Character(differentThen) );
+				chars.remove(Character.valueOf(differentThen));
 			}else{
-				chars.remove( new Character(( char ) ( (differentThen+"").toUpperCase().charAt( 0 ) )) );
-				chars.remove( new Character(( char ) ( (differentThen+"").toLowerCase().charAt( 0 ) )) );
+				chars.remove(Character.valueOf((char) ((differentThen + "").toUpperCase().charAt(0))));
+				chars.remove(Character.valueOf((char) ((differentThen + "").toLowerCase().charAt(0))));
 			}
 		}
 		

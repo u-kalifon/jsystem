@@ -6,7 +6,7 @@ package jsystem.framework.analyzer;
 /**
  * Any system object implement the <code>Analyzer</code> interface. The Analyzer work in 2
  * steps: In the first the object to analyze is set by using
- * {@see jsystem.framework.analyzer.Analyzer#setTestAgainsObject(Object)}. it's the system object task to do it. 
+ * {@see jsystem.framework.analyzer.Analyzer#setTestAgainstObject(Object)}. it's the system object task to do it.
  * Then the <code>analyze</code>or <code>isAnalyzeSuccess</code> methods are called.
  * The analyze methods accept the {@see AnalyzerParameter} that define the analysis process itself.<p>
  * <b>For example:</b><p>
@@ -16,7 +16,7 @@ package jsystem.framework.analyzer;
  *              String version;
  *              // Do some operation that get the system version
  *              report.report("version: " + version);
- *              <b>setTestAgainsObject(version)</b>;
+ *              <b>setTestAgainstObject(version)</b>;
  *     }
  * </pre></blockquote>
  * <p>
@@ -161,11 +161,6 @@ public interface Analyzer {
 	public void analyze(AnalyzerParameter parameter, boolean silent, boolean throwException, boolean showAsWarning, String successMessage, String failMessage) throws AnalyzerException;
 	
 	/**
-	 * @deprecated please use {@link #setTestAgainstObject(Object)}
-	 */
-	public void setTestAgainsObject(Object o);
-
-	/**
 	 * Set the object to analyze. This method is called by the system object.
 	 * 
 	 * @param o
@@ -180,11 +175,6 @@ public interface Analyzer {
 	 * @param throwException
 	 */
 	public void setThrowException(boolean throwException);
-
-	/**
-	 * @deprecated please use {@link #getTestAgainstObject()}
-	 */
-	public Object getTestAgainsObject();
 
 	/**
 	 * Get the tests against object

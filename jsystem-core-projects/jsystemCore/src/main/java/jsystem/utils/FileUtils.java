@@ -1243,9 +1243,9 @@ public class FileUtils {
 			@Override
 			public int compare(File o1, File o2) {
 				if (earliestFirst) {
-					return new Long(o1.lastModified()).compareTo(new Long(o2.lastModified()));
+					return Long.compare(o1.lastModified(), o2.lastModified());
 				} else {
-					return new Long(o2.lastModified()).compareTo(new Long(o1.lastModified()));
+					return Long.compare(o2.lastModified(), o1.lastModified());
 				}
 			}
 		});

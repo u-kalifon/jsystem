@@ -30,9 +30,6 @@ import junit.framework.Test;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.util.FileUtils;
-import org.apache.tools.ant.util.StringUtils;
-
-
 /**
  * Prints plain text output of the test to a specified Writer.
  *
@@ -100,7 +97,7 @@ public class PlainJUnitResultFormatter implements JUnitResultFormatter {
         }
         StringBuffer sb = new StringBuffer("Testsuite: ");
         sb.append(suite.getName());
-        sb.append(StringUtils.LINE_SEP);
+        sb.append(System.lineSeparator());
         try {
             out.write(sb.toString().getBytes());
             out.flush();
@@ -124,26 +121,26 @@ public class PlainJUnitResultFormatter implements JUnitResultFormatter {
         sb.append(", Time elapsed: ");
         sb.append(nf.format(suite.getRunTime() / 1000.0));
         sb.append(" sec");
-        sb.append(StringUtils.LINE_SEP);
+        sb.append(System.lineSeparator());
 
         // append the err and output streams to the log
         if (systemOutput != null && systemOutput.length() > 0) {
             sb.append("------------- Standard Output ---------------")
-                .append(StringUtils.LINE_SEP)
+                .append(System.lineSeparator())
                 .append(systemOutput)
                 .append("------------- ---------------- ---------------")
-                .append(StringUtils.LINE_SEP);
+                .append(System.lineSeparator());
         }
 
         if (systemError != null && systemError.length() > 0) {
             sb.append("------------- Standard Error -----------------")
-                .append(StringUtils.LINE_SEP)
+                .append(System.lineSeparator())
                 .append(systemError)
                 .append("------------- ---------------- ---------------")
-                .append(StringUtils.LINE_SEP);
+                .append(System.lineSeparator());
         }
 
-        sb.append(StringUtils.LINE_SEP);
+        sb.append(System.lineSeparator());
 
         if (out != null) {
             try {
@@ -168,7 +165,7 @@ public class PlainJUnitResultFormatter implements JUnitResultFormatter {
      * @param t the test.
      */
     public void startTest(Test t) {
-        testStarts.put(t, new Long(System.currentTimeMillis()));
+        testStarts.put(t, Long.valueOf(System.currentTimeMillis()));
         failed.put(t, Boolean.FALSE);
     }
 

@@ -96,7 +96,7 @@ public class ForTask extends Task {
 			throw new BuildException("Illegal value for threadCount "
 					+ threadCount + " it should be > 0");
 		}
-		this.threadCount = new Integer(threadCount);
+		this.threadCount = Integer.valueOf(threadCount);
 	}
 
 	/**

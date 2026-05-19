@@ -108,13 +108,6 @@ public abstract class SystemTestCase extends TestCase implements SystemTest, UIE
 	public static Reporter report = ListenerstManager.getInstance();
 
 	/**
-	 * Use it to get information about the setup/system you are testing.
-	 * 
-	 * @deprecated use sut() method
-	 */
-	public static Sut sut = SutFactory.getInstance().getSutInstance();
-
-	/**
 	 * Use it to access the interfaces of your tested system.
 	 */
 	public SystemObjectManager system = SystemManagerImpl.getInstance();

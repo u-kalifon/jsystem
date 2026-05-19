@@ -205,7 +205,7 @@ public class LevelReporter extends SystemTestCase {
 		//report.stopLevel();
 		
 		
-//		  mso.setTestAgainsObject(new String("fff"));
+//		  mso.setTestAgainstObject(new String("fff"));
 //	      mso.analyze(new FindText("s"),false,false);
    }
    class MySystemObject extends SystemObjectImpl{

@@ -187,7 +187,7 @@ public class XMLJUnitResultFormatter implements JUnitResultFormatter, XMLConstan
      * @param t the test.
      */
     public void startTest(Test t) {
-        testStarts.put(t, new Long(System.currentTimeMillis()));
+        testStarts.put(t, Long.valueOf(System.currentTimeMillis()));
     }
 
     /**

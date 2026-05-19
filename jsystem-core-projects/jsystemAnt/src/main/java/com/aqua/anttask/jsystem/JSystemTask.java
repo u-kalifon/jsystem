@@ -424,20 +424,6 @@ public class JSystemTask extends Task {
      * Adds a system property that tests can access.
      * This might be useful to tranfer Ant properties to the
      * testcases when JVM forking is not enabled.
-     *
-     * @since Ant 1.3
-     * @deprecated since ant 1.6
-     * @param sysp environment variable to add
-     */
-    public void addSysproperty(Environment.Variable sysp) {
-
-        getCommandline().addSysproperty(sysp);
-    }
-
-    /**
-     * Adds a system property that tests can access.
-     * This might be useful to tranfer Ant properties to the
-     * testcases when JVM forking is not enabled.
      * @param sysp new environment variable to add
      * @since Ant 1.6
      */

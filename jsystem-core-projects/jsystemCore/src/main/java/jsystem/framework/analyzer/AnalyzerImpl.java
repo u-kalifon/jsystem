@@ -10,7 +10,7 @@ import jsystem.framework.report.Reporter;
 /**
  * Any system object implement an Analyzer as well. The Analyzer work in 2
  * steps: In the first the object to analyze is set by using
- * setTestAgainsObject. it's the system object task to do it. Then the analyze
+ * setTestAgainstObject. it's the system object task to do it. Then the analyze
  * or the silenceAnalyze method are called.
  * 
  * @author Guy Arieli
@@ -138,22 +138,8 @@ public class AnalyzerImpl implements Analyzer {
 		return parameter.getStatus();
 	}
 
-	/**
-	 * @deprecated please use {@link #testAgainstObject}
-	 */
-	public void setTestAgainsObject(Object o) {
-		this.testAgainstObject = o;
-	}
-
 	public void setTestAgainstObject(Object o) {
 		this.testAgainstObject = o;
-	}
-
-	/**
-	 * @deprecated please use {@link #getTestAgainstObject()}
-	 */
-	public Object getTestAgainsObject() {
-		return testAgainstObject;
 	}
 
 	public Object getTestAgainstObject() {
