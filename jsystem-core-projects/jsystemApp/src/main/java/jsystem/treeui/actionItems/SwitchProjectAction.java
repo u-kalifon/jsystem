@@ -104,7 +104,7 @@ public class SwitchProjectAction extends IgnisAction {
 			public void run() {
 				try {
 					if (sutFile!=null){
-						SutComboAction.getInstance().changeSut(sutFile.getPath());
+						SutComboAction.getInstance().changeSut(sutFile.getName());
 					}
 					initScenarioAndRefreshTree();
 				} finally {

@@ -76,7 +76,7 @@ public class SystemManagerImpl implements SystemObjectManager, TestListener {
         return manager;
     }
     public SystemObject getSystemObject(String name, String sutName, boolean forceNew) throws Exception{
-    	Sut sut = SutFactory.getInstance().getNewSutInstance();
+    	Sut sut = SutFactory.getInstance().getSutInstance();
 		File file = new File(SutFactory.getInstance().getSutDirectory(), sutName.toLowerCase().endsWith(".xml")? sutName: sutName + ".xml");
 		if(!file.exists()){
 			throw new FileNotFoundException("Could not find SUT file name: " + file.getAbsolutePath());
@@ -89,7 +89,7 @@ public class SystemManagerImpl implements SystemObjectManager, TestListener {
         return object;
     }
     public SystemObject getSystemObject(String name, Document doc, boolean forceNew) throws Exception{
-    	Sut sut = SutFactory.getInstance().getNewSutInstance();
+    	Sut sut = SutFactory.getInstance().getSutInstance();
 		sut.setDocument(doc);
     	SystemObject object = getSystemObject("/sut", name, -1, null, forceNew, null, sut);
     	if(object == null){

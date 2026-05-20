@@ -92,7 +92,7 @@ public class SutFactory {
 		return usedSut;
 	}
 
-	public Sut getNewSutInstance() throws Exception{
+	private Sut getNewSutInstance() throws Exception{
 		String defaultSutClassName = null;
 		defaultSutClassName = JSystemProperties.getInstance().getPreference(FrameworkOptions.SUT_CLASS_NAME);
 		if (defaultSutClassName == null) {
@@ -119,7 +119,7 @@ public class SutFactory {
 			usedSut.setSutXml(file);
 			log.debug("Use sut file: " + sutFile.getName());
 		} catch (Exception e) {
-			String message = "Unable to init sut with file: " + sutFile.getName() + " " + e.getMessage(); 
+			String message = "Unable to init sut [" + sutFile.getName() + "]: " + e.getMessage(); 
 			log.warn(message);
 			log.debug(message,e);
 		}
