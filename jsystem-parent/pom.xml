@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.jsystemtest</groupId>
 	<artifactId>jsystem-parent</artifactId>
-	<version>6.2.1-SNAPSHOT</version>
+	<version>6.2.2-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>jsystem-parent</name>
 	<organization>
@@ -139,11 +139,6 @@
 				<artifactId>commons-net</artifactId>
 				<version>3.12.0</version>
 			</dependency>
-			<!-- dependency> <groupId>org.apache.ftpserver</groupId> <artifactId>ftpserver-core</artifactId> 
-				<version>1.0.0</version> </dependency> <dependency> <groupId>org.apache.ftpserver</groupId> 
-				<artifactId>ftplet-api</artifactId> <version>1.0.0</version> </dependency> 
-				<dependency> <groupId>org.apache.ftpserver</groupId> <artifactId>ftpserver-deprecated</artifactId> 
-				<version>1.0.0-M2</version> </dependency -->
 			<dependency>
 				<groupId>org.apache.ftpserver</groupId>
 				<artifactId>ftpserver-core</artifactId>
@@ -225,7 +220,7 @@
 				<artifactId>logback-core</artifactId>
 				<version>${logback.version}</version>
 			</dependency>
-			<!-- JUL to SLF4J bridge for existing JUL dependencies -->
+			<!-- JUL to SLF4J bridge for existing JUL dependencies (ant or ant-contrib?) -->
 			<dependency>
 				<groupId>org.slf4j</groupId>
 				<artifactId>jul-to-slf4j</artifactId>
