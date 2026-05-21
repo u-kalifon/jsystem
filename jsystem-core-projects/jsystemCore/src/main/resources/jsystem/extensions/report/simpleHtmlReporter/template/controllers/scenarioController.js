@@ -34,9 +34,49 @@ function isPropertyExist(element, property) {
     return (element.hasOwnProperty(property) && element[property] !== null && element[property] !== "");
 }
 
-function addStatusAsClass(elementToAppend, elementWithStatus, suffix) {
+function createStatusIcon(status) {
+    var $icon = $("<span>").addClass("status-icon").attr("aria-hidden", "true");
+    switch (status) {
+        case "success":
+            $icon.addClass("status-icon-success").html(
+                '<svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">' +
+                '<path d="M6.5 11.5 3 8l1-1 2.5 2.5L12 4l1 1-6.5 6.5z" fill="currentColor"/>' +
+                '</svg>');
+            break;
+        case "failure":
+        case "error":
+            $icon.addClass("status-icon-failure").html(
+                '<svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">' +
+                '<path d="M4.5 4.5 11.5 11.5M11.5 4.5 4.5 11.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>' +
+                '</svg>');
+            break;
+        case "warning":
+            $icon.addClass("status-icon-warning").html(
+                '<svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">' +
+                '<path d="M8 2 14 13H2L8 2z" fill="currentColor"/>' +
+                '<path d="M8 6.5v3.5M8 12h.01" stroke="#fff" stroke-width="1.5" stroke-linecap="round"/>' +
+                '</svg>');
+            break;
+        default:
+            return null;
+    }
+    return $icon;
+}
+
+function addStatusAsClass(elementToAppend, elementWithStatus, suffix, showStatusIcon) {
     if (isPropertyExist(elementWithStatus, "status")) {
         elementToAppend.addClass("s_" + elementWithStatus.status.toLowerCase() + suffix);
+        if (showStatusIcon) {
+            var $icon = createStatusIcon(elementWithStatus.status.toLowerCase());
+            if ($icon) {
+                var $timestamp = elementToAppend.children(".timestamp").first();
+                if ($timestamp.length) {
+                    $icon.insertAfter($timestamp);
+                } else {
+                    elementToAppend.prepend($icon);
+                }
+            }
+        }
     }
 }
 
@@ -66,7 +106,7 @@ function setRegularElement($container, element, isHtml) {
         $div.append($timestamp).append($content);
     }
 
-    addStatusAsClass($div, element, "_text");
+    addStatusAsClass($div, element, "_text", true);
     appendElement($container, $div);
 }
 
@@ -122,7 +162,7 @@ function setCollapsableElement($container, element, className, startExpanded) {
         $div.append($userDocDiv);
     }
 
-    addStatusAsClass($div, element, "_text");
+    addStatusAsClass($div, element, "_text", className === "startLevel");
     appendElement($container, $div);
 
     // push the div into the level stack

@@ -43,6 +43,32 @@
 	opacity: 0.9;
 }
 
+.status-icon {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    margin-right: 4px;
+    vertical-align: middle;
+}
+
+.status-icon svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+.status-icon-success {
+    color: #26ce7a;
+}
+
+.status-icon-failure {
+    color: #ff4242;
+}
+
+.status-icon-warning {
+    color: #e6a800;
+}
+
 .timestamp{
     display: inline-block;
     width: 100px;
