@@ -39,7 +39,6 @@
 				<include>*:asm:*</include>
 				<include>*:asm-commons:*</include>
 				<include>*:asm-tree:*</include>
-				<include>*:avalon-framework:*</include>
 				<include>*:commons-codec:*</include>
 				<include>*:commons-httpclient:*</include>
 				<include>*:commons-jxpath:*</include>
@@ -53,12 +52,9 @@
 				<include>*:logback-classic:*</include>
 				<include>*:logback-core:*</include>
 				<include>*:jul-to-slf4j:*</include>
-				<include>*:logkit:*</include>
 				<include>*:mail:*</include>
 				<include>*:javaparser-core:*</include>
 				<include>*:serializer:*</include>
-				<include>*:servlet-api:*</include>
-				<include>*:spring:*</include>
 				<include>*:xalan:*</include>
 				<include>*:xml-apis:*</include>
 				<include>*:activation:*</include>
@@ -74,11 +70,7 @@
 				<include>*:swingx:*</include>
 				<include>*:junit:*</include>
 				<include>*:swing-worker:*</include>
-				<include>*:mx4j-jmx:*</include>
-				<include>*:commons-digester:*</include>
-				<include>*:commons-modeler:*</include>
 				<include>*:filters:*</include>
-				<include>*:xz:*</include>
 				<include>*:jackson-databind:*</include>
 				<include>*:jackson-annotations:*</include>
 				<include>*:jackson-core:*</include>
@@ -91,7 +83,6 @@
 			<outputFileNameMapping>${artifact.artifactId}.${artifact.extension}</outputFileNameMapping>
 			<includes>
 				<include>org.jsystemtest:*:jar</include>
-				<include>org.jsystemtest.systemobjects:*:jar</include>
 			</includes>
 			<excludes>
 				<exclude>*:jsystem-runner:*</exclude>
