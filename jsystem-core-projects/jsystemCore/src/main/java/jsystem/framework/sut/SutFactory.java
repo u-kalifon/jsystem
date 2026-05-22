@@ -34,7 +34,7 @@ public class SutFactory {
 
 	private volatile static boolean suppressGUI = false;
 
-	Sut usedSut = null;
+	Sut usedSutImpl = null;
 
 	private SutFactory() {
 	}
@@ -81,18 +81,18 @@ public class SutFactory {
 	 * @return The SUT instance.
 	 */
 	public Sut getSutInstance() {
-		if (usedSut == null) {
+		if (usedSutImpl == null) {
 			try {
-				usedSut = getNewSutInstance();
+				usedSutImpl = getAdditionalSutInstance();
 				init();
 			} catch (Exception e) {
 				log.error("Unable to load sut class: " + JSystemProperties.getInstance().getPreference(FrameworkOptions.SUT_CLASS_NAME), e);
 			}
 		}
-		return usedSut;
+		return usedSutImpl;
 	}
 
-	public Sut getNewSutInstance() throws Exception{
+	public Sut getAdditionalSutInstance() throws Exception {
 		String defaultSutClassName = null;
 		defaultSutClassName = JSystemProperties.getInstance().getPreference(FrameworkOptions.SUT_CLASS_NAME);
 		if (defaultSutClassName == null) {
@@ -116,7 +116,7 @@ public class SutFactory {
 
 		try {
 			File file = new File(getSutDirectory(), sutFile.getName());
-			usedSut.setSutXml(file);
+			usedSutImpl.setSutXml(file);
 			log.debug("Use sut file: " + sutFile.getName());
 		} catch (Exception e) {
 			String message = "Unable to init sut with file: " + sutFile.getName() + " " + e.getMessage(); 
@@ -209,7 +209,9 @@ public class SutFactory {
 
 	public void setSut(String sutName) {
 		JSystemProperties.getInstance().setPreference(FrameworkOptions.USED_SUT_FILE, sutName);
-		init();
+		if (usedSutImpl != null) {
+			init();
+		}
 	}
 
 	public int getCurrentSutIndex() {
