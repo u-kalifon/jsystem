@@ -10,20 +10,6 @@
 	<id>runner</id>
 	<dependencySets>
 		<dependencySet>
-			<outputDirectory>thirdparty</outputDirectory>
-			<unpack>true</unpack>
-			<directoryMode>774</directoryMode>
-			<fileMode>774</fileMode>
-			<includes>
-				<include>ant:ant-full:*</include>
-			</includes>
-			<unpackOptions>
-				<excludes>
-					<exclude>ant/docs/**</exclude>
-				</excludes>
-			</unpackOptions>
-		</dependencySet>
-		<dependencySet>
 			<outputDirectory>thirdparty/ant/lib</outputDirectory>
 			<outputFileNameMapping>${artifact.artifactId}.${artifact.extension}</outputFileNameMapping>
 			<includes>
@@ -35,7 +21,6 @@
 			<outputFileNameMapping>${artifact.artifactId}.${artifact.extension}</outputFileNameMapping>
 			<includes>
 				<include>*:ant:*</include>
-				<include>*:ant-launcher:*</include>
 				<include>*:asm:*</include>
 				<include>*:asm-commons:*</include>
 				<include>*:asm-tree:*</include>
@@ -59,14 +44,12 @@
 				<include>*:xml-apis:*</include>
 				<include>*:activation:*</include>
 				<include>*:commons-logging:*</include>
-				<include>*:commons-logging-api:*</include>
 				<include>*:commons-io:*</include>
 				<include>*:commons-compress:*</include>
 				<include>*:commons-text:*</include>
 				<include>*:commons-lang3:*</include>
 				<include>*:looks:*</include>
 				<include>*:commons-net:*</include>
-				<include>*:ftpserver-core:*</include>
 				<include>*:swingx:*</include>
 				<include>*:junit:*</include>
 				<include>*:swing-worker:*</include>
@@ -90,6 +73,15 @@
 		</dependencySet>
 	</dependencySets>
 	<fileSets>
+		<fileSet>
+			<directory>${project.build.directory}/ant-staging/${ant.binary.unpack.dir}</directory>
+			<outputDirectory>thirdparty/ant</outputDirectory>
+			<directoryMode>774</directoryMode>
+			<fileMode>774</fileMode>
+			<excludes>
+				<exclude>manual/**</exclude>
+			</excludes>
+		</fileSet>
 		<fileSet>
 			<outputDirectory>dev</outputDirectory>
 			<directory>src/main/dev</directory>

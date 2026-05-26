@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.jsystemtest</groupId>
 	<artifactId>jsystem-parent</artifactId>
-	<version>6.2.1-SNAPSHOT</version>
+	<version>6.3.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>jsystem-parent</name>
 	<organization>
@@ -28,13 +28,17 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<assembly.format>dir</assembly.format>
-		<topq.repository.rootUrl>https://maven.top-q.co.il</topq.repository.rootUrl>
 		<maven.compiler.source>17</maven.compiler.source>
 		<maven.compiler.target>17</maven.compiler.target>
 		<slf4j.version>2.0.17</slf4j.version>
 		<logback.version>1.5.18</logback.version>
 		<jackson.version>2.15.2</jackson.version>
-		<ant.version>1.10.15</ant.version>
+		<!-- downloading the full ant binary distribution from apache.org using the download-maven-plugin -->
+		<ant.version>1.10.17</ant.version>
+		<ant.binary.url>https://dlcdn.apache.org/ant/binaries/apache-ant-${ant.version}-bin.zip</ant.binary.url>
+		<ant.binary.archive>apache-ant-${ant.version}-bin.zip</ant.binary.archive>
+		<ant.binary.unpack.dir>apache-ant-${ant.version}</ant.binary.unpack.dir>
+		<download-maven-plugin.version>1.10.0</download-maven-plugin.version>
 	</properties>
 
 	<dependencies>
@@ -59,22 +63,6 @@
 				<groupId>org.apache.ant</groupId>
 				<artifactId>ant</artifactId>
 				<version>${ant.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.ant</groupId>
-				<artifactId>ant-launcher</artifactId>
-				<version>${ant.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>ant</groupId>
-				<artifactId>ant-full</artifactId>
-				<version>1.9.6</version>
-				<type>zip</type>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.ant</groupId>
-				<artifactId>ant-nodeps</artifactId>
-				<version>1.8.1</version>
 			</dependency>
 			<dependency>
 				<groupId>commons-httpclient</groupId>
@@ -139,11 +127,6 @@
 				<artifactId>commons-net</artifactId>
 				<version>3.12.0</version>
 			</dependency>
-			<!-- dependency> <groupId>org.apache.ftpserver</groupId> <artifactId>ftpserver-core</artifactId> 
-				<version>1.0.0</version> </dependency> <dependency> <groupId>org.apache.ftpserver</groupId> 
-				<artifactId>ftplet-api</artifactId> <version>1.0.0</version> </dependency> 
-				<dependency> <groupId>org.apache.ftpserver</groupId> <artifactId>ftpserver-deprecated</artifactId> 
-				<version>1.0.0-M2</version> </dependency -->
 			<dependency>
 				<groupId>org.apache.ftpserver</groupId>
 				<artifactId>ftpserver-core</artifactId>
@@ -236,6 +219,15 @@
 
 	</dependencyManagement>
 	<build>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>com.googlecode.maven-download-plugin</groupId>
+					<artifactId>download-maven-plugin</artifactId>
+					<version>${download-maven-plugin.version}</version>
+				</plugin>
+			</plugins>
+		</pluginManagement>
 		<!--<finalName>${project.artifactId}</finalName> -->
 		<plugins>
 			<plugin>
@@ -271,18 +263,6 @@
 		<module>../jsystem-archetypes</module>
 		<module>../jsystem-miscellaneous/jsystem-maven-plugin</module>
 	</modules>
-	<repositories>
-		<repository>
-			<id>topq</id>
-			<url>${topq.repository.rootUrl}/content/groups/public</url>
-		</repository>
-	</repositories>
-	<pluginRepositories>
-		<pluginRepository>
-			<id>topq</id>
-			<url>${topq.repository.rootUrl}/content/groups/public</url>
-		</pluginRepository>
-	</pluginRepositories>
 	<profiles>
 		<profile>
 			<!-- additional module if you pass -P dist to the maven command -->
