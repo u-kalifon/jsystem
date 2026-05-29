@@ -34,7 +34,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Observable;
 import java.util.Properties;
 import java.util.StringTokenizer;
 import java.util.TreeMap;
@@ -170,7 +169,7 @@ import jsystem.utils.SwingUtils;
 import junit.framework.AssertionFailedError;
 import junit.framework.Test;
 
-public class TestsTableController extends Observable implements TestStatusListener, ActionListener, ExtendTestListener,
+public class TestsTableController implements TestStatusListener, ActionListener, ExtendTestListener,
 		TreeSelectionListener, MouseListener, TreeExpansionListener, ScenarioListener {
 
 	private static Logger log = LoggerFactory.getLogger(TestsTableController.class);
@@ -2595,9 +2594,6 @@ public class TestsTableController extends Observable implements TestStatusListen
 		toolBar.setLayout(new FlowLayout(FlowLayout.LEFT, 1, 1));
 		toolBar.setFloatable(false);
 		toolBar.setRollover(true);
-		toolBar.add(OpenScenarioAction.getInstance());
-		toolBar.addSeparator(new Dimension(15, 0));
-
 		JButton upButton = toolBar.add(MoveUpAction.getInstance());
 		upButton.setAlignmentX(Component.CENTER_ALIGNMENT);
 		JButton downButton = toolBar.add(MoveDownAction.getInstance());
@@ -2693,7 +2689,6 @@ public class TestsTableController extends Observable implements TestStatusListen
 
 	public void setEnableToolBar(boolean enable) {
 		changeSut.setEnabled(enable);
-		OpenScenarioAction.getInstance().setEnabled(enable);
 	}
 
 	/**

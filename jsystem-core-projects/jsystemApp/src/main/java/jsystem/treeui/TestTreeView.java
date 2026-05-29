@@ -71,6 +71,7 @@ import jsystem.treeui.actionItems.EditSutAction;
 import jsystem.treeui.actionItems.ExitAction;
 import jsystem.treeui.actionItems.InitReportersAction;
 import jsystem.treeui.actionItems.NewScenarioAction;
+import jsystem.treeui.actionItems.OpenScenarioAction;
 import jsystem.treeui.actionItems.PauseAction;
 import jsystem.treeui.actionItems.PlayAction;
 import jsystem.treeui.actionItems.PublishXmlResultAction;
@@ -354,6 +355,7 @@ public class TestTreeView extends JFrame implements ActionListener, TestsTreeLis
 		toolBar.setFloatable(false);
 		toolBar.setRollover(true);
 		toolBar.add(NewScenarioAction.getInstance());
+		toolBar.add(OpenScenarioAction.getInstance());
 
 		JButton saveScenario = toolBar.add(SaveScenarioAction.getInstance());
 		saveScenario.setAlignmentX(Component.CENTER_ALIGNMENT);
