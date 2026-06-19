@@ -1,0 +1,55 @@
+name: Build & Publish
+
+on:
+  push:
+    branches:
+      - master
+      - 'version/*'      # matches any version branch, e.g. version/1.2, version/2.0
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    permissions:
+      contents: read
+      packages: write    # needed to publish to GitHub Packages
+      # contents: write  # uncomment if a step needs to push tags or create GitHub Releases
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'       # adjust to your Java version
+          distribution: 'temurin'
+          cache: maven             # caches ~/.m2 based on pom.xml hash
+          server-id: github        # must match <id>github</id> in distributionManagement
+          server-username: GITHUB_ACTOR
+          server-password: GITHUB_TOKEN
+
+      # ── Step 1: build the parent ──────────────────────────────────────
+      - name: Build jsystem-parent
+        run: mvn --batch-mode clean install -DskipTests
+        working-directory: jsystem-parent
+
+      # ── Step 2: build & publish the runner in one pass ────────────────
+      - name: Build & Publish jsystem-runner
+        run: mvn --batch-mode clean deploy -DskipTests
+        working-directory: jsystem-assembly/jsystem-runner
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_ACTOR: ${{ github.actor }}
+
+      # ── Upload artifacts for inspection / download ────────────────────
+      - name: Upload artifacts
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: jsystem-artifacts
+          path: |
+            jsystem-assembly/jsystem-runner/target/*.jar
+            jsystem-assembly/jsystem-runner/target/runner/runner/lib/*.jar
+          retention-days: 14

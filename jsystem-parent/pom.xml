@@ -272,4 +272,10 @@
 			</modules>
 		</profile>
 	</profiles>
+	<distributionManagement>
+		<repository>
+			<id>github</id>
+			<url>https://maven.pkg.github.com/u-kalifon/jsystem</url>
+		</repository>
+	</distributionManagement>
 </project>
