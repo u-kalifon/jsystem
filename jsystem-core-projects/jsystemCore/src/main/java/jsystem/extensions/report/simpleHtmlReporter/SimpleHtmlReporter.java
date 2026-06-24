@@ -169,6 +169,7 @@ public class SimpleHtmlReporter implements ExtendLevelTestReporter, ExtendTestLi
 		"bootstrap.min.js",
 		"dataTables.bootstrap.min.js",
 		"docs.min.js",
+		"he.min.js",
 		"jquery-ui.min.js",
 		"jquery.dataTables.js",
 		"jquery.min.js",
