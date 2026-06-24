@@ -8,7 +8,7 @@
 	<parent>
 		<groupId>org.jsystemtest</groupId>
 		<artifactId>jsystem-parent</artifactId>
-		<version>6.3.3-SNAPSHOT</version>
+		<version>6.4.0-SNAPSHOT</version>
 		<relativePath>../../jsystem-parent</relativePath>
 	</parent>
 	<repositories>
@@ -39,13 +39,13 @@
 		</dependency>
 		<dependency>
 			<groupId>org.jsystemtest</groupId>
-			<artifactId>jsystemApp</artifactId>
+			<artifactId>jsystem-app</artifactId>
 			<version>${project.version}</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.jsystemtest</groupId>
-			<artifactId>jsystemAnt</artifactId>
+			<artifactId>jsystem-ant</artifactId>
 			<version>${project.version}</version>
 			
 		</dependency>

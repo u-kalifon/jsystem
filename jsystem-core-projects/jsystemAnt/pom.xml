@@ -4,14 +4,14 @@
 	<parent>
 		<groupId>org.jsystemtest</groupId>
 		<artifactId>jsystem-parent</artifactId>
-		<version>6.3.3-SNAPSHOT</version>
+		<version>6.4.0-SNAPSHOT</version>
 		<relativePath>../../jsystem-parent</relativePath>
 	</parent>
-	<artifactId>jsystemAnt</artifactId>
+	<artifactId>jsystem-ant</artifactId>
 	<dependencies>
 		<dependency>
 			<groupId>org.jsystemtest</groupId>
-			<artifactId>jsystemCore</artifactId>
+			<artifactId>jsystem-core</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
