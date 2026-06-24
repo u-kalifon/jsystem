@@ -32,7 +32,7 @@ jobs:
 
       # ── Step 1: build the parent ──────────────────────────────────────
       - name: Build jsystem-parent
-        run: mvn --batch-mode clean deploy -DskipTests
+        run: mvn --batch-mode -e clean deploy -DskipTests
         working-directory: jsystem-parent
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
