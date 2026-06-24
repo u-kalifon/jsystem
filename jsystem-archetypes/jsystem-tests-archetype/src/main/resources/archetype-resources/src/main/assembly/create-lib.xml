@@ -25,11 +25,11 @@
 		<dependencySet>
 			<excludes>
 				<!-- JSystem Lib -->
-				<exclude>*:jsystemCore:*</exclude>
-				<exclude>*:jsystemAnt:*</exclude>
-				<exclude>*:jsystemCommon:*</exclude>
-				<exclude>*:jsystemApp:*</exclude>
-				<exclude>*:jsystemAgent:*</exclude>
+				<exclude>*:jsystem-core:*</exclude>
+				<exclude>*:jsystem-ant:*</exclude>
+				<exclude>*:jsystem-common:*</exclude>
+				<exclude>*:jsystem-app:*</exclude>
+				<exclude>*:jsystem-agent:*</exclude>
 				<exclude>*:jsystem-launcher:*</exclude>
 
 				<!-- JSystem third party -->

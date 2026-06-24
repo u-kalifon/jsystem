@@ -104,27 +104,27 @@
 
 		<dependency>
 			<groupId>org.jsystemtest</groupId>
-			<artifactId>jsystemCore</artifactId>
+			<artifactId>jsystem-core</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.jsystemtest</groupId>
-			<artifactId>jsystemCommon</artifactId>
+			<artifactId>jsystem-common</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.jsystemtest</groupId>
-			<artifactId>jsystemAnt</artifactId>
+			<artifactId>jsystem-ant</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.jsystemtest</groupId>
-			<artifactId>jsystemAgent</artifactId>
+			<artifactId>jsystem-agent</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.jsystemtest</groupId>
-			<artifactId>jsystemApp</artifactId>
+			<artifactId>jsystem-app</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>

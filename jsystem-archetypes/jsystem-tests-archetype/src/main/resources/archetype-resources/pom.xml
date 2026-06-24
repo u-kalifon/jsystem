@@ -25,7 +25,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>org.jsystemtest</groupId>
-			<artifactId>jsystemApp</artifactId>
+			<artifactId>jsystem-app</artifactId>
 			<version>\${jsystem.version}</version>
 		</dependency>
 	</dependencies>

@@ -7,12 +7,12 @@
 		<version>6.4.0-beta1</version>
 		<relativePath>../../jsystem-parent</relativePath>
 	</parent>
-	<artifactId>jsystemCommon</artifactId>
+	<artifactId>jsystem-common</artifactId>
 	<dependencies>
 		
 		<dependency>
 			<groupId>org.jsystemtest</groupId>
-			<artifactId>jsystemCore</artifactId>
+			<artifactId>jsystem-core</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<!-- SLF4J and Logback dependencies -->

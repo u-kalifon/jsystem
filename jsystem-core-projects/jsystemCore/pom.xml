@@ -7,7 +7,7 @@
 		<version>6.4.0-beta1</version>
 		<relativePath>../../jsystem-parent</relativePath>
 	</parent>
-	<artifactId>jsystemCore</artifactId>
+	<artifactId>jsystem-core</artifactId>
 	<properties>
 		<runner.home>../jsystem-runner/target/jsystem-runner-${project.version}/jsystem-runner-${project.version}</runner.home>
 	</properties>

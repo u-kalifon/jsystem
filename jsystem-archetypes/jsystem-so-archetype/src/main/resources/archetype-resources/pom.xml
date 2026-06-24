@@ -19,7 +19,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>org.jsystemtest</groupId>
-			<artifactId>jsystemCommon</artifactId>
+			<artifactId>jsystem-common</artifactId>
 			<version>\${jsystem.version}</version>
 			<scope>provided</scope>
 		</dependency>
