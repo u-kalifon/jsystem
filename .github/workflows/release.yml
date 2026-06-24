@@ -32,8 +32,11 @@ jobs:
 
       # ── Step 1: build the parent ──────────────────────────────────────
       - name: Build jsystem-parent
-        run: mvn --batch-mode clean install -DskipTests
+        run: mvn --batch-mode clean deploy -DskipTests
         working-directory: jsystem-parent
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_ACTOR: ${{ github.actor }}
 
       # ── Step 2: build & publish the runner in one pass ────────────────
       - name: Build & Publish jsystem-runner
