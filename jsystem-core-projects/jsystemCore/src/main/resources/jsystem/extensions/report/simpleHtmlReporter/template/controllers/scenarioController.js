@@ -12,7 +12,7 @@ function setFixedProperties(test, element) {
     addStatusBackgroundClass($(element).find("#status"), test);
     addPropertiesToTbl(test.scenarioProperties, $(element).find("#propTbl > tbody"));
     $(element).find("#timestamp").text(test.timestamp);
-    $(element).find("#description").html(nl2br(he.escape(test.description)));
+    $(element).find("#description").html(nl2br(he.escape(test.description || "")));
 }
 
 function addPropertiesToTbl(properties, table) {
