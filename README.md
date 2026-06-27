@@ -1,10 +1,6 @@
-[![Build Status](https://travis-ci.org/Top-Q/jsystem.svg?branch=master)](https://travis-ci.org/Top-Q/jsystem)
-
 # JSystem Framework #
 
-[JSystem Site](http://www.jsystem.org/)</br>
-
-[JSystem Release Notes](https://github.com/Top-Q/jsystem/wiki/Release-Notes)</br>
+[JSystem Documentation on the Top-Q website](https://github.com/Top-Q/jsystem-docs/wiki)</br>
 
 JSystem is a professional open-source framework for writing and managing automated system tests.
 
@@ -21,14 +17,12 @@ JSystem is used by many enterprise organizations like: Juniper, Nokia-Siemens, E
 ## The JSystem framework is comprised of the following components: ##
 
 * JSystem Services (Java API) - exposes JSystem services.
-* JSystem Drivers- Java modules used to interface with devices and applications in the system under test.
 * JSystem GUI Interface (JRunner) - GUI application interface used for creating and running test scenarios.
 * JSystem Agent - an execution engine used to run scenarios on a distributed setup.
-* JSystem Eclipse plug-in - accelerates the development environment setup and enforces JSystem conventions.
+* JSystem Maven plug-in - initialize automation projects and run testts from the command-line.
 * JSystem deploys several open source projects, two of the central open source projects are JUnit used for writing tests and Ant used as the scenario execution engine.
 
 # How to work with the project #
 1. Clone the whole jsystem root folder
-2. Eclipse - import the jsystem root folder with all its projects
-3. Run maven install on the jsystem-parent project (without the tests)
-4. Run maven install on the jsystem-runner project
+2. Run maven install on the jsystem-parent project (without the tests)
+3. Run maven install on the jsystem-runner project
