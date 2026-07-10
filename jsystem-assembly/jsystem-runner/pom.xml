@@ -158,6 +158,10 @@
 	<build>
 		<plugins>
 			<plugin>
+				<!-- If you get PKIX errors, first get the full cert chain from dlcdn.apache.org: -->
+				<!-- openssl s_client -connect dlcdn.apache.org:443 -showcerts 2>/dev/null < /dev/null |   awk '/BEGIN CERTIFICATE/,/END CERTIFICATE/' > fullchain.pem -->
+				<!-- Then add the certs one by one to the JVM truststore: -->
+				<!-- keytool.exe -importcert -trustcacerts -alias [[unique_alias]] -cacerts -storepass changeit -file cert.pem -->
 				<groupId>com.googlecode.maven-download-plugin</groupId>
 				<artifactId>download-maven-plugin</artifactId>
 				<executions>
@@ -172,6 +176,7 @@
 							<outputDirectory>${project.build.directory}/ant-staging</outputDirectory>
 							<outputFileName>${ant.binary.archive}</outputFileName>
 							<unpack>true</unpack>
+							<readTimeOut>120000</readTimeOut>
 						</configuration>
 					</execution>
 				</executions>
