@@ -4,33 +4,49 @@
 	<groupId>\${groupId}</groupId>
 	<artifactId>\${artifactId}</artifactId>
 	<version>\${version}</version>
+	<packaging>jar</packaging>
 	<properties>
 		<jsystem.version>${jsystem.dependency.version}</jsystem.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<maven.compiler.source>17</maven.compiler.source>
-		<maven.compiler.target>17</maven.compiler.target>
+		<maven.compiler.release>17</maven.compiler.release>
 	</properties>
-	<repositories>
-		<repository>
-			<id>top-q</id>
-			<url>https://maven.top-q.co.il/content/groups/public</url>
-		</repository>
-	</repositories>
-	<pluginRepositories>
-		<pluginRepository>
-			<id>top-q</id>
-			<url>https://maven.top-q.co.il/content/groups/public</url>
-		</pluginRepository>
-	</pluginRepositories>
 	<dependencies>
 		<dependency>
 			<groupId>org.jsystemtest</groupId>
 			<artifactId>jsystem-app</artifactId>
 			<version>\${jsystem.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>org.jsystemtest</groupId>
+			<artifactId>jsystem-ant</artifactId>
+			<version>\${jsystem.version}</version>
+		</dependency>
 	</dependencies>
+
 	<build>
 		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>3.5.0</version>
+				<executions>
+					<execution>
+						<id>default-jar</id>
+						<phase>none</phase>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-install-plugin</artifactId>
+				<version>3.1.4</version>
+				<executions>
+					<execution>
+						<id>default-install</id>
+						<phase>none</phase>
+					</execution>
+				</executions>
+			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-assembly-plugin</artifactId>
@@ -58,27 +74,66 @@
 				<groupId>org.jsystemtest</groupId>
 				<artifactId>jsystem-maven-plugin</artifactId>
 				<version>\${jsystem.version}</version>
-				<dependencies>
-					<dependency>
-						<groupId>\${groupId}</groupId>
-						<artifactId>\${artifactId}</artifactId>
-						<version>[0.0,]</version>
-						<scope>runtime</scope>
-					</dependency>
-				</dependencies>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-source-plugin</artifactId>
-				<version>2.2</version>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<version>3.8.1</version>
 				<executions>
 					<execution>
-						<id>attach-sources</id>
+						<id>copy-ant-to-thirdparty</id>
+						<phase>package</phase>
 						<goals>
-							<goal>jar</goal>
+							<goal>copy-dependencies</goal>
+						</goals>
+						<configuration>
+							<!-- JSystem's RemoteExecutorImpl looks for thirdparty/ant/lib/ant-launcher.jar
+							     (bare name, no version) to bootstrap the Ant subprocess for each scenario run. -->
+							<includeArtifactIds>ant,ant-launcher</includeArtifactIds>
+							<outputDirectory>\${project.basedir}/thirdparty/ant/lib</outputDirectory>
+							<stripVersion>true</stripVersion>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<artifactId>maven-resources-plugin</artifactId>
+				<version>3.5.0</version>
+				<executions>
+					<execution>
+						<id>process-resources</id>
+						<phase>process-resources</phase>
+						<goals>
+							<goal>resources</goal>
 						</goals>
 					</execution>
 				</executions>
+			</plugin>
+			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.15.0</version>
+				<configuration>
+					<release>\${maven.compiler.release}</release>
+				</configuration>
+				<executions>
+					<execution>
+						<id>default-compile</id>
+						<phase>compile</phase>
+						<goals>
+							<goal>compile</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>3.5.2</version>
+				<configuration>
+					<includes>
+						<include>\${groupIdInPathFormat}/SurefireTests.java</include>
+					</includes>
+				</configuration>
 			</plugin>
 			<plugin>
 				<artifactId>maven-clean-plugin</artifactId>
@@ -98,6 +153,12 @@
 										<include>**/*.*</include>
 									</includes>
 								</fileset>
+								<fileset>
+									<directory>thirdparty</directory>
+									<includes>
+										<include>**/*.*</include>
+									</includes>
+								</fileset>
 							</filesets>
 							<failOnError>false</failOnError>
 						</configuration>
@@ -106,5 +167,66 @@
 			</plugin>
 		</plugins>
 	</build>
+
+	<profiles>
+		<profile>
+			<id>dist</id>
+			<build>
+				<plugins>
+					<plugin>
+						<artifactId>maven-jar-plugin</artifactId>
+						<version>3.4.1</version>
+						<executions>
+							<execution>
+								<id>dist-jar</id>
+								<phase>package</phase>
+								<goals>
+									<goal>jar</goal>
+								</goals>
+								<configuration>
+									<classifier>dist</classifier>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.jsystemtest</groupId>
+						<artifactId>jsystem-maven-plugin</artifactId>
+						<dependencies>
+							<dependency>
+								<groupId>\${project.groupId}</groupId>
+								<artifactId>\${project.artifactId}</artifactId>
+								<version>\${project.version}</version>
+								<classifier>dist</classifier>
+								<type>jar</type>
+								<scope>runtime</scope>
+							</dependency>
+						</dependencies>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+
+	<!-- To use the repository from github packages, you need to add to your ~/.m2/settings.xml: -->
+
+	<!-- settings xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.1.0 http://maven.apache.org/xsd/settings-1.1.0.xsd"
+                  xmlns="http://maven.apache.org/SETTINGS/1.1.0"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+                <servers>
+                        <server>
+                                <id>github</id>
+                                <username>your-user-name</username>
+                                <password>ghp_NDHw....</password>
+                        </server>
+                </servers>
+        </settings -->
+
+	<repositories>
+		<repository>
+			<id>github</id>
+			<url>https://maven.pkg.github.com/u-kalifon/jsystem</url>
+		</repository>
+	</repositories>
 </project>
 

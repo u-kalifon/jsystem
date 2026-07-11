@@ -26,3 +26,13 @@ JSystem is used by many enterprise organizations like: Juniper, Nokia-Siemens, E
 1. Clone the whole jsystem root folder
 2. Run maven install on the jsystem-parent project (without the tests)
 3. Run maven install on the jsystem-runner project
+
+# Creating a new automation project #
+1. In the directory you want to create the project on:
+mvn archetype:generate -DarchetypeGroupId=org.jsystemtest.archetypes -DarchetypeArtifactId=jsystem-tests-archetype -DarchetypeVersion=6.4.1-SNAPSHOT -DgroupId=com.mycompany.automation -DartifactId=my-automation-project -Dversion=1.0-SNAPSHOT -Dpackage=com.mycompany.automation
+
+2. Inside the created project:
+```
+./runner.sh
+```
+The script will build the automation project, initialize some settings and directories, and will open up the GUI.

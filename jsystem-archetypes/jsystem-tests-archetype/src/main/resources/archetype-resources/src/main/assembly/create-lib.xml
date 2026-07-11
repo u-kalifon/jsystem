@@ -11,8 +11,7 @@
 	<id>create-lib</id>
 	<fileSets>
 		<fileSet>
-			<!-- We are adding this file to prevent from the assembly plugin to fail 
-				in case there are no jars to add to the lib folder -->
+			<!-- Prevents assembly plugin failing when there are no jars -->
 			<outputDirectory></outputDirectory>
 			<directory>src/main/assembly</directory>
 			<includes>
@@ -24,63 +23,14 @@
 	<dependencySets>
 		<dependencySet>
 			<excludes>
-				<!-- JSystem Lib -->
-				<exclude>*:jsystem-core:*</exclude>
-				<exclude>*:jsystem-ant:*</exclude>
-				<exclude>*:jsystem-common:*</exclude>
-				<exclude>*:jsystem-app:*</exclude>
-				<exclude>*:jsystem-agent:*</exclude>
-				<exclude>*:jsystem-launcher:*</exclude>
+				<!-- ant/ant-launcher go to thirdparty/ant/lib/ with bare names via maven-dependency-plugin -->
+				<exclude>org.apache.ant:ant:*</exclude>
+				<exclude>org.apache.ant:ant-launcher:*</exclude>
 
-				<!-- JSystem third party -->
-				<exclude>*:ant:*</exclude>
-				<exclude>*:asm:*</exclude>
-				<exclude>*:asm-commons:*</exclude>
-				<exclude>*:asm-tree:*</exclude>
-				<exclude>*:avalon-framework:*</exclude>
-				<exclude>*:commons-codec:*</exclude>
-				<exclude>*:commons-httpclient:*</exclude>
-				<exclude>*:commons-jxpath:*</exclude>
-				<exclude>*:hamcrest-core:*</exclude>
-				<exclude>*:jcommon:*</exclude>
-				<exclude>*:jfreechart:*</exclude>
-				<exclude>*:junit:*</exclude>
-				<exclude>*:jython:*</exclude>
-				<exclude>*:logkit:*</exclude>
-				<exclude>*:mail:*</exclude>
-				<exclude>*:javaparser-core:*</exclude>
-				<exclude>*:serializer:*</exclude>
-				<exclude>*:servlet-api:*</exclude>
-				<exclude>*:xalan:*</exclude>
-				<exclude>*:xml-apis:*</exclude>
-				<exclude>*:activation:*</exclude>
-				<exclude>*:cli:*</exclude>
-				<exclude>*:commons-logging:*</exclude>
-				<exclude>*:commons-logging-api:*</exclude>
-				<exclude>*:looks:*</exclude>
-				<exclude>javax.mail:mail:*</exclude>
-				<exclude>*:commons-net:*</exclude>
-				<exclude>*:commons-io:*</exclude>
-				<exclude>*:swingx:*</exclude>
-				<exclude>*:junit:*</exclude>
-				<exclude>*:swing-worker:*</exclude>
-				<exclude>*:mx4j-jmx:*</exclude>
-				<exclude>*:commons-digester:*</exclude>
-				<exclude>*:commons-modeler:*</exclude>
-				<exclude>*:filters:*</exclude>
-				<exclude>*:commons-compress:*</exclude>
-				<exclude>*:xz:*</exclude>
-				<exclude>*:jackson-annotations:*</exclude>
-				<exclude>*:jackson-core:*</exclude>
-				<exclude>*:jackson-databind:*</exclude>
-				<!-- The project artifact should not be in the lib folder because it 
-					should be read from the classes folder -->
-				<exclude>*:\${artifactId}:*</exclude>
+				<!-- Project classes are loaded from target/classes/, not a jar -->
+				<exclude>${project.groupId}:${project.artifactId}:*</exclude>
 			</excludes>
 		</dependencySet>
-
-
 	</dependencySets>
-
 
 </assembly>
