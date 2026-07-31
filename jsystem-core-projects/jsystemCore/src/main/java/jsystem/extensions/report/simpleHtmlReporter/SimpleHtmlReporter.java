@@ -368,7 +368,7 @@ public class SimpleHtmlReporter implements ExtendLevelTestReporter, ExtendTestLi
 	}
 
 	private File getScenarioJsFile(String scenarioNameAndUid) {
-		Path scenarioDir = getScenarioDir(testReportDto.getNameAndUid());
+		Path scenarioDir = getScenarioDir(scenarioNameAndUid);
 		return new File(scenarioDir.resolve("scenario.js").toString());
 	}
 
@@ -452,6 +452,42 @@ public class SimpleHtmlReporter implements ExtendLevelTestReporter, ExtendTestLi
 		currentStep.addProperty("Method", testInfo.methodName);
 		currentStep.setUserDoc(testInfo.userDoc);
 
+		// when running a simple JUnit test from the IDE, there is no startContainer() call, so we need to initialize the testReportDto here
+		if (testReportDto == null) {
+			initTestReportDto(stepName, testInfo.userDoc);
+
+			// if this is the first container, start the scenario
+			if (containerStack.isEmpty()) {
+				createScenarioDirectory(testReportDto.getNameAndUid());
+				File scenarioJsFile = getScenarioJsFile(testReportDto.getNameAndUid());
+				try {
+					dumpAsJsToFile(testReportDto, scenarioJsFile);
+					log.debug("Wrote initial test report to: " + scenarioJsFile);
+				} catch (IOException e) {
+					log.error("Failed to write initial test report to: " + scenarioJsFile, e);
+					throw new RuntimeException("Failed to write initial test report to: " + scenarioJsFile, e);
+				}
+
+				// Get the SUT file path relative to the classes directory
+				Path sutFilePath = SutFactory.getInstance().getSutFile().toPath().toAbsolutePath();
+				String classesPath = JSystemProperties.getInstance().getPreference(FrameworkOptions.TESTS_CLASS_FOLDER);
+				Path classesDir = new File(classesPath).toPath().toAbsolutePath();
+				String relativeSutFile = classesDir.relativize(sutFilePath).toString();
+				String sanitizedSutFile = sanitizeSutFileName(relativeSutFile);
+				testReportDto.addProperty("sutFile", sanitizedSutFile);
+				testReportDto.addProperty("Timestamp", testReportDto.getTimestamp());
+
+				// Add the scenario to the execution file
+				addScenarioToExecutionFile(stepName, testReportDto.getTimestamp(), sanitizedSutFile, testReportDto.getUid());
+			} else {
+				ReportElementDto childScenarioStart = ReportElementDto.newChildScenarioStart(LocalDateTime.now().format(DATE_TIME_FORMATTER), stepName, testInfo.userDoc);
+				testReportDto.getReportElements().add(childScenarioStart);
+				appendReportElementToScenarioJs(childScenarioStart);
+			}
+
+			containerStack.push(stepName);
+		}
+
 		if (testInfo.parameters != null && !testInfo.parameters.trim().isEmpty()) {
 			log.debug("Adding parameters " + testInfo.parameters);
 			try (Scanner scanner = new Scanner(testInfo.parameters)) {
@@ -467,10 +503,6 @@ public class SimpleHtmlReporter implements ExtendLevelTestReporter, ExtendTestLi
 					currentStep.addProperty(key, value);
 				}
 			}
-		}
-
-		if (testInfo.userDoc != null && !testInfo.userDoc.trim().isEmpty()) {
-			currentStep.setUserDoc(testInfo.userDoc);
 		}
 
 		// add the step to the scenario report (adds an item to the log) and write to disk
@@ -493,8 +525,8 @@ public class SimpleHtmlReporter implements ExtendLevelTestReporter, ExtendTestLi
 	 * @param element the ReportElementDto to append
 	 */
 	private void appendReportElementToScenarioJs(ReportElementDto element) {
-		if (containerStack.isEmpty()) {
-			log.error("Cannot append report element: no container is active");
+		if (testReportDto == null) {
+			log.error("Cannot append report element: no startTest() or startContainer() was called");
 			return;
 		}
 
@@ -527,6 +559,11 @@ public class SimpleHtmlReporter implements ExtendLevelTestReporter, ExtendTestLi
 	@Override
 	public void endTest(Test test) {
 		log.debug("### Recieved end test event -> " + test.toString());
+		if (currentStep == null) {
+			// shouldn't happen, unless some exception was thrown somewhere and currentStep is not set
+			log.error("Cannot end test: no startTest() was called");
+			return;
+		}
 		currentStep.setStatus(Status.SUCCESS);	// if it's already more severe (WARNING, ERROR...) there won't be an update
 		currentStep = null;
 	}
@@ -535,6 +572,35 @@ public class SimpleHtmlReporter implements ExtendLevelTestReporter, ExtendTestLi
 	public void endRun() {
 		// ignore for now (assuming that everything is written to disk)
 		log.debug("### Recieved end run event");
+
+		if (testReportDto == null) {
+			// all is well - the endContainer() cleaned up everything
+			return;
+		}
+
+		currentStep = null;
+		closeAllLevels();
+		if (containerStack.isEmpty()) {
+			// edge case: initTestReportDto succeeded but containerStack.push() was never reached (e.g. exception in dumpAsJsToFile)
+			log.warn("endRun: testReportDto is set but containerStack is empty; finalizing with current testReportDto status");
+			testReportDto.setStatus(testReportDto.getStatus() == Status.RUNNING ? Status.SUCCESS : testReportDto.getStatus());
+		} else {
+			containerStack.peek().setStatus(Status.SUCCESS);	// Will update RUNNING -> SUCCESS status if there was no update during the run (if noone logged anything else)
+			testReportDto.setStatus(containerStack.peek().getStatus());	// overall scenario status
+		}
+
+		File scenarioJsFile = getScenarioJsFile(testReportDto.getNameAndUid());
+		try {
+			dumpAsJsToFile(testReportDto, scenarioJsFile);
+			log.debug("Wrote final test report to: " + scenarioJsFile);
+		} catch (IOException e) {
+			log.error("Failed to write final test report to: " + scenarioJsFile, e);
+			throw new RuntimeException("Failed to write final test report to: " + scenarioJsFile, e);
+		}
+
+		String duration = composeDuration(testReportDto.getTimestamp());
+		updateScenarioInExecutionFile(testReportDto.getUid(), testReportDto.getStatus(), duration);
+		testReportDto = null;
 	}
 
 	public File getLogDirectory() {
@@ -937,13 +1003,18 @@ public class SimpleHtmlReporter implements ExtendLevelTestReporter, ExtendTestLi
 		ReportElementDto reportEntry = ReportElementDto.newReportEntry(
 			html ? "html" : link && isImage(message) ? "img" : link ? "lnk" : "regular",	// support for "bold" removed (it used to be a "step")
 			LocalDateTime.now().format(DATE_TIME_FORMATTER), title, message, status);
-		testReportDto.getReportElements().add(reportEntry);
-		appendReportElementToScenarioJs(reportEntry);
+
+		// testReportDto ,oght be null if startTest() wasn't called, for example from a @Before method
+		if (testReportDto != null) {
+			testReportDto.getReportElements().add(reportEntry);
+			appendReportElementToScenarioJs(reportEntry);
+		}
 
 		// update the statuses of the current step, the current log level, and the current container
 		if (currentStep != null)
 			currentStep.setStatus(status);	// will only update if it's more severe
-		containerStack.peek().setStatus(status);	// will only update if it's more severe
+		if (!containerStack.isEmpty())
+			containerStack.peek().setStatus(status);	// will only update if it's more severe
 	}
 
 	private boolean isImage(String fileName) {
@@ -961,16 +1032,30 @@ public class SimpleHtmlReporter implements ExtendLevelTestReporter, ExtendTestLi
 
 	@Override
 	public void addFailure(Test test, AssertionFailedError error) {
-		// This is coming from TestListener (the JUnit API interface) but we should instead use the report() method
+		if (currentStep == null || testReportDto == null) {
+			log.error("Received addFailure but reporter is not in an active test");
+			return;
+		}
+		String message = error.getMessage() != null ? error.getMessage() : "Assertion failed";
+		report("Assertion failure", message, Status.FAILURE, false, false, false);
 	}
 
 	@Override
 	public void addError(Test test, Throwable error) {
-		// This is coming from TestListener (the JUnit API interface) but we should instead use the report() method
+		if (currentStep == null || testReportDto == null) {
+			log.error("Received addError but reporter is not in an active test");
+			return;
+		}
+		report(error.getClass().getSimpleName(), StringUtils.getStackTrace(error), Status.FAILURE, false, false, false);
 	}
 
 	@Override
 	public void saveFile(String fileName, byte[] content) {
+		if (testReportDto == null) {
+			log.error("Cannot save file: no startTest() or startContainer() was called");
+			return;
+		}
+
 		try {
 			Path scenarioDir = getScenarioDir(testReportDto.getNameAndUid());
 			fileName = Paths.get(fileName).getFileName().toString();

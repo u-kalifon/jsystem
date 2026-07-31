@@ -6,8 +6,6 @@ package junit.framework;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.Arrays;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import jsystem.framework.report.ListenerstManager;
 import jsystem.framework.scenario.RunningProperties;
@@ -15,6 +13,7 @@ import jsystem.framework.scenario.RunningProperties;
 import org.junit.internal.runners.InitializationError;
 import org.junit.internal.runners.JUnit4ClassRunner;
 import org.junit.runner.Description;
+import org.junit.runner.Result;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunListener;
 import org.junit.runner.notification.RunNotifier;
@@ -30,8 +29,6 @@ import org.junit.runner.notification.RunNotifier;
  *
  */
 public class JSystemJUnit4ClassRunner extends JUnit4ClassRunner {
-	
-	private Logger log = LoggerFactory.getLogger(JSystemJUnit4ClassRunner.class);
 	
 	/**
 	 * 
@@ -168,10 +165,10 @@ public class JSystemJUnit4ClassRunner extends JUnit4ClassRunner {
 
 		@Override
 		public void testStarted(Description description) throws Exception {
-			description = fixDescriptionIfExecutionError(description);
-			super.testStarted(description);
 			TestInfo info = new TestInfo(description);
 			methodName = info.getMethodName();
+			description = fixDescriptionIfExecutionError(description);
+			super.testStarted(description);
 			testListener.startTest(info);
 		}
 		
@@ -242,9 +239,15 @@ public class JSystemJUnit4ClassRunner extends JUnit4ClassRunner {
 			testClass = ((JsystemRunNotifier) notifier).getTestClass();
 			methodName = ((JsystemRunNotifier) notifier).getMethodName();
 		} else {
-			//ITAI : This was the original line before I added the first block.
-			//I am not sure if this is still needs to be here
-			testClass = getTestClass().getJavaClass();
+			testClass = getTestClass().getJavaClass();	// NOTE: methodName will be set in testStarted()
+
+			// When running with JUnit from IDE: add an anonymous listener, just to call endRun() when the class run completes
+			notifier.addListener(new RunListener() {
+				@Override
+				public void testRunFinished(Result result) throws Exception {
+					ListenerstManager.getInstance().endRun();
+				}
+			});
 		}
 		notifier.addListener(new TestListenerAdapter(ListenerstManager.getInstance()));
 		this.notifier = notifier;
