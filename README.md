@@ -29,7 +29,7 @@ JSystem is used by many enterprise organizations like: Juniper, Nokia-Siemens, E
 
 # Creating a new automation project #
 1. In the directory you want to create the project on:
-mvn archetype:generate -DarchetypeGroupId=org.jsystemtest.archetypes -DarchetypeArtifactId=jsystem-tests-archetype -DarchetypeVersion=6.4.1-SNAPSHOT -DgroupId=com.mycompany.automation -DartifactId=my-automation-project -Dversion=1.0-SNAPSHOT -Dpackage=com.mycompany.automation
+mvn archetype:generate -DarchetypeGroupId=org.jsystemtest.archetypes -DarchetypeArtifactId=jsystem-tests-archetype -DarchetypeVersion=6.4.2-SNAPSHOT -DgroupId=com.mycompany.automation -DartifactId=my-automation-project -Dversion=1.0-SNAPSHOT -Dpackage=com.mycompany.automation
 
 2. Inside the created project:
 ```

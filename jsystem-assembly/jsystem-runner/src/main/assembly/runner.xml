@@ -51,7 +51,6 @@
 				<include>*:looks:*</include>
 				<include>*:commons-net:*</include>
 				<include>*:swingx:*</include>
-				<include>*:junit:*</include>
 				<include>*:swing-worker:*</include>
 				<include>*:filters:*</include>
 				<include>*:jackson-databind:*</include>
