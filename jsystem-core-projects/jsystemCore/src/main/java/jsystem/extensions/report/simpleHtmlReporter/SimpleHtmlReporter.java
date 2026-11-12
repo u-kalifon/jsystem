@@ -56,7 +56,7 @@ public class SimpleHtmlReporter implements ExtendLevelTestReporter, ExtendTestLi
 	private static final Logger log = LoggerFactory.getLogger(SimpleHtmlReporter.class);
 
 	private static final String LOCK_FILE_NAME = ".reporter.lock";
-	private static final long DEFAULT_LOCK_TIMEOUT_MS = 2 * 60 * 1000; // 2 minutes
+	private static final long DEFAULT_LOCK_TIMEOUT_MS = 2 * 60 * 1000L; // 2 minutes
 	private static final long LOCK_RETRY_INTERVAL_MS = 200; // 100ms between retries
 	private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
 	private static final List<String> IMAGES_TYPES = List.of(".jpg", ".png", ".gif");
