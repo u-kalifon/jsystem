@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.jsystemtest</groupId>
 	<artifactId>jsystem-parent</artifactId>
-	<version>6.4.2-SNAPSHOT</version>
+	<version>6.5.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>jsystem-parent</name>
 	<organization>
@@ -28,13 +28,13 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<assembly.format>dir</assembly.format>
-		<maven.compiler.source>17</maven.compiler.source>
-		<maven.compiler.target>17</maven.compiler.target>
+		<maven.compiler.source>25</maven.compiler.source>
+		<maven.compiler.target>25</maven.compiler.target>
 		<slf4j.version>2.0.17</slf4j.version>
 		<logback.version>1.5.18</logback.version>
 		<jackson.version>2.15.2</jackson.version>
 		<!-- downloading the full ant binary distribution from apache.org using the download-maven-plugin -->
-		<ant.version>1.10.17</ant.version>
+		<ant.version>1.10.18</ant.version>
 		<ant.binary.url>https://dlcdn.apache.org/ant/binaries/apache-ant-${ant.version}-bin.zip</ant.binary.url>
 		<ant.binary.archive>apache-ant-${ant.version}-bin.zip</ant.binary.archive>
 		<ant.binary.unpack.dir>apache-ant-${ant.version}</ant.binary.unpack.dir>
@@ -87,9 +87,22 @@
 				<version>2.7.3</version>
 			</dependency>
 			<dependency>
-				<groupId>jython</groupId>
-				<artifactId>jython</artifactId>
-				<version>2.1</version>
+				<groupId>org.graalvm.polyglot</groupId>
+				<artifactId>polyglot</artifactId>
+				<version>25.4.4.1.1</version>
+				<scope>compile</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.graalvm.python</groupId>
+				<artifactId>python-language</artifactId>
+				<version>25.4.4.1.1</version>
+				<scope>compile</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.graalvm.python</groupId>
+				<artifactId>python-embedding</artifactId>
+				<version>25.4.4.1.1</version>
+				<scope>compile</scope>
 			</dependency>
 			<dependency>
 				<groupId>jfree</groupId>
@@ -226,6 +239,11 @@
 					<artifactId>download-maven-plugin</artifactId>
 					<version>${download-maven-plugin.version}</version>
 				</plugin>
+				<plugin>
+				        <groupId>org.apache.maven.plugins</groupId>
+				        <artifactId>maven-install-plugin</artifactId>
+				        <version>3.2.0</version>
+	           		 </plugin>
 			</plugins>
 		</pluginManagement>
 		<!--<finalName>${project.artifactId}</finalName> -->

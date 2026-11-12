@@ -31,7 +31,9 @@
 				<include>*:jcommon:*</include>
 				<include>*:jfreechart:*</include>
 				<include>*:junit:*</include>
-				<include>*:jython:*</include>
+				<include>*:polyglot:*</include>
+				<include>*:python-language:*</include>
+				<include>*:python-embedding:*</include>
 				<!-- include>*:log4j:*</include -->
 				<include>*:slf4j-api:*</include>
 				<include>*:logback-classic:*</include>
