@@ -9,6 +9,7 @@ package jsystem.framework.scripts.jython;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import org.graalvm.polyglot.Context;
+import org.graalvm.polyglot.Value;
 import org.graalvm.python.embedding.GraalPyResources;
 
 import org.slf4j.Logger;
@@ -20,7 +21,7 @@ public class PythonInterpreter {
 
     private PythonInterpreter() {}
 
-    public static void exec(String script) {
+    public static Value exec(String script) {
         if (context == null) {
             // we expect all the python files in the automation project to be found under
             // <project_root>/python
@@ -70,7 +71,7 @@ public class PythonInterpreter {
 
         // Exec the Python script
         try {
-            context.eval("python", script);
+            return context.eval("python", script);
         } catch (Exception e) {
             log.error("Python execution failed: " + e.getMessage());
             throw e;
